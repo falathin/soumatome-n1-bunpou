@@ -14,14 +14,14 @@ for (let w = 2; w <= 8; w++) {
     for (let d = 1; d <= 7; d++) {
         courseData[`week${w}`].days[`day${d}`] = {
             title: `Hari ${d} (Materi Kosong)`, grammar: [],
-            exam: `<p>Materi Ujian Minggu ${w} Hari ${d} akan segera ditambahkan.</p>`
+            exam: { type: "html", content: `<p><i class="bi bi-info-circle"></i> Materi Ujian Minggu ${w} Hari ${d} akan segera ditambahkan.</p>` }
         };
     }
 }
 
 let activeWeek = 'week1';
 let activeDay = 'day1';
-let openWeek = 'week1'; // Menyimpan state accordion mana yang terbuka
+let openWeek = 'week1';
 
 const sidebarContainer = document.getElementById('filterContainer');
 const grammarCards = document.getElementById('grammarCards');
@@ -37,23 +37,19 @@ function renderSidebar() {
         const group = document.createElement('div');
         group.className = 'week-group';
         
-        // Tombol Week (Accordion Toggle)
         const wBtn = document.createElement('button');
         wBtn.className = `week-btn ${openWeek === wKey ? 'open' : ''}`;
         wBtn.innerHTML = `<i class="bi bi-journal-bookmark-fill"></i> Week ${wKey.replace('week','')}<i class="bi bi-chevron-down chevron"></i>`;
         
-        // Container Hari (Accordion Content)
         const daysContainer = document.createElement('div');
         daysContainer.className = `days-container ${openWeek === wKey ? 'show' : ''}`;
 
         wBtn.onclick = () => {
-            // Jika diklik minggu yang sama, tutup. Jika beda, buka yang baru.
             openWeek = openWeek === wKey ? null : wKey;
             renderSidebar(); 
         };
         group.appendChild(wBtn);
 
-        // Render tombol hari di dalam container
         Object.keys(wData.days).forEach(dKey => {
             const dBtn = document.createElement('button');
             dBtn.className = `day-btn ${wKey === activeWeek && dKey === activeDay ? 'active' : ''}`;
@@ -64,7 +60,7 @@ function renderSidebar() {
             
             dBtn.innerHTML = `${icon} ${text}`;
             dBtn.onclick = () => {
-                searchInput.value = ''; // Reset pencarian jika klik menu samping
+                searchInput.value = '';
                 loadContent(wKey, dKey);
             };
             daysContainer.appendChild(dBtn);
@@ -78,7 +74,6 @@ function renderSidebar() {
 function createCardHTML(item, index) {
     const savedStatus = localStorage.getItem(`status_${item.id}`) || '0';
     
-    // Render Contoh Kalimat dengan ikon Bootstrap pengganti emoji
     const examplesHTML = item.examples.map(ex => 
         `<div class="example-box"><i class="bi bi-caret-right-fill"></i> ${ex}</div>`
     ).join('');
@@ -110,11 +105,107 @@ function createCardHTML(item, index) {
     `;
 }
 
+// Render Sistem Ujian Interaktif
+function renderExam(examData) {
+    if (!examData) {
+        miniExam.classList.add('hidden');
+        return;
+    }
+
+    miniExam.classList.remove('hidden');
+    miniExam.classList.remove('fade-in');
+    void miniExam.offsetWidth; 
+    miniExam.classList.add('fade-in');
+
+    // Jika tipe ujian adalah HTML mentah (seperti pesan kosong)
+    if (examData.type === 'html') {
+        examContent.innerHTML = examData.content;
+        return;
+    }
+
+    // Jika tipe ujian adalah Quiz Interaktif (Array of Questions)
+    let output = `<div class="quiz-container">`;
+    let totalScore = 0;
+
+    examData.questions.forEach((q, qIndex) => {
+        output += `
+            <div class="exam-q" id="question-${qIndex}">
+                <p><strong>Pertanyaan ${qIndex + 1}:</strong> ${q.question}</p>
+                <div class="options-grid" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+        `;
+
+        q.options.forEach((opt, optIndex) => {
+            output += `
+                <button class="exam-opt-btn" onclick="checkAnswer(${qIndex}, ${optIndex}, ${q.correct}, this)" style="padding: 0.6rem 1rem; text-align: left; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); cursor: pointer; font-weight: 600;">
+                    ${optIndex + 1}. ${opt}
+                </button>
+            `;
+        });
+
+        output += `</div><div class="exam-feedback" id="feedback-${qIndex}" style="margin-top: 0.5rem; font-weight: bold; font-size: 0.9rem;"></div></div><hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 1rem 0;">`;
+    });
+
+    output += `<button id="submitExamBtn" onclick="evaluateExam(${examData.questions.length})" style="background: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 1rem;"><i class="bi bi-send-check"></i> Selesai & Lihat Skor</button>`;
+    output += `<div id="examResultSummary" style="margin-top: 1rem; font-size: 1.2rem; font-weight: bold;"></div>`;
+    output += `</div>`;
+
+    examContent.innerHTML = output;
+}
+
+// Logika Pengecekan Jawaban Per Soal
+window.userAnswers = {};
+window.checkAnswer = function(qIndex, optIndex, correctOpt, btnElement) {
+    const parentContainer = btnElement.parentElement;
+    const buttons = parentContainer.querySelectorAll('button');
+    
+    // Nonaktifkan semua tombol di soal ini setelah dipilih
+    buttons.forEach(b => b.disabled = true);
+    
+    window.userAnswers[qIndex] = optIndex;
+
+    if (optIndex === correctOpt) {
+        btnElement.style.background = '#2a9d8f';
+        btnElement.style.color = 'white';
+        document.getElementById(`feedback-${qIndex}`).innerHTML = `<span style="color: #2a9d8f;"><i class="bi bi-check-circle-fill"></i> Benar!</span>`;
+    } else {
+        btnElement.style.background = '#ef233c';
+        btnElement.style.color = 'white';
+        buttons[correctOpt].style.background = '#2a9d8f';
+        buttons[correctOpt].style.color = 'white';
+        document.getElementById(`feedback-${qIndex}`).innerHTML = `<span style="color: #ef233c;"><i class="bi bi-x-circle-fill"></i> Kurang tepat. Jawaban benar ada di nomor ${correctOpt + 1}.</span>`;
+    }
+}
+
+window.evaluateExam = function(totalQuestions) {
+    let score = 0;
+    let answeredCount = Object.keys(window.userAnswers).length;
+
+    if (answeredCount < totalQuestions) {
+        alert("Harap jawab semua pertanyaan terlebih dahulu!");
+        return;
+    }
+
+    // Hitung skor berdasarkan soal yang benar
+    // (Akan dievaluasi secara dinamis berdasarkan state tombol atau simpanan)
+    let currentDayData = courseData[activeWeek]?.days[activeDay];
+    if(currentDayData && currentDayData.exam && currentDayData.exam.questions) {
+        currentDayData.exam.questions.forEach((q, idx) => {
+            if (window.userAnswers[idx] === q.correct) {
+                score++;
+            }
+        });
+    }
+
+    const percentage = (score / totalQuestions) * 100;
+    const summaryEl = document.getElementById('examResultSummary');
+    summaryEl.innerHTML = `Skor Anda: ${score} / ${totalQuestions} (${percentage}%) - ${percentage >= 70 ? '🎉 Luar Biasa!' : '💪 Ayo belajar lagi!'}`;
+}
+
 function loadContent(week, day) {
     activeWeek = week; activeDay = day;
+    window.userAnswers = {}; // Reset jawaban ujian saat pindah halaman
     renderSidebar();
 
-    // Trigger Animasi Header
     headerBanner.classList.remove('fade-in');
     void headerBanner.offsetWidth; 
     headerBanner.classList.add('fade-in');
@@ -136,37 +227,26 @@ function loadContent(week, day) {
     });
 
     if (targetDay.exam) {
-        miniExam.classList.remove('hidden');
-        miniExam.classList.remove('fade-in');
-        void miniExam.offsetWidth; 
-        miniExam.classList.add('fade-in');
-        examContent.innerHTML = targetDay.exam;
+        renderExam(targetDay.exam);
     } else {
         miniExam.classList.add('hidden');
     }
 }
 
-// ---------------------------
-// FITUR PENCARIAN (SEARCH)
-// ---------------------------
 searchInput.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase().trim();
     
-    // Jika input kosong, kembalikan ke tampilan default hari yang sedang aktif
     if (query === '') {
         loadContent(activeWeek, activeDay);
         return;
     }
     
     let results = [];
-    
-    // Looping melalui seluruh data course
     Object.keys(courseData).forEach(wKey => {
         Object.keys(courseData[wKey].days).forEach(dKey => {
             const dayData = courseData[wKey].days[dKey];
             if (dayData.grammar) {
                 dayData.grammar.forEach(item => {
-                    // Cari berdasarkan Grammar Rule atau Artinya
                     if (
                         item.rule.toLowerCase().includes(query) || 
                         item.meaning.id.toLowerCase().includes(query) ||
@@ -179,12 +259,11 @@ searchInput.addEventListener('input', (e) => {
         });
     });
 
-    // Tampilkan Hasil Pencarian
     document.getElementById('weekTitle').innerHTML = `<i class="bi bi-search"></i> Hasil Pencarian`;
     document.getElementById('dayTitle').innerText = `Menemukan ${results.length} tata bahasa untuk: "${query}"`;
     
     grammarCards.innerHTML = '';
-    miniExam.classList.add('hidden'); // Sembunyikan ujian saat mode search
+    miniExam.classList.add('hidden');
 
     if (results.length === 0) {
         grammarCards.innerHTML = '<p style="color: var(--text-sub);"><i class="bi bi-search"></i> Tidak ada hasil yang ditemukan.</p>';
