@@ -72,14 +72,39 @@ window.W1H1 = {
     questions: [
       {
         question: 'その国で生活（ ）文化がわかるというものだ。',
-        options: ['してこそ', 'したこそ', 'するこそ', 'したところ'],
-        correct: 0 // Indeks jawaban benar (0 = pilihan pertama)
+        options: ['してこそ', 'したこそ'],
+        correct: 0
       },
       {
         question: '程度の違いこそ（ ）、悪いことをしたのは皆同じだ。',
-        options: ['すれ', 'あれ', 'こそ', 'おれ'],
+        options: ['あれ', 'すれ'],
+        correct: 0
+      },
+      {
+        question: '彼は字（ ）汚いが、いい文章を書く。',
+        options: ['こそ', 'こそすれ'],
+        correct: 0
+      },
+      {
+        question: 'ここは、（ ）こそあれ、緑が多くていいところだ。',
+        options: ['不便な', '不便で'],
         correct: 1
+      },
+      {
+        question: '文章は理解（ ）意味がある。',
+        options: ['こそされて', 'されてこそ'],
+        correct: 1
+      },
+      {
+        question: '君のやったことは、___ ___ ___ ___ ではない。',
+        options: ['1 非難される', '2 すれ', '3 ほめられこそ', '4 もの'],
+        correct: '3-2-1-4'
+      },
+      {
+        question: 'その2つの ___ ___ ___ ___ 中身に大きな違いはない。',
+        options: ['1 製品は', '2 名前', '3 違うが', '4 こそ'],
+        correct: '1-2-4-3'
       }
     ]
   }
-}
+};
