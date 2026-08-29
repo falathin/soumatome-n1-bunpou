@@ -57,10 +57,16 @@ for (let week = 1; week <= 8; week++) {
 
     courseData[weekKey] = {
 
-        title:
-            week === 1
-                ? "第1週 努力してこそ合格できる"
-                : `第${week}週 JLPT N1`,
+        title: 
+            week === 1 ? "第1週 努力してこそ合格できる" :
+            week === 2 ? "第2週 私なりに努力している" :
+            week === 3 ? "第3週 言うまでもなく、努力している" :
+            week === 4 ? "第4週 努力なくして合格はない" :
+            week === 5 ? "第5週 努力せずには進まない" :
+            week === 6 ? "第6週 以前にも増して努力している" :
+            week === 7 ? "第7週 努力に努力を重ねている" :
+            week === 8 ? "第8週 結果はどうあれ、努力しよう" :
+            `第${week}週 JLPT N1`,
 
         days
 
@@ -1856,7 +1862,7 @@ function createCardHTML(
 
                         <i class="bi bi-translate"></i>
 
-                        Penjelasan mudah
+                        Penjelasan
 
                     </div>
 
