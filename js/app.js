@@ -936,27 +936,44 @@ if ('speechSynthesis' in window) {
 }
 
 /* =========================================================
-   JAPANESE VOICE
+   VOICE FINDER
 ========================================================= */
 
-function findJapaneseVoice () {
+function findVoiceByLanguage (language) {
   loadVoices()
 
   if (!availableVoices.length) {
     return null
   }
 
+  const normalized = normalizeApiLanguage(language)
+
   const priorities = [
     voice =>
       /microsoft/i.test(voice.name) &&
       /online|natural/i.test(voice.name) &&
-      /^ja/i.test(voice.lang),
+      new RegExp(`^${normalized}`, 'i').test(voice.lang),
 
-    voice => /microsoft/i.test(voice.name) && /^ja/i.test(voice.lang),
+    voice =>
+      /microsoft/i.test(voice.name) &&
+      new RegExp(`^${normalized}`, 'i').test(voice.lang),
 
-    voice => /^ja-JP/i.test(voice.lang),
+    voice =>
+      new RegExp(`^${normalized}`, 'i').test(voice.lang),
 
-    voice => /^ja/i.test(voice.lang)
+    voice => {
+      const voiceLang = normalizeApiLanguage(voice.lang)
+
+      if (normalized === 'zh-CN') {
+        return (
+          voiceLang === 'zh-cn' ||
+          voiceLang === 'zh' ||
+          /^zh/i.test(voice.lang)
+        )
+      }
+
+      return voiceLang === normalized
+    }
   ]
 
   for (const test of priorities) {
@@ -968,6 +985,14 @@ function findJapaneseVoice () {
   }
 
   return null
+}
+
+/* =========================================================
+   JAPANESE VOICE
+========================================================= */
+
+function findJapaneseVoice () {
+  return findVoiceByLanguage('ja-JP')
 }
 
 /* =========================================================
@@ -985,38 +1010,92 @@ function cleanSpeechText (text) {
 }
 
 /* =========================================================
-   TRANSLATE MEANING → JAPANESE FOR TTS
+   GET DISPLAYED EXPLANATION
 ========================================================= */
 
-async function translateMeaningForSpeech (item) {
-  const meaningSource =
-    item?.meaning?.id ||
-    item?.meaning?.en ||
-    item?.meaning?.cn ||
-    item?.meaning?.zh ||
-    ''
+/*
+  Mengambil teks penjelasan yang benar-benar sedang tampil
+  pada card.
 
-  const cleanMeaning = cleanSpeechText(meaningSource)
+  Urutan prioritas:
+  1. Teks .id-explanation pada card
+  2. item.explanation
+*/
 
-  if (!cleanMeaning || cleanMeaning === '-') {
+function getDisplayedExplanationText (item) {
+  if (!item?.id) {
     return ''
   }
 
-  const sourceLanguage = detectLanguage(cleanMeaning)
+  const selector = `.translation-box[data-explanation-id="${CSS.escape(
+    String(item.id)
+  )}"]`
 
-  if (normalizeApiLanguage(sourceLanguage) === 'ja') {
-    return cleanMeaning
+  const explanationBox = document.querySelector(selector)
+
+  const displayed = explanationBox?.querySelector('.id-explanation')
+
+  if (displayed) {
+    const text = cleanSpeechText(displayed.textContent || '')
+
+    if (
+      text &&
+      text !== cleanSpeechText(getLanguageText('translating'))
+    ) {
+      return text
+    }
   }
 
-  try {
-    const translated = await translateText(cleanMeaning, sourceLanguage, 'ja')
+  return cleanSpeechText(item?.explanation || '')
+}
 
-    return cleanSpeechText(translated)
-  } catch (error) {
-    console.warn('Meaning translation for TTS failed:', error)
+/* =========================================================
+   TTS LABELS
+========================================================= */
 
-    return ''
+function getSpeechLabel (type) {
+  switch (type) {
+    case 'explanation-label':
+      return '簡単な説明。'
+
+    case 'example-label':
+      return '例文。'
+
+    default:
+      return ''
   }
+}
+
+/* =========================================================
+   SPEECH LANGUAGE
+========================================================= */
+
+function getSpeechLanguage (chunk) {
+  if (!chunk) {
+    return 'ja-JP'
+  }
+
+  if (chunk.type === 'bunpou') {
+    return 'ja-JP'
+  }
+
+  if (chunk.type === 'example') {
+    return 'ja-JP'
+  }
+
+  if (chunk.type === 'explanation-label') {
+    return 'ja-JP'
+  }
+
+  if (chunk.type === 'explanation') {
+    return getApiLanguage(currentLanguage)
+  }
+
+  if (chunk.type === 'example-label') {
+    return 'ja-JP'
+  }
+
+  return 'ja-JP'
 }
 
 /* =========================================================
@@ -1026,74 +1105,88 @@ async function translateMeaningForSpeech (item) {
 /*
   URUTAN TTS BARU:
 
-  1. Grammar rule
-  2. 「簡単な説明」 + arti yang otomatis diterjemahkan ke Jepang
-  3. 「例文」
-  4. Contoh kalimat 1
-  5. 「例文」
-  6. Contoh kalimat 2
-  7. 「例文」
-  8. Contoh kalimat 3
+  1. grammar-rule
+  2. 「簡単な説明」
+  3. penjelasan yang tampil di UI
+  4. 「例文」
+  5. contoh kalimat 1
+  6. contoh kalimat 2
+  7. contoh kalimat 3
 
-  Semua bagian TTS menggunakan bahasa Jepang.
+  Maksimal 3 contoh.
 */
 
-async function buildSpeechQueue (item) {
+function buildSpeechQueue (item) {
   const queue = []
 
-  /* ========================================================
-     1. GRAMMAR RULE
-  ======================================================== */
+  /*
+    ========================================================
+    1. GRAMMAR RULE
+    ========================================================
+  */
 
   const rule = cleanSpeechText(item?.rule || '')
 
   if (rule) {
     queue.push({
       type: 'bunpou',
-      text: rule
+      text: rule,
+      language: 'ja-JP'
     })
   }
 
-  /* ========================================================
-     2. KANTAN NA SETSUMEI
-  ======================================================== */
+  /*
+    ========================================================
+    2. KANTAN NA SETSUMEI
+    ========================================================
+  */
 
-  const meaningJP = await translateMeaningForSpeech(item)
+  const explanation = getDisplayedExplanationText(item)
 
-  if (meaningJP) {
+  if (explanation) {
     queue.push({
-      type: 'meaning-label',
-      text: `簡単な説明。${meaningJP}`
+      type: 'explanation-label',
+      text: getSpeechLabel('explanation-label'),
+      language: 'ja-JP'
     })
-  } else {
+
     queue.push({
-      type: 'meaning-label',
-      text: '簡単な説明。'
-    })
-  }
-
-  /* ========================================================
-     3. REIBUN
-  ======================================================== */
-
-  if (Array.isArray(item?.examples)) {
-    item.examples.slice(0, 3).forEach((example, index) => {
-      const clean = cleanSpeechText(example)
-
-      if (!clean) {
-        return
-      }
-
-      queue.push({
-        type: 'example-label',
-        index: index + 1,
-        text: `例文。`
+      type: 'explanation',
+      text: explanation,
+      language: getSpeechLanguage({
+        type: 'explanation'
       })
+    })
+  }
 
+  /*
+    ========================================================
+    3. REIBUN
+    ========================================================
+  */
+
+  const examples = Array.isArray(item?.examples)
+    ? item.examples
+    : []
+
+  const validExamples = examples
+    .slice(0, 3)
+    .map(example => cleanSpeechText(example))
+    .filter(Boolean)
+
+  if (validExamples.length) {
+    queue.push({
+      type: 'example-label',
+      text: getSpeechLabel('example-label'),
+      language: 'ja-JP'
+    })
+
+    validExamples.forEach((example, index) => {
       queue.push({
         type: 'example',
         index: index + 1,
-        text: clean
+        text: example,
+        language: 'ja-JP'
       })
     })
   }
@@ -1128,7 +1221,7 @@ function stopSpeech () {
 window.stopSpeech = stopSpeech
 
 /* =========================================================
-   SPEECH RATE BY TYPE
+   SPEECH RATE
 ========================================================= */
 
 function getSpeechRate (type) {
@@ -1136,11 +1229,14 @@ function getSpeechRate (type) {
     case 'bunpou':
       return 0.82
 
-    case 'meaning-label':
-      return 0.84
+    case 'explanation-label':
+      return 0.86
+
+    case 'explanation':
+      return 0.9
 
     case 'example-label':
-      return 0.84
+      return 0.86
 
     case 'example':
       return 0.88
@@ -1151,7 +1247,7 @@ function getSpeechRate (type) {
 }
 
 /* =========================================================
-   SPEECH PITCH BY TYPE
+   SPEECH PITCH
 ========================================================= */
 
 function getSpeechPitch (type) {
@@ -1159,7 +1255,10 @@ function getSpeechPitch (type) {
     case 'bunpou':
       return 1.0
 
-    case 'meaning-label':
+    case 'explanation-label':
+      return 1.0
+
+    case 'explanation':
       return 1.0
 
     case 'example-label':
@@ -1205,21 +1304,18 @@ async function startSpeech (item) {
   updateSpeechButtons()
 
   /*
-    Bangun queue baru secara async karena
-    arti harus diterjemahkan ke bahasa Jepang dahulu.
+    Queue:
+
+    grammar-rule
+    → 簡単な説明
+    → penjelasan
+    → 例文
+    → contoh 1
+    → contoh 2
+    → contoh 3
   */
 
-  try {
-    speechQueue = await buildSpeechQueue(item)
-  } catch (error) {
-    console.warn('Speech queue build failed:', error)
-
-    if (requestId === speechRequestId) {
-      stopSpeech()
-    }
-
-    return
-  }
+  speechQueue = buildSpeechQueue(item)
 
   if (requestId !== speechRequestId || speakingCardId !== String(item.id)) {
     return
@@ -1255,10 +1351,25 @@ function speakCurrentChunk (requestId) {
   const utterance = new SpeechSynthesisUtterance(chunk.text)
 
   /*
-    SELALU BAHASA JEPANG
+    ========================================================
+    LANGUAGE
+    ========================================================
+
+    Bunpou:
+      Jepang
+
+    簡単な説明:
+      Jepang
+
+    Explanation:
+      mengikuti bahasa UI
+      ID / EN / ZH-CN
+
+    例文:
+      Jepang
   */
 
-  utterance.lang = 'ja-JP'
+  utterance.lang = chunk.language || 'ja-JP'
 
   utterance.rate = getSpeechRate(chunk.type)
 
@@ -1266,7 +1377,7 @@ function speakCurrentChunk (requestId) {
 
   utterance.volume = 1
 
-  const voice = findJapaneseVoice()
+  const voice = findVoiceByLanguage(utterance.lang)
 
   if (voice) {
     utterance.voice = voice
@@ -1287,10 +1398,11 @@ function speakCurrentChunk (requestId) {
       Delay kecil antar bagian agar:
       bunpou
       → 簡単な説明
+      → penjelasan
       → 例文
       → contoh
 
-      tidak terasa menempel.
+      terasa jelas dan tidak menempel.
     */
 
     const nextIndex = speechIndex + 1
@@ -1303,7 +1415,7 @@ function speakCurrentChunk (requestId) {
       }
 
       speakCurrentChunk(requestId)
-    }, 220)
+    }, 300)
   }
 
   utterance.onerror = event => {
@@ -1317,7 +1429,10 @@ function speakCurrentChunk (requestId) {
       Itu bukan error penting.
     */
 
-    if (event?.error === 'canceled') {
+    if (
+      event?.error === 'canceled' ||
+      event?.error === 'interrupted'
+    ) {
       return
     }
 
@@ -1392,7 +1507,7 @@ function updateSpeechButtons () {
     status.textContent = active
       ? speechPaused
         ? 'Dijeda'
-        : 'Sedang membaca: bunpou → 簡単な説明 → 例文 1-3'
+        : 'Sedang membaca: bunpou → 簡単な説明 → penjelasan → 例文 3'
       : '読み上げ機能'
 
     if (play) {
@@ -1897,8 +2012,8 @@ function createCardHTML (item, index) {
           class="speaker-main-btn"
           type="button"
           onclick="handleMainSpeech('${escapeForJS(item?.id)}')"
-          title="Bacakan: bunpou → 簡単な説明 → 例文"
-          aria-label="Bacakan bunpou, penjelasan bahasa Jepang, dan tiga contoh"
+          title="Bacakan: bunpou → 簡単な説明 → penjelasan → 例文"
+          aria-label="Bacakan bunpou, penjelasan, dan tiga contoh"
         >
           <i class="bi bi-volume-up-fill"></i>
         </button>
