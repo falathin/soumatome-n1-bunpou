@@ -5,7 +5,9 @@ window.W1H2 = {
       id: 'w1_d2_1',
       rule: '〜くらいなら',
       formal: false,
-      explanation: 'Vるくらいなら / Vるぐらいなら (とてもいやだという気持ち)',
+      conjunction: 'V-辞書形 + くらいなら / ぐらいなら',
+      explanation:
+        '【ID】Ibarat memilih antara racun dan obat pahit—daripada memilih skenario terburuk A, lebih baik memilih alternatif B yang masih bisa ditoleransi.\n【EN】Expresses strong aversion to option A, stating that option B (even if unfavorable) is much preferable.\n【JP】〜という最悪な状態・感情になるよりは、まだ後者のほうがマシだ。',
       meaning: {
         id: 'Daripada (harus) melakukan..., lebih baik...',
         en: 'Rather than doing..., better to...',
@@ -21,7 +23,9 @@ window.W1H2 = {
       id: 'w1_d2_2',
       rule: '〜ぐらいのものだ',
       formal: false,
-      explanation: '(〜のは) Nくらい/ぐらい のものだ',
+      conjunction: 'N + くらい / ぐらい + のものだ',
+      explanation:
+        '【ID】Ibarat satu-satunya pahlawan di kota—hanya subjek X yang mampu/memungkinkan melakukan hal tersebut, tidak ada pilihan lain.\n【EN】Used to emphasize that subjek X is the sole exception or only entity capable of a specific action.\n【JP】〜できるのは、この人／この物くらいで他には絶対にいない。',
       meaning: {
         id: 'Hanya... (tidak ada yang lain)',
         en: 'Only... (is capable/enough)',
@@ -37,7 +41,9 @@ window.W1H2 = {
       id: 'w1_d2_3',
       rule: '〜ものとして',
       formal: false,
-      explanation: 'V/A/na/N(普通形) + ものとして (naな→である / Nだ→である)',
+      conjunction: 'V/A/na/N(普通形) + ものとして (na/Nだ→である)',
+      explanation:
+        '【ID】Ibarat membuat skenario simulasi—menganggap suatu kondisi X sudah menjadi kenyataan sebagai fondasi untuk mengambil langkah Y.\n【EN】Used when acting or planning under the assumption/premise that X is established as true.\n【JP】〜と前提・仮定して、あるいは事実とみなして次の行動を進める。',
       meaning: {
         id: 'Dengan anggapan bahwa... / Berasumsi bahwa...',
         en: 'Assuming that...',
@@ -53,7 +59,9 @@ window.W1H2 = {
       id: 'w1_d2_4',
       rule: '〜ものとする',
       formal: true,
-      explanation: 'Vるものとする (契約書などに多く出てくる表現)',
+      conjunction: 'V-辞書形 + ものとする',
+      explanation:
+        '【ID】Ibarat pasal dalam Kitab Undang-Undang atau kontrak formal—digunakan untuk menetapkan aturan resminya hukum/perjanjian.\n【EN】Formal legal/contractual phrasing used to declare mandates, stipulations, or regulations.\n【JP】契約書や公的な規則・文書で「〜と決定する／義務付ける」ことを表す。',
       meaning: {
         id: 'Ditetapkan bahwa... / Memutuskan untuk...',
         en: 'Shall be / It is decided that...',
@@ -95,14 +103,16 @@ window.W1H2 = {
         correct: 1
       },
       {
-        question: '昨日授業で教えた ___ ___ ___ ___ 次に進みます。',
+        question: '昨日授業で教えた ___ ___ ★ ___ 次に進みます。',
         options: ['1 もの', '2 ことは', '3 として', '4 わかった'],
-        correct: '2-4-1-3'
+        correct: 0,
+        fullSentence: '昨日授業で教えた【 2 ことは 】【 4 わかった 】【 1★ もの 】【 3 として 】次に進みます。'
       },
       {
-        question: 'そんなことを ___ ___ ___ ___ ほうがましだ。',
+        question: 'そんなことを ___ ___ ★ ___ ほうがましだ。',
         options: ['1 させられる', '2 参加しない', '3 なら', '4 くらい'],
-        correct: '1-4-3-2'
+        correct: 2,
+        fullSentence: 'そんなことを【 1 させられる 】【 4 くらい 】【 3★ なら 】【 2 参加しない 】ほうがましだ。'
       }
     ]
   }

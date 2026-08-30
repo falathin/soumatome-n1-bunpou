@@ -7,7 +7,7 @@ window.W1H1 = {
       formal: false,
       conjunction: 'V-て + こそ',
       explanation:
-        '【ID】Hanya setelah melakukan X, barulah Y terwujud/dipahami. Tidak untuk masa lalu.\n【EN】Only after doing X does Y become possible.\n【JP】〜して初めて、本当の価値や効果がわかる。',
+        '【ID】Ibarat pintu kunci yang baru terbuka setelah memegang kuncinya—hanya setelah melakukan syarat X, nilai/manfaat Y baru benar-benar terwujud.\n【EN】Only after doing X does Y become meaningful or possible (not used for past facts).\n【JP】〜して初めて、本当の価値や意義・効果がわかる。',
       meaning: {
         id: 'Hanya setelah (melakukan sesuatu), barulah bisa...',
         en: 'Only after doing...',
@@ -25,7 +25,7 @@ window.W1H1 = {
       formal: true,
       conjunction: 'N + こそあれ / Na-で + こそあれ',
       explanation:
-        '【ID】Meskipun ada kekurangan X, tidak mengubah kenyataan/penilaian utama Y.\n【EN】Although there is X, main point Y remains unchanged.\n【JP】〜はあるけれど、本質や評価には影響がない。',
+        '【ID】Ibarat riak kecil di permukaan air—meskipun ada sedikit kekurangan/hal X, hal itu tidak mempengaruhi kualitas atau esensi utama Y.\n【EN】Used in formal contexts to show that although X exists, the main assessment/status Y remains unaffected.\n【JP】〜はあるけれど、本質や全体的な評価には影響がない。',
       meaning: {
         id: 'Meskipun ada X, tetapi (hal utamanya tetap Y)...',
         en: 'Although there is...',
@@ -43,7 +43,7 @@ window.W1H1 = {
       formal: true,
       conjunction: 'V-ます(buang masu) + こそすれ / N + こそすれ',
       explanation:
-        '【ID】Mungkin/pasti melakukan X, tetapi SAMA SEKALI TIDAK MUNGKIN Y (lawan katanya).\n【EN】May do X, but definitely not Y.\n【JP】〜することはあっても、絶対に逆のことはない。',
+        '【ID】Ibarat dua kutub magnet yang berlawanan—mungkin/pasti terjadi aksi X, tetapi SAMA SEKALI TIDAK MUNGKIN terjadi kebalikannya (Y).\n【EN】Emphasizes that X definitely happens/applies, while the opposite condition Y is strictly impossible.\n【JP】〜することはあっても、絶対にその逆（対比となる状態）はない。',
       meaning: {
         id: 'Yang ada justru X, dan sama sekali tidak Y...',
         en: 'May do X, but definitely not Y...',
@@ -61,7 +61,7 @@ window.W1H1 = {
       formal: false,
       conjunction: 'N + こそ + [ 悪いが… / 〜が… / 〜けれど… ]',
       explanation:
-        '【ID】Memang buruk di aspek X, tetapi aspek utama lainnya sangat bagus.\n【EN】May be bad in terms of X, but other aspects are good.\n【JP】〜という側面は悪いが、他の重要な側面は素晴らしい。',
+        '【ID】Ibarat buah durian—memang kulit luar/elemen X-nya buruk, tetapi bagian dalam/aspek utamanya sangat berkualitas.\n【EN】Acknowledges a minor visual/superficial negative point X, while strongly praising the core quality Y.\n【JP】〜という一部のマイナス面はあるが、最も重要な本質・内容は素晴らしい。',
       meaning: {
         id: 'Memang buruk di aspek X, tetapi...',
         en: 'It may be bad in terms of X, but...',
