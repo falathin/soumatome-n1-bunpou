@@ -2,18 +2,16 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <meta name="theme-color" content="#1677ff" />
 
-    <!-- <title>総まとめ上級文法</title> -->
     <title>総まとめ・上級・文法</title>
 
     <!-- Favicon -->
     <link
       rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>文</text></svg>"
+      href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2280%22%3E文%3C/text%3E%3C/svg%3E"
     />
 
     <!-- Bootstrap Icons -->
@@ -39,17 +37,15 @@
           </div>
 
           <div class="brand-text">
-            <strong> 総まとめ </strong>
-
-            <span> JLPT N1 Grammar </span>
+            <strong>総まとめ</strong>
+            <span>JLPT N1 Grammar</span>
           </div>
         </div>
 
         <div class="navbar-actions">
           <div class="navbar-page-name">
-            <span> 文法 </span>
-
-            <small> Master JLPT N1 </small>
+            <span>文法</span>
+            <small>Master JLPT N1</small>
           </div>
 
           <button
@@ -86,7 +82,7 @@
     </header>
 
     <!-- =====================================================
-         MOBILE LANGUAGE MENU
+         LANGUAGE MENU
     ====================================================== -->
 
     <div id="languageMenu" class="language-menu hidden">
@@ -103,8 +99,8 @@
 
     <main class="page-container">
       <!-- =================================================
-             HERO / GREETING
-        ================================================== -->
+           HERO
+      ================================================== -->
 
       <section id="greetingCard" class="greeting-card">
         <div class="hero-noise"></div>
@@ -140,15 +136,11 @@
           </div>
 
           <div class="time-period-chip">
-            <!-- <i class="bi bi-sparkles"></i> -->
-            <!-- <i class="bi bi-lightning-fill"></i> -->
             <i class="bi bi-fire"></i>
 
             <span id="timePeriodText"> Pagi </span>
           </div>
         </div>
-
-        <!-- Decorative animated blobs -->
 
         <div class="hero-blob blob-1"></div>
         <div class="hero-blob blob-2"></div>
@@ -158,8 +150,8 @@
       </section>
 
       <!-- =================================================
-             FILTER
-        ================================================== -->
+           FILTER
+      ================================================== -->
 
       <section class="filter-card">
         <div class="filter-header">
@@ -177,8 +169,7 @@
 
           <button id="resetFiltersBtn" class="reset-filter-btn" type="button">
             <i class="bi bi-arrow-counterclockwise"></i>
-
-            <span> Reset </span>
+            <span>Reset</span>
           </button>
         </div>
 
@@ -196,7 +187,7 @@
               aria-label="Cari tata bahasa"
             />
 
-            <kbd> Ctrl K </kbd>
+            <kbd>Ctrl K</kbd>
           </div>
 
           <!-- Week -->
@@ -204,7 +195,6 @@
           <label class="select-control filter-box">
             <span class="select-label">
               <i class="bi bi-calendar3"></i>
-
               Minggu
             </span>
 
@@ -220,7 +210,6 @@
           <label class="select-control filter-box">
             <span class="select-label">
               <i class="bi bi-calendar-day"></i>
-
               Hari
             </span>
 
@@ -236,7 +225,6 @@
           <label class="select-control filter-box">
             <span class="select-label">
               <i class="bi bi-check2-circle"></i>
-
               Status
             </span>
 
@@ -268,8 +256,8 @@
       </section>
 
       <!-- =================================================
-             CONTENT HEADER
-        ================================================== -->
+           CONTENT HEADER
+      ================================================== -->
 
       <section class="content-header">
         <div class="content-title-block">
@@ -284,11 +272,13 @@
           <p id="dayTitle">Silakan tunggu...</p>
         </div>
 
+        <!-- Progress -->
+
         <div class="content-progress">
           <div class="progress-top">
-            <span id="progressLabel">Progress hafalan</span>
+            <span id="progressLabel"> Progress hafalan </span>
 
-            <strong id="progressPercent">0%</strong>
+            <strong id="progressPercent"> 0% </strong>
           </div>
 
           <div class="progress-track">
@@ -300,14 +290,14 @@
       </section>
 
       <!-- =================================================
-             GRAMMAR
-        ================================================== -->
+           GRAMMAR
+      ================================================== -->
 
       <section id="grammarCards" class="grammar-grid"></section>
 
       <!-- =================================================
-             EMPTY
-        ================================================== -->
+           EMPTY
+      ================================================== -->
 
       <section id="emptyState" class="empty-state hidden">
         <div class="empty-icon">
@@ -325,8 +315,8 @@
       </section>
 
       <!-- =================================================
-             EXAM
-        ================================================== -->
+           EXAM
+      ================================================== -->
 
       <section id="miniExam" class="exam-section hidden">
         <div class="exam-top-decoration"></div>
@@ -337,7 +327,7 @@
           </div>
 
           <div>
-            <span> 練習問題 </span>
+            <span>練習問題</span>
 
             <h3>実戦問題</h3>
 
@@ -362,10 +352,102 @@
     </main>
 
     <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <!-- =====================================================
+     FOOTER
+====================================================== -->
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <!-- LEFT -->
+        <div class="footer-main">
+          <div class="footer-logo">
+            <i class="bi bi-journal-bookmark-fill"></i>
+            <span>総まとめ N1</span>
+          </div>
+
+          <p class="footer-description">
+            JLPT N1の文法は決して簡単ではありません。
+            でも、今日一つの文法を学ぶことが、合格への一歩につながります。
+            このサイトが、毎日の学習を少しでも支えられれば嬉しいです。
+          </p>
+
+          <div class="footer-motto">
+            一歩一歩、合格へ！
+            <span>（一歩ずつ、合格を目指そう！）</span>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="footer-support">
+          <div class="footer-support-title">
+            このサイトを気に入っていただけましたか？
+          </div>
+
+          <div class="footer-support-content">
+            <!-- Instagram -->
+            <a
+              href="https://instagram.com/username_kreator"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-instagram"
+              aria-label="Instagram"
+            >
+              <i class="bi bi-instagram"></i>
+
+              <div>
+                <strong>Instagram</strong>
+                <span>@username_kreator</span>
+              </div>
+            </a>
+
+            <!-- Donation -->
+            <div class="footer-donation">
+              <div class="footer-donation-text">
+                <span>クリエイターを応援</span>
+
+                <strong> QRコードからご支援ください </strong>
+
+                <small>
+                  皆さまのご支援がサイト運営と 今後の開発につながります。
+                </small>
+              </div>
+
+              <img
+                src="assets/qr.png"
+                alt="寄付用QRコード"
+                class="footer-qr"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM -->
+      <div class="footer-bottom">
+        <div>
+          © 2026 総まとめ Notes. Crafted by
+          <a
+            href="https://instagram.com/username_kreator"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @username_kreator
+          </a>
+        </div>
+
+        <div class="footer-credit">日本語の森 文法ノート</div>
+      </div>
+    </footer>
+    <!-- =====================================================
          DATA
     ====================================================== -->
 
     <!-- Week 1 -->
+
     <script src="js/data/minggu1/h1.js"></script>
     <script src="js/data/minggu1/h2.js"></script>
     <script src="js/data/minggu1/h3.js"></script>
@@ -375,6 +457,7 @@
     <script src="js/data/minggu1/h7.js"></script>
 
     <!-- Week 2 -->
+
     <script src="js/data/minggu2/h1.js"></script>
     <script src="js/data/minggu2/h2.js"></script>
     <script src="js/data/minggu2/h3.js"></script>
@@ -384,6 +467,7 @@
     <script src="js/data/minggu2/h7.js"></script>
 
     <!-- Week 3 -->
+
     <script src="js/data/minggu3/h1.js"></script>
     <script src="js/data/minggu3/h2.js"></script>
     <script src="js/data/minggu3/h3.js"></script>
@@ -393,6 +477,7 @@
     <script src="js/data/minggu3/h7.js"></script>
 
     <!-- Week 4 -->
+
     <script src="js/data/minggu4/h1.js"></script>
     <script src="js/data/minggu4/h2.js"></script>
     <script src="js/data/minggu4/h3.js"></script>
@@ -402,6 +487,7 @@
     <script src="js/data/minggu4/h7.js"></script>
 
     <!-- Week 5 -->
+
     <script src="js/data/minggu5/h1.js"></script>
     <script src="js/data/minggu5/h2.js"></script>
     <script src="js/data/minggu5/h3.js"></script>
@@ -411,6 +497,7 @@
     <script src="js/data/minggu5/h7.js"></script>
 
     <!-- Week 6 -->
+
     <script src="js/data/minggu6/h1.js"></script>
     <script src="js/data/minggu6/h2.js"></script>
     <script src="js/data/minggu6/h3.js"></script>
@@ -420,6 +507,7 @@
     <script src="js/data/minggu6/h7.js"></script>
 
     <!-- Week 7 -->
+
     <script src="js/data/minggu7/h1.js"></script>
     <script src="js/data/minggu7/h2.js"></script>
     <script src="js/data/minggu7/h3.js"></script>
@@ -429,6 +517,7 @@
     <script src="js/data/minggu7/h7.js"></script>
 
     <!-- Week 8 -->
+
     <script src="js/data/minggu8/h1.js"></script>
     <script src="js/data/minggu8/h2.js"></script>
     <script src="js/data/minggu8/h3.js"></script>
@@ -438,6 +527,7 @@
     <script src="js/data/minggu8/h7.js"></script>
 
     <!-- Main App -->
+
     <script src="js/app.js"></script>
   </body>
 </html>
