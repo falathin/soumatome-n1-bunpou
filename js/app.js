@@ -50,7 +50,7 @@ for (let week = 1; week <= 8; week++) {
    NORMALIZE DAY
 ========================================================= */
 
-function normalizeDayData (data) {
+function normalizeDayData(data) {
   if (!data) {
     return {
       title: 'Materi belum tersedia',
@@ -61,7 +61,9 @@ function normalizeDayData (data) {
 
   return {
     ...data,
-    grammar: Array.isArray(data.grammar) ? data.grammar : [],
+    grammar: Array.isArray(data.grammar)
+      ? data.grammar
+      : [],
     exam: data.exam || null
   }
 }
@@ -70,7 +72,7 @@ function normalizeDayData (data) {
    EMPTY DAY
 ========================================================= */
 
-function createEmptyDay (week, day) {
+function createEmptyDay(week, day) {
   if (day === 7) {
     return {
       title: `７日目 実戦問題 (Ujian Minggu ${week})`,
@@ -111,7 +113,9 @@ let memoMode = false
    LANGUAGE
 ========================================================= */
 
-let currentLanguage = localStorage.getItem('n1_language') || 'id'
+let currentLanguage = normalizeLanguage(
+  localStorage.getItem('n1_language') || 'id'
+)
 
 const languageText = {
   id: {
@@ -123,7 +127,8 @@ const languageText = {
     copySuccess: 'Berhasil disalin!',
     copiedOriginal: 'Kalimat asli disalin!',
     copiedTranslation: 'Terjemahan disalin!',
-    translateTitle: 'Klik = salin • Double click = translate'
+    translateTitle:
+      'Klik = salin • Double click = translate'
   },
 
   en: {
@@ -131,11 +136,15 @@ const languageText = {
     explanation: 'Explanation',
     noExample: 'No example available.',
     translating: 'Translating...',
-    translationFailed: 'Translation failed.',
+    translationFailed:
+      'Translation unavailable.',
     copySuccess: 'Copied!',
-    copiedOriginal: 'Original sentence copied!',
-    copiedTranslation: 'Translation copied!',
-    translateTitle: 'Click = copy • Double click = translate'
+    copiedOriginal:
+      'Original sentence copied!',
+    copiedTranslation:
+      'Translation copied!',
+    translateTitle:
+      'Click = copy • Double click = translate'
   },
 
   cn: {
@@ -143,103 +152,192 @@ const languageText = {
     explanation: '解释',
     noExample: '暂无例句。',
     translating: '正在翻译...',
-    translationFailed: '翻译失败。',
+    translationFailed: '暂时无法翻译。',
     copySuccess: '已复制！',
     copiedOriginal: '原句已复制！',
     copiedTranslation: '译文已复制！',
-    translateTitle: '单击 = 复制 • 双击 = 翻译'
+    translateTitle:
+      '单击 = 复制 • 双击 = 翻译'
   }
 }
 
-function normalizeLanguage (lang) {
-  if (lang === 'en') {
+function normalizeLanguage(lang) {
+  const value = String(lang || '')
+    .toLowerCase()
+    .trim()
+
+  if (
+    value === 'en' ||
+    value === 'en-us' ||
+    value === 'en-gb'
+  ) {
     return 'en'
   }
 
-  if (lang === 'cn' || lang === 'zh' || lang === 'zh-CN') {
+  if (
+    value === 'cn' ||
+    value === 'zh' ||
+    value === 'zh-cn' ||
+    value === 'zh_cn'
+  ) {
     return 'cn'
   }
 
   return 'id'
 }
 
-function getLanguageText (key) {
+function getLanguageText(key) {
+  const lang = normalizeLanguage(
+    currentLanguage
+  )
+
   return (
-    languageText[normalizeLanguage(currentLanguage)]?.[key] ||
+    languageText[lang]?.[key] ||
     languageText.id[key] ||
     ''
   )
 }
 
-function getApiLanguage (lang) {
-  const normalized = normalizeLanguage(lang)
+function getApiLanguage(lang) {
+  const normalized =
+    normalizeLanguage(lang)
 
-  if (normalized === 'cn') {
-    return 'zh-CN'
+  switch (normalized) {
+    case 'en':
+      return 'en'
+
+    case 'cn':
+      return 'zh-CN'
+
+    default:
+      return 'id'
   }
-
-  return normalized
 }
 
 /* =========================================================
    ELEMENTS
 ========================================================= */
 
-const grammarCards = document.getElementById('grammarCards')
+const grammarCards =
+  document.getElementById('grammarCards')
 
-const miniExam = document.getElementById('miniExam')
+const miniExam =
+  document.getElementById('miniExam')
 
-const examContent = document.getElementById('examContent')
+const examContent =
+  document.getElementById('examContent')
 
-const emptyState = document.getElementById('emptyState')
+const emptyState =
+  document.getElementById('emptyState')
 
-const searchInput = document.getElementById('searchInput')
+const searchInput =
+  document.getElementById('searchInput')
 
-const weekSelect = document.getElementById('weekSelect')
+const weekSelect =
+  document.getElementById('weekSelect')
 
-const daySelect = document.getElementById('daySelect')
+const daySelect =
+  document.getElementById('daySelect')
 
-const statusSelect = document.getElementById('statusSelect')
+const statusSelect =
+  document.getElementById('statusSelect')
 
-const resultCounter = document.getElementById('resultCounter')
+const resultCounter =
+  document.getElementById('resultCounter')
 
-const activeFilterLabel = document.getElementById('activeFilterLabel')
+const activeFilterLabel =
+  document.getElementById(
+    'activeFilterLabel'
+  )
 
-const resetFiltersBtn = document.getElementById('resetFiltersBtn')
+const resetFiltersBtn =
+  document.getElementById(
+    'resetFiltersBtn'
+  )
 
-const emptyResetBtn = document.getElementById('emptyResetBtn')
+const emptyResetBtn =
+  document.getElementById(
+    'emptyResetBtn'
+  )
 
-const weekTitle = document.getElementById('weekTitle')
+const weekTitle =
+  document.getElementById('weekTitle')
 
-const dayTitle = document.getElementById('dayTitle')
+const dayTitle =
+  document.getElementById('dayTitle')
 
-const progressPercent = document.getElementById('progressPercent')
+const progressPercent =
+  document.getElementById(
+    'progressPercent'
+  )
 
-const progressBarFill = document.getElementById('progressBarFill')
+const progressBarFill =
+  document.getElementById(
+    'progressBarFill'
+  )
 
-const memoToggle = document.getElementById('memoToggle')
+const memoToggle =
+  document.getElementById('memoToggle')
 
-const themeToggle = document.getElementById('themeToggle')
+const themeToggle =
+  document.getElementById('themeToggle')
 
-const langToggleBtn = document.getElementById('langToggleBtn')
+const langToggleBtn =
+  document.getElementById(
+    'langToggleBtn'
+  )
 
-const languageMenu = document.getElementById('languageMenu')
+const languageMenu =
+  document.getElementById(
+    'languageMenu'
+  )
 
-const liveClock = document.getElementById('liveClock')
+const liveClock =
+  document.getElementById('liveClock')
 
-const greetingLabel = document.getElementById('greetingLabel')
+const greetingLabel =
+  document.getElementById(
+    'greetingLabel'
+  )
 
-const greetingJapanese = document.getElementById('greetingJapanese')
+const greetingJapanese =
+  document.getElementById(
+    'greetingJapanese'
+  )
 
-const greetingMessage = document.getElementById('greetingMessage')
+const greetingMessage =
+  document.getElementById(
+    'greetingMessage'
+  )
 
-const greetingIcon = document.getElementById('greetingIcon')
+const greetingIcon =
+  document.getElementById('greetingIcon')
 
-const timePeriodText = document.getElementById('timePeriodText')
+const timePeriodText =
+  document.getElementById(
+    'timePeriodText'
+  )
 
-const examAnswered = document.getElementById('examAnswered')
+const examAnswered =
+  document.getElementById(
+    'examAnswered'
+  )
 
-const examProgressFill = document.getElementById('examProgressFill')
+const examProgressFill =
+  document.getElementById(
+    'examProgressFill'
+  )
+
+/* =========================================================
+   SAFE ELEMENT HELPER
+========================================================= */
+
+function elementExists(element) {
+  return (
+    element &&
+    typeof element === 'object'
+  )
+}
 
 /* =========================================================
    TTS STATE
@@ -253,32 +351,485 @@ let speechPaused = false
 let currentSpeakingItem = null
 
 /* =========================================================
-   TRANSLATION STATE
+   FURIGANA STATE
 ========================================================= */
 
-const translationCacheKey = 'n1_translation_cache'
+/*
+   Kuroshiro digunakan untuk membuat furigana
+   otomatis dari kalimat Jepang.
 
-const exampleTranslationTimers = new Map()
+   Library akan dimuat langsung dari CDN.
+*/
+
+let kuroshiroInstance = null
+let furiganaReady = false
+let furiganaLoadingPromise = null
+
+const FURIGANA_CONFIG = {
+  kuroshiro:
+    'https://unpkg.com/kuroshiro@1.2.0/dist/kuroshiro.min.js',
+
+  analyzer:
+    'https://unpkg.com/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js',
+
+  dictPath:
+    'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/'
+}
 
 /* =========================================================
-   EXPLANATION TRANSLATION CACHE
+   LOAD SCRIPT HELPER
 ========================================================= */
 
-const explanationCacheKey = 'n1_explanation_translation_cache'
+function loadExternalScript(src) {
+  return new Promise(
+    (resolve, reject) => {
+      const existing =
+        document.querySelector(
+          `script[src="${src}"]`
+        )
 
-function getExplanationCache () {
+      if (existing) {
+        if (
+          existing.dataset.loaded ===
+          'true'
+        ) {
+          resolve()
+          return
+        }
+
+        existing.addEventListener(
+          'load',
+          () => resolve(),
+          { once: true }
+        )
+
+        existing.addEventListener(
+          'error',
+          () =>
+            reject(
+              new Error(
+                `Script failed: ${src}`
+              )
+            ),
+          { once: true }
+        )
+
+        return
+      }
+
+      const script =
+        document.createElement('script')
+
+      script.src = src
+      script.async = true
+
+      script.addEventListener(
+        'load',
+        () => {
+          script.dataset.loaded =
+            'true'
+
+          resolve()
+        },
+        { once: true }
+      )
+
+      script.addEventListener(
+        'error',
+        () => {
+          reject(
+            new Error(
+              `Script failed: ${src}`
+            )
+          )
+        },
+        { once: true }
+      )
+
+      document.head.appendChild(
+        script
+      )
+    }
+  )
+}
+
+/* =========================================================
+   INITIALIZE FURIGANA
+========================================================= */
+
+async function initializeFurigana() {
+  if (furiganaReady) {
+    return true
+  }
+
+  if (furiganaLoadingPromise) {
+    return furiganaLoadingPromise
+  }
+
+  furiganaLoadingPromise =
+    (async () => {
+      try {
+        await loadExternalScript(
+          FURIGANA_CONFIG.kuroshiro
+        )
+
+        await loadExternalScript(
+          FURIGANA_CONFIG.analyzer
+        )
+
+        const KuroshiroClass =
+          window.Kuroshiro?.default ||
+          window.Kuroshiro
+
+        const AnalyzerClass =
+          window.KuromojiAnalyzer?.default ||
+          window.KuromojiAnalyzer
+
+        if (!KuroshiroClass) {
+          throw new Error(
+            'Kuroshiro tidak ditemukan.'
+          )
+        }
+
+        if (!AnalyzerClass) {
+          throw new Error(
+            'KuromojiAnalyzer tidak ditemukan.'
+          )
+        }
+
+        kuroshiroInstance =
+          new KuroshiroClass()
+
+        const analyzer =
+          new AnalyzerClass({
+            dictPath:
+              FURIGANA_CONFIG.dictPath
+          })
+
+        await kuroshiroInstance.init(
+          analyzer
+        )
+
+        furiganaReady = true
+
+        return true
+      } catch (error) {
+        console.warn(
+          'Furigana initialization failed:',
+          error
+        )
+
+        furiganaReady = false
+
+        return false
+      }
+    })()
+
+  return furiganaLoadingPromise
+}
+
+/* =========================================================
+   CONVERT JAPANESE TO FURIGANA
+========================================================= */
+
+async function convertToFurigana(
+  text
+) {
+  const clean = stripHTML(text)
+
+  if (!clean) {
+    return ''
+  }
+
+  /*
+     Kalau tidak ada Kanji,
+     tidak perlu proses Kuroshiro.
+     Hiragana / Katakana / Latin langsung
+     dikembalikan sebagai teks biasa.
+  */
+  if (
+    !/[\u3400-\u4DBF\u4E00-\u9FFF]/.test(
+      clean
+    )
+  ) {
+    return escapeHTML(clean)
+  }
+
+  const ready =
+    await initializeFurigana()
+
+  if (
+    !ready ||
+    !kuroshiroInstance
+  ) {
+    return escapeHTML(clean)
+  }
+
   try {
-    return JSON.parse(localStorage.getItem(explanationCacheKey) || '{}')
-  } catch {
-    return {}
+    const result =
+      await kuroshiroInstance.convert(
+        clean,
+        {
+          mode: 'furigana',
+          to: 'hiragana'
+        }
+      )
+
+    return result || escapeHTML(clean)
+  } catch (error) {
+    console.warn(
+      'Furigana conversion failed:',
+      error
+    )
+
+    return escapeHTML(clean)
   }
 }
 
-function saveExplanationCache (cache) {
+/* =========================================================
+   APPLY FURIGANA TO EXAMPLES
+========================================================= */
+
+async function applyFuriganaToExamples() {
+  if (!grammarCards) {
+    return
+  }
+
+  const boxes =
+    grammarCards.querySelectorAll(
+      '.example-box[data-example-id]'
+    )
+
+  if (!boxes.length) {
+    return
+  }
+
+  /*
+     Pastikan analyzer sudah siap.
+  */
+  await initializeFurigana()
+
+  await Promise.allSettled(
+    Array.from(boxes).map(
+      async box => {
+        const state =
+          box?._translationState
+
+        if (!state) {
+          return
+        }
+
+        /*
+           Jangan proses ulang.
+        */
+        if (state.furiganaReady) {
+          return
+        }
+
+        const originalText =
+          state.originalText
+
+        if (!originalText) {
+          return
+        }
+
+        /*
+           Hanya beri furigana pada
+           kalimat Jepang.
+        */
+        if (
+          detectLanguage(
+            originalText
+          ) !== 'ja'
+        ) {
+          state.furiganaHTML =
+            escapeHTML(
+              originalText
+            )
+
+          state.furiganaReady =
+            true
+
+          return
+        }
+
+        const html =
+          await convertToFurigana(
+            originalText
+          )
+
+        /*
+           Pastikan element masih ada.
+        */
+        if (
+          !document.body.contains(box)
+        ) {
+          return
+        }
+
+        const latestState =
+          box?._translationState
+
+        if (!latestState) {
+          return
+        }
+
+        latestState.furiganaHTML =
+          html || escapeHTML(
+            originalText
+          )
+
+        latestState.furiganaReady =
+          true
+
+        /*
+           Jangan mengganti tampilan
+           kalau user sedang melihat
+           hasil translation.
+        */
+        if (
+          latestState.translated
+        ) {
+          return
+        }
+
+        box.innerHTML = `
+          <i class="bi bi-caret-right-fill"></i>
+
+          <span class="example-content">
+            ${
+              latestState.furiganaHTML
+            }
+          </span>
+        `
+      }
+    )
+  )
+}
+
+/* =========================================================
+   TRANSLATION STATE
+========================================================= */
+
+const translationCacheKey =
+  'n1_translation_cache'
+
+const explanationCacheKey =
+  'n1_explanation_translation_cache'
+
+const exampleTranslationTimers =
+  new Map()
+
+const translationPending =
+  new Map()
+
+let translationMemoryCache = null
+let explanationMemoryCache = null
+
+/* =========================================================
+   TRANSLATION API CONFIG
+========================================================= */
+
+const TRANSLATION_CONFIG = {
+  timeout: 12000,
+  retries: 2,
+
+  myMemory:
+    'https://api.mymemory.translated.net/get',
+
+  google:
+    'https://translate.googleapis.com/translate_a/single'
+}
+
+/* =========================================================
+   EXPLANATION CACHE
+========================================================= */
+
+function getExplanationCache() {
+  if (explanationMemoryCache) {
+    return explanationMemoryCache
+  }
+
   try {
-    localStorage.setItem(explanationCacheKey, JSON.stringify(cache))
-  } catch {
-    /* Ignore localStorage quota */
+    explanationMemoryCache =
+      JSON.parse(
+        localStorage.getItem(
+          explanationCacheKey
+        ) || '{}'
+      )
+  } catch (error) {
+    console.warn(
+      'Explanation cache read failed:',
+      error
+    )
+
+    explanationMemoryCache = {}
+  }
+
+  return explanationMemoryCache
+}
+
+function saveExplanationCache(
+  cache
+) {
+  explanationMemoryCache = cache
+
+  try {
+    localStorage.setItem(
+      explanationCacheKey,
+      JSON.stringify(cache)
+    )
+  } catch (error) {
+    console.warn(
+      'Explanation cache save skipped:',
+      error
+    )
+  }
+}
+
+/* =========================================================
+   TRANSLATION CACHE
+========================================================= */
+
+function getTranslationCache() {
+  if (translationMemoryCache) {
+    return translationMemoryCache
+  }
+
+  try {
+    translationMemoryCache =
+      JSON.parse(
+        localStorage.getItem(
+          translationCacheKey
+        ) || '{}'
+      )
+  } catch (error) {
+    console.warn(
+      'Translation cache read failed:',
+      error
+    )
+
+    translationMemoryCache = {}
+  }
+
+  return translationMemoryCache
+}
+
+function saveTranslationCache(
+  cache
+) {
+  translationMemoryCache = cache
+
+  try {
+    localStorage.setItem(
+      translationCacheKey,
+      JSON.stringify(cache)
+    )
+  } catch (error) {
+    console.warn(
+      'Translation cache save skipped:',
+      error
+    )
   }
 }
 
@@ -286,25 +837,34 @@ function saveExplanationCache (cache) {
    VOICES
 ========================================================= */
 
-function loadVoices () {
-  if (!('speechSynthesis' in window)) {
+function loadVoices() {
+  if (
+    !('speechSynthesis' in window)
+  ) {
     return
   }
 
-  availableVoices = window.speechSynthesis.getVoices() || []
+  availableVoices =
+    window.speechSynthesis.getVoices() ||
+    []
 }
 
 loadVoices()
 
-if ('speechSynthesis' in window) {
-  window.speechSynthesis.addEventListener('voiceschanged', loadVoices)
+if (
+  'speechSynthesis' in window
+) {
+  window.speechSynthesis.addEventListener(
+    'voiceschanged',
+    loadVoices
+  )
 }
 
 /* =========================================================
    JAPANESE VOICE
 ========================================================= */
 
-function findJapaneseVoice () {
+function findJapaneseVoice() {
   loadVoices()
 
   if (!availableVoices.length) {
@@ -313,19 +873,30 @@ function findJapaneseVoice () {
 
   const priority = [
     voice =>
-      /microsoft/i.test(voice.name) &&
-      /online|natural/i.test(voice.name) &&
+      /microsoft/i.test(
+        voice.name
+      ) &&
+      /online|natural/i.test(
+        voice.name
+      ) &&
       /^ja/i.test(voice.lang),
 
-    voice => /microsoft/i.test(voice.name) && /^ja/i.test(voice.lang),
+    voice =>
+      /microsoft/i.test(
+        voice.name
+      ) &&
+      /^ja/i.test(voice.lang),
 
-    voice => /^ja-JP/i.test(voice.lang),
+    voice =>
+      /^ja-JP/i.test(voice.lang),
 
-    voice => /^ja/i.test(voice.lang)
+    voice =>
+      /^ja/i.test(voice.lang)
   ]
 
   for (const test of priority) {
-    const found = availableVoices.find(test)
+    const found =
+      availableVoices.find(test)
 
     if (found) {
       return found
@@ -339,70 +910,120 @@ function findJapaneseVoice () {
    CLEAN HTML
 ========================================================= */
 
-function stripHTML (html) {
-  const temp = document.createElement('div')
+function stripHTML(html) {
+  const temp =
+    document.createElement('div')
 
   temp.innerHTML = html || ''
 
-  return (temp.textContent || temp.innerText || '').replace(/\s+/g, ' ').trim()
+  return (
+    temp.textContent ||
+    temp.innerText ||
+    ''
+  )
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 /* =========================================================
    ESCAPE HTML
 ========================================================= */
 
-function escapeHTML (value) {
-  return String(value)
+function escapeHTML(value) {
+  return String(value ?? '')
     .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
+    )
 }
 
 /* =========================================================
    ESCAPE JS
 ========================================================= */
 
-function escapeForJS (value) {
-  return String(value)
-    .replace(/\\/g, '\\\\')
-    .replace(/'/g, "\\'")
-    .replace(/"/g, '\\"')
-    .replace(/\n/g, '\\n')
-    .replace(/\r/g, '\\r')
+function escapeForJS(value) {
+  return String(value ?? '')
+    .replace(
+      /\\/g,
+      '\\\\'
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    )
+    .replace(
+      /"/g,
+      '\\"'
+    )
+    .replace(
+      /\r/g,
+      '\\r'
+    )
+    .replace(
+      /\n/g,
+      '\\n'
+    )
 }
 
 /* =========================================================
    STATUS
 ========================================================= */
 
-function getStatus (item) {
-  return localStorage.getItem(`status_${item.id}`) || '0'
+function getStatus(item) {
+  return (
+    localStorage.getItem(
+      `status_${item.id}`
+    ) || '0'
+  )
 }
 
 /* =========================================================
    GET ALL GRAMMAR
 ========================================================= */
 
-function getAllGrammar () {
+function getAllGrammar() {
   const output = []
 
-  Object.entries(courseData).forEach(([weekKey, weekData]) => {
-    Object.entries(weekData.days).forEach(([dayKey, dayData]) => {
-      if (!Array.isArray(dayData.grammar)) {
-        return
-      }
+  Object.entries(courseData).forEach(
+    ([weekKey, weekData]) => {
+      Object.entries(
+        weekData.days
+      ).forEach(
+        ([dayKey, dayData]) => {
+          if (
+            !Array.isArray(
+              dayData.grammar
+            )
+          ) {
+            return
+          }
 
-      dayData.grammar.forEach(item => {
-        output.push({
-          ...item,
-          _week: weekKey,
-          _day: dayKey
-        })
-      })
-    })
-  })
+          dayData.grammar.forEach(
+            item => {
+              output.push({
+                ...item,
+                _week: weekKey,
+                _day: dayKey
+              })
+            }
+          )
+        }
+      )
+    }
+  )
 
   return output
 }
@@ -411,55 +1032,101 @@ function getAllGrammar () {
    WEEK SELECT
 ========================================================= */
 
-function populateWeekSelect () {
-  weekSelect.innerHTML = ''
-
-  for (let week = 1; week <= 8; week++) {
-    const option = document.createElement('option')
-
-    option.value = `week${week}`
-
-    option.textContent = `Minggu ${week}`
-
-    weekSelect.appendChild(option)
+function populateWeekSelect() {
+  if (!elementExists(weekSelect)) {
+    return
   }
 
-  weekSelect.value = activeWeek
+  weekSelect.innerHTML = ''
+
+  for (
+    let week = 1;
+    week <= 8;
+    week++
+  ) {
+    const option =
+      document.createElement(
+        'option'
+      )
+
+    option.value =
+      `week${week}`
+
+    option.textContent =
+      `Minggu ${week}`
+
+    weekSelect.appendChild(
+      option
+    )
+  }
+
+  weekSelect.value =
+    activeWeek
 }
 
 /* =========================================================
    DAY SELECT
 ========================================================= */
 
-function populateDaySelect () {
-  daySelect.innerHTML = ''
-
-  for (let day = 1; day <= 7; day++) {
-    const option = document.createElement('option')
-
-    option.value = `day${day}`
-
-    option.textContent = day === 7 ? 'Hari 7 — Full Exam' : `Hari ${day}`
-
-    daySelect.appendChild(option)
+function populateDaySelect() {
+  if (!elementExists(daySelect)) {
+    return
   }
 
-  daySelect.value = activeDay
+  daySelect.innerHTML = ''
+
+  for (
+    let day = 1;
+    day <= 7;
+    day++
+  ) {
+    const option =
+      document.createElement(
+        'option'
+      )
+
+    option.value =
+      `day${day}`
+
+    option.textContent =
+      day === 7
+        ? 'Hari 7 — Full Exam'
+        : `Hari ${day}`
+
+    daySelect.appendChild(
+      option
+    )
+  }
+
+  daySelect.value =
+    activeDay
 }
 
 /* =========================================================
    FILTERED ITEMS
 ========================================================= */
 
-function getFilteredItems () {
+function getFilteredItems() {
   let items
 
   if (currentSearch) {
-    items = getAllGrammar().filter(item => matchesSearch(item, currentSearch))
+    items =
+      getAllGrammar().filter(
+        item =>
+          matchesSearch(
+            item,
+            currentSearch
+          )
+      )
   } else {
-    const day = courseData[activeWeek]?.days[activeDay]
+    const day =
+      courseData[
+        activeWeek
+      ]?.days?.[activeDay]
 
-    items = Array.isArray(day?.grammar)
+    items = Array.isArray(
+      day?.grammar
+    )
       ? day.grammar.map(item => ({
           ...item,
           _week: activeWeek,
@@ -468,8 +1135,16 @@ function getFilteredItems () {
       : []
   }
 
-  if (currentStatus !== 'all') {
-    items = items.filter(item => getStatus(item) === currentStatus)
+  if (
+    currentStatus !==
+    'all'
+  ) {
+    items =
+      items.filter(
+        item =>
+          getStatus(item) ===
+          currentStatus
+      )
   }
 
   return items
@@ -479,7 +1154,10 @@ function getFilteredItems () {
    SEARCH
 ========================================================= */
 
-function matchesSearch (item, query) {
+function matchesSearch(
+  item,
+  query
+) {
   if (!query) {
     return true
   }
@@ -492,53 +1170,51 @@ function matchesSearch (item, query) {
     item.meaning?.id,
     item.meaning?.en,
     item.meaning?.cn,
+    item.meaning?.zh,
     item.explanation,
     item.explanationJP,
-    ...(item.examples || [])
+    ...(Array.isArray(
+      item.examples
+    )
+      ? item.examples
+      : [])
   ]
-    .map(value => stripHTML(value || ''))
+    .map(value =>
+      stripHTML(value || '')
+    )
     .join(' ')
     .toLowerCase()
 
-  return text.includes(query)
-}
-
-/* =========================================================
-   TRANSLATION CACHE
-========================================================= */
-
-function getTranslationCache () {
-  try {
-    return JSON.parse(localStorage.getItem(translationCacheKey) || '{}')
-  } catch {
-    return {}
-  }
-}
-
-function saveTranslationCache (cache) {
-  try {
-    localStorage.setItem(translationCacheKey, JSON.stringify(cache))
-  } catch {
-    /* Ignore quota */
-  }
+  return text.includes(
+    String(query).toLowerCase()
+  )
 }
 
 /* =========================================================
    LANGUAGE DETECTOR
 ========================================================= */
 
-function detectLanguage (text) {
-  const clean = stripHTML(text)
+function detectLanguage(text) {
+  const clean =
+    stripHTML(text)
 
   if (!clean) {
     return 'id'
   }
 
-  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(clean)) {
+  if (
+    /[\u3040-\u309f\u30a0-\u30ff]/.test(
+      clean
+    )
+  ) {
     return 'ja'
   }
 
-  if (/[\u4e00-\u9fff]/.test(clean)) {
+  if (
+    /[\u4e00-\u9fff]/.test(
+      clean
+    )
+  ) {
     return 'zh-CN'
   }
 
@@ -564,121 +1240,521 @@ function detectLanguage (text) {
     'harus',
     'sangat',
     'dalam',
-    'pada'
+    'pada',
+    'sebuah',
+    'tersebut',
+    'dapat',
+    'menjadi',
+    'lebih',
+    'hanya'
   ]
 
-  const lower = clean.toLowerCase()
+  const lower =
+    clean.toLowerCase()
 
-  const score = idWords.reduce(
-    (total, word) =>
-      total + (new RegExp(`\\b${word}\\b`, 'i').test(lower) ? 1 : 0),
-    0
+  let score = 0
+
+  for (
+    const word of idWords
+  ) {
+    const pattern =
+      new RegExp(
+        `\\b${word}\\b`,
+        'i'
+      )
+
+    if (
+      pattern.test(lower)
+    ) {
+      score++
+    }
+  }
+
+  if (
+    /[a-z]/i.test(clean) &&
+    /(yang|dan|untuk|dengan|tidak|ini|itu|akan)\b/i.test(
+      lower
+    )
+  ) {
+    score += 2
+  }
+
+  return score > 0
+    ? 'id'
+    : 'en'
+}
+
+/* =========================================================
+   NORMALIZE API LANGUAGE
+========================================================= */
+
+function normalizeApiLanguage(
+  lang
+) {
+  const value = String(
+    lang || ''
   )
+    .trim()
+    .toLowerCase()
 
-  return score > 0 ? 'id' : 'en'
+  if (
+    value === 'zh' ||
+    value === 'zh-cn' ||
+    value === 'cn'
+  ) {
+    return 'zh-CN'
+  }
+
+  if (
+    value === 'jp'
+  ) {
+    return 'ja'
+  }
+
+  return value
 }
 
 /* =========================================================
    GET TARGET LANGUAGE
 ========================================================= */
 
-function getTargetLanguage (sourceLanguage) {
-  const selected = normalizeLanguage(currentLanguage)
+function getTargetLanguage(
+  sourceLanguage
+) {
+  const source =
+    normalizeApiLanguage(
+      sourceLanguage
+    )
 
-  const source = normalizeLanguage(sourceLanguage)
-
-  /*
-      Double-click mengikuti bahasa
-      yang dipilih user.
-
-      JP -> CN ketika pilih CN
-      JP -> EN ketika pilih EN
-      JP -> ID ketika pilih ID
-  */
+  const selected =
+    getApiLanguage(
+      currentLanguage
+    )
 
   if (
-    source === 'ja' ||
-    source === 'zh' ||
-    source === 'id' ||
-    source === 'en'
+    source === selected
   ) {
-    if (selected !== source) {
-      return getApiLanguage(selected)
+    if (
+      source === 'ja'
+    ) {
+      return 'id'
+    }
+
+    if (
+      source === 'id'
+    ) {
+      return 'en'
+    }
+
+    if (
+      source === 'en'
+    ) {
+      return 'id'
+    }
+
+    if (
+      source === 'zh-CN'
+    ) {
+      return 'id'
     }
   }
 
-  /*
-      Kalau source dan target sama,
-      tetap beri bahasa alternatif.
-  */
+  return selected
+}
 
-  if (source === 'ja') {
-    return 'id'
+/* =========================================================
+   FETCH WITH TIMEOUT
+========================================================= */
+
+async function fetchWithTimeout(
+  url,
+  options = {},
+  timeout =
+    TRANSLATION_CONFIG.timeout
+) {
+  const controller =
+    new AbortController()
+
+  const timeoutId =
+    setTimeout(
+      () =>
+        controller.abort(),
+      timeout
+    )
+
+  try {
+    return await fetch(
+      url,
+      {
+        ...options,
+        signal:
+          controller.signal,
+        headers: {
+          Accept:
+            'application/json',
+          ...(options.headers ||
+            {})
+        }
+      }
+    )
+  } finally {
+    clearTimeout(
+      timeoutId
+    )
+  }
+}
+
+/* =========================================================
+   MYMEMORY TRANSLATION
+========================================================= */
+
+async function translateWithMyMemory(
+  text,
+  from,
+  to
+) {
+  const source =
+    normalizeApiLanguage(
+      from
+    )
+
+  const target =
+    normalizeApiLanguage(
+      to
+    )
+
+  const url =
+    new URL(
+      TRANSLATION_CONFIG
+        .myMemory
+    )
+
+  url.searchParams.set(
+    'q',
+    text
+  )
+
+  url.searchParams.set(
+    'langpair',
+    `${source}|${target}`
+  )
+
+  const response =
+    await fetchWithTimeout(
+      url.toString(),
+      {
+        method: 'GET'
+      }
+    )
+
+  if (!response.ok) {
+    throw new Error(
+      `MyMemory HTTP ${response.status}`
+    )
   }
 
-  if (source === 'id') {
-    return 'ja'
+  const data =
+    await response.json()
+
+  if (
+    data &&
+    data.responseStatus &&
+    Number(
+      data.responseStatus
+    ) !== 200
+  ) {
+    throw new Error(
+      `MyMemory API status ${data.responseStatus}`
+    )
   }
 
-  if (source === 'en') {
-    return 'id'
+  if (
+    data?.quotaFinished ===
+    true
+  ) {
+    throw new Error(
+      'MyMemory quota finished'
+    )
   }
 
-  if (source === 'zh-CN') {
-    return 'id'
+  const translated =
+    data?.responseData
+      ?.translatedText ||
+    data?.matches?.[0]
+      ?.translation ||
+    ''
+
+  const result =
+    String(
+      translated || ''
+    ).trim()
+
+  if (!result) {
+    throw new Error(
+      'MyMemory returned empty translation'
+    )
   }
 
-  return 'id'
+  return result
+}
+
+/* =========================================================
+   GOOGLE FALLBACK TRANSLATION
+========================================================= */
+
+async function translateWithGoogleFallback(
+  text,
+  from,
+  to
+) {
+  const source =
+    normalizeApiLanguage(
+      from
+    )
+
+  const target =
+    normalizeApiLanguage(
+      to
+    )
+
+  const url =
+    new URL(
+      TRANSLATION_CONFIG
+        .google
+    )
+
+  url.searchParams.set(
+    'client',
+    'gtx'
+  )
+
+  url.searchParams.set(
+    'sl',
+    source
+  )
+
+  url.searchParams.set(
+    'tl',
+    target
+  )
+
+  url.searchParams.set(
+    'dt',
+    't'
+  )
+
+  url.searchParams.set(
+    'q',
+    text
+  )
+
+  const response =
+    await fetchWithTimeout(
+      url.toString(),
+      {
+        method: 'GET'
+      }
+    )
+
+  if (!response.ok) {
+    throw new Error(
+      `Fallback translator HTTP ${response.status}`
+    )
+  }
+
+  const data =
+    await response.json()
+
+  const translated =
+    Array.isArray(data) &&
+    Array.isArray(data[0])
+      ? data[0]
+          .map(part =>
+            Array.isArray(part)
+              ? part[0]
+              : ''
+          )
+          .filter(Boolean)
+          .join('')
+      : ''
+
+  const result =
+    String(
+      translated || ''
+    ).trim()
+
+  if (!result) {
+    throw new Error(
+      'Fallback translator returned empty result'
+    )
+  }
+
+  return result
 }
 
 /* =========================================================
    TRANSLATE TEXT
 ========================================================= */
 
-async function translateText (text, from = 'ja', to = 'id') {
-  const clean = stripHTML(text)
+async function translateText(
+  text,
+  from = 'ja',
+  to = 'id'
+) {
+  const clean =
+    stripHTML(text)
 
   if (!clean) {
     return ''
   }
 
-  const cache = getTranslationCache()
+  const source =
+    normalizeApiLanguage(
+      from
+    )
 
-  const cacheKey = `${from}_${to}_${clean}`
+  const target =
+    normalizeApiLanguage(
+      to
+    )
 
-  if (cache[cacheKey]) {
-    return cache[cacheKey]
+  if (
+    source === target
+  ) {
+    return clean
   }
 
+  const cache =
+    getTranslationCache()
+
+  const cacheKey =
+    `${source}__${target}__${clean}`
+
+  if (
+    cache[cacheKey] &&
+    typeof cache[
+      cacheKey
+    ] === 'string'
+  ) {
+    return cache[
+      cacheKey
+    ]
+  }
+
+  if (
+    translationPending.has(
+      cacheKey
+    )
+  ) {
+    return translationPending.get(
+      cacheKey
+    )
+  }
+
+  const requestPromise =
+    (async () => {
+      let lastError =
+        null
+
+      for (
+        let attempt = 0;
+        attempt <
+        TRANSLATION_CONFIG.retries;
+        attempt++
+      ) {
+        try {
+          const result =
+            await translateWithMyMemory(
+              clean,
+              source,
+              target
+            )
+
+          if (result) {
+            cache[
+              cacheKey
+            ] = result
+
+            saveTranslationCache(
+              cache
+            )
+
+            return result
+          }
+        } catch (error) {
+          lastError = error
+
+          if (
+            attempt <
+            TRANSLATION_CONFIG
+              .retries - 1
+          ) {
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  500 *
+                    (attempt +
+                      1)
+                )
+            )
+          }
+        }
+      }
+
+      try {
+        const fallbackResult =
+          await translateWithGoogleFallback(
+            clean,
+            source,
+            target
+          )
+
+        if (
+          fallbackResult
+        ) {
+          cache[
+            cacheKey
+          ] = fallbackResult
+
+          saveTranslationCache(
+            cache
+          )
+
+          return fallbackResult
+        }
+      } catch (
+        fallbackError
+      ) {
+        lastError =
+          fallbackError
+      }
+
+      console.warn(
+        'Translation unavailable:',
+        {
+          source,
+          target,
+          error:
+            lastError?.message ||
+            'Unknown translation error'
+        }
+      )
+
+      return ''
+    })()
+
+  translationPending.set(
+    cacheKey,
+    requestPromise
+  )
+
   try {
-    const url =
-      'https://api.mymemory.translated.net/get' +
-      `?q=${encodeURIComponent(clean)}` +
-      `&langpair=${encodeURIComponent(from)}|${encodeURIComponent(to)}`
-
-    const response = await fetch(url)
-
-    if (!response.ok) {
-      throw new Error('Translation request failed')
-    }
-
-    const data = await response.json()
-
-    const result = data?.responseData?.translatedText
-
-    if (!result) {
-      throw new Error('No translation returned')
-    }
-
-    cache[cacheKey] = result
-
-    saveTranslationCache(cache)
-
-    return result
-  } catch (error) {
-    console.warn('Translation error:', error)
-
-    return ''
+    return await requestPromise
+  } finally {
+    translationPending.delete(
+      cacheKey
+    )
   }
 }
 
@@ -686,98 +1762,153 @@ async function translateText (text, from = 'ja', to = 'id') {
    EXPLANATION AUTO TRANSLATION
 ========================================================= */
 
-async function getExplanationForLanguage (item) {
-  const source = stripHTML(item.explanation || '')
+async function getExplanationForLanguage(
+  item
+) {
+  const source =
+    stripHTML(
+      item.explanation || ''
+    )
 
   if (!source) {
     return ''
   }
 
-  /*
-      Indonesia:
-      pakai penjelasan asli.
-  */
+  const lang =
+    normalizeLanguage(
+      currentLanguage
+    )
 
-  if (currentLanguage === 'id') {
+  if (lang === 'id') {
     return source
   }
 
-  /*
-      English / Chinese:
-      translate otomatis dari
-      penjelasan Indonesia.
-  */
+  const target =
+    getApiLanguage(lang)
 
-  const target = getApiLanguage(currentLanguage)
+  const cache =
+    getExplanationCache()
 
-  const cache = getExplanationCache()
+  const cacheKey =
+    `${lang}::${source}`
 
-  const cacheKey = `${currentLanguage}::${source}`
-
-  if (cache[cacheKey]) {
-    return cache[cacheKey]
+  if (
+    cache[cacheKey] &&
+    typeof cache[
+      cacheKey
+    ] === 'string'
+  ) {
+    return cache[
+      cacheKey
+    ]
   }
 
-  const translated = await translateText(source, 'id', target)
+  const translated =
+    await translateText(
+      source,
+      'id',
+      target
+    )
 
   if (translated) {
-    cache[cacheKey] = translated
+    cache[
+      cacheKey
+    ] = translated
 
-    saveExplanationCache(cache)
+    saveExplanationCache(
+      cache
+    )
+
+    return translated
   }
 
-  return translated || source
+  return source
 }
 
 /* =========================================================
    TTS QUEUE
 ========================================================= */
 
-async function buildSpeechQueue (item) {
+async function buildSpeechQueue(
+  item
+) {
   const queue = []
-
-  /*
-      TTS tetap membaca bahasa Jepang.
-  */
 
   if (item.rule) {
     queue.push({
-      text: `文法 ${stripHTML(item.rule)}`,
+      text:
+        `文法 ${stripHTML(
+          item.rule
+        )}`,
       type: 'jp'
     })
   }
 
   if (item.reading) {
     queue.push({
-      text: stripHTML(item.reading),
+      text:
+        stripHTML(
+          item.reading
+        ),
       type: 'jp'
     })
   }
 
-  const explanationJP = item.explanationJP
-    ? stripHTML(item.explanationJP)
-    : await translateText(item.explanation || '', 'id', 'ja')
+  let explanationJP =
+    ''
+
+  if (
+    item.explanationJP
+  ) {
+    explanationJP =
+      stripHTML(
+        item.explanationJP
+      )
+  } else if (
+    item.explanation
+  ) {
+    explanationJP =
+      await translateText(
+        item.explanation,
+        'id',
+        'ja'
+      )
+  }
 
   if (explanationJP) {
     queue.push({
-      text: `簡単な説明。${explanationJP}`,
+      text:
+        `簡単な説明。${explanationJP}`,
       type: 'jp'
     })
   }
 
-  if (Array.isArray(item.examples)) {
-    item.examples.forEach((example, index) => {
-      const clean = stripHTML(example)
+  if (
+    Array.isArray(
+      item.examples
+    )
+  ) {
+    item.examples.forEach(
+      (
+        example,
+        index
+      ) => {
+        const clean =
+          stripHTML(
+            example
+          )
 
-      if (!clean) {
-        return
+        if (!clean) {
+          return
+        }
+
+        queue.push({
+          text:
+            `例文 ${index + 1}。${clean}`,
+          type: 'jp'
+        })
       }
-
-      queue.push({
-        text: `例文 ${index + 1}。${clean}`,
-        type: 'jp'
-      })
-    })
+    )
   }
 
   return queue
@@ -787,22 +1918,41 @@ async function buildSpeechQueue (item) {
    START TTS
 ========================================================= */
 
-async function startSpeech (item) {
-  if (!('speechSynthesis' in window)) {
-    alert('Browser ini tidak mendukung Text to Speech.')
+async function startSpeech(
+  item
+) {
+  if (
+    !('speechSynthesis' in
+      window)
+  ) {
+    alert(
+      'Browser ini tidak mendukung Text to Speech.'
+    )
 
     return
   }
 
   stopSpeech()
 
-  currentSpeakingItem = item
+  currentSpeakingItem =
+    item
 
-  speakingCardId = String(item.id)
+  speakingCardId =
+    String(item.id)
 
   updateSpeechButtons()
 
-  speechQueue = await buildSpeechQueue(item)
+  speechQueue =
+    await buildSpeechQueue(
+      item
+    )
+
+  if (
+    speakingCardId !==
+    String(item.id)
+  ) {
+    return
+  }
 
   speechIndex = 0
   speechPaused = false
@@ -814,27 +1964,54 @@ async function startSpeech (item) {
    SPEAK CURRENT
 ========================================================= */
 
-function speakCurrentChunk () {
-  if (!speechQueue.length || speechIndex >= speechQueue.length) {
+function speakCurrentChunk() {
+  if (
+    !speechQueue.length ||
+    speechIndex >=
+      speechQueue.length
+  ) {
     stopSpeech()
+
     return
   }
 
-  const chunk = speechQueue[speechIndex]
+  if (
+    !('speechSynthesis' in
+      window)
+  ) {
+    stopSpeech()
 
-  const utterance = new SpeechSynthesisUtterance(chunk.text)
+    return
+  }
 
-  utterance.lang = 'ja-JP'
+  const chunk =
+    speechQueue[
+      speechIndex
+    ]
 
-  utterance.rate = 0.88
+  const utterance =
+    new SpeechSynthesisUtterance(
+      chunk.text
+    )
 
-  utterance.pitch = 1
-  utterance.volume = 1
+  utterance.lang =
+    'ja-JP'
 
-  const voice = findJapaneseVoice()
+  utterance.rate =
+    0.88
+
+  utterance.pitch =
+    1
+
+  utterance.volume =
+    1
+
+  const voice =
+    findJapaneseVoice()
 
   if (voice) {
-    utterance.voice = voice
+    utterance.voice =
+      voice
   }
 
   utterance.onstart = () => {
@@ -842,371 +2019,625 @@ function speakCurrentChunk () {
   }
 
   utterance.onend = () => {
+    if (
+      speakingCardId ===
+      null
+    ) {
+      return
+    }
+
     speechIndex++
 
-    if (speakingCardId !== null) {
-      speakCurrentChunk()
+    speakCurrentChunk()
+  }
+
+  utterance.onerror =
+    event => {
+      console.warn(
+        'TTS error:',
+        event?.error ||
+          'unknown'
+      )
+
+      stopSpeech()
     }
-  }
 
-  utterance.onerror = event => {
-    console.warn('TTS error:', event.error)
-
-    stopSpeech()
-  }
-
-  window.speechSynthesis.speak(utterance)
+  window.speechSynthesis.speak(
+    utterance
+  )
 }
 
 /* =========================================================
    PAUSE
 ========================================================= */
 
-window.togglePauseSpeech = function () {
-  if (!('speechSynthesis' in window)) {
-    return
+window.togglePauseSpeech =
+  function () {
+    if (
+      !(
+        'speechSynthesis' in
+        window
+      )
+    ) {
+      return
+    }
+
+    if (
+      speakingCardId ===
+      null
+    ) {
+      return
+    }
+
+    if (
+      window.speechSynthesis
+        .paused
+    ) {
+      window.speechSynthesis.resume()
+
+      speechPaused = false
+    } else {
+      window.speechSynthesis.pause()
+
+      speechPaused = true
+    }
+
+    updateSpeechButtons()
   }
-
-  if (speakingCardId === null) {
-    return
-  }
-
-  if (window.speechSynthesis.paused) {
-    window.speechSynthesis.resume()
-
-    speechPaused = false
-  } else {
-    window.speechSynthesis.pause()
-
-    speechPaused = true
-  }
-
-  updateSpeechButtons()
-}
 
 /* =========================================================
    REPLAY
 ========================================================= */
 
-window.replaySpeech = function () {
-  if (!currentSpeakingItem) {
-    return
-  }
+window.replaySpeech =
+  function () {
+    if (
+      !currentSpeakingItem
+    ) {
+      return
+    }
 
-  startSpeech(currentSpeakingItem)
-}
+    startSpeech(
+      currentSpeakingItem
+    )
+  }
 
 /* =========================================================
    STOP
 ========================================================= */
 
-window.stopSpeech = function () {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel()
+window.stopSpeech =
+  function () {
+    if (
+      'speechSynthesis' in
+      window
+    ) {
+      try {
+        window.speechSynthesis.cancel()
+      } catch (error) {
+        console.warn(
+          'Speech cancel failed:',
+          error
+        )
+      }
+    }
+
+    speakingCardId =
+      null
+
+    speechQueue =
+      []
+
+    speechIndex = 0
+
+    speechPaused =
+      false
+
+    currentSpeakingItem =
+      null
+
+    updateSpeechButtons()
   }
-
-  speakingCardId = null
-
-  speechQueue = []
-
-  speechIndex = 0
-
-  speechPaused = false
-
-  currentSpeakingItem = null
-
-  updateSpeechButtons()
-}
 
 /* =========================================================
    SPEECH UI
 ========================================================= */
 
-function updateSpeechButtons () {
-  document.querySelectorAll('.grammar-card').forEach(card => {
-    const id = card.dataset.id
+function updateSpeechButtons() {
+  document
+    .querySelectorAll(
+      '.grammar-card'
+    )
+    .forEach(card => {
+      const id =
+        card.dataset.id
 
-    const status = card.querySelector('.tts-status')
+      const status =
+        card.querySelector(
+          '.tts-status'
+        )
 
-    const play = card.querySelector('.tts-play')
+      const play =
+        card.querySelector(
+          '.tts-play'
+        )
 
-    const pause = card.querySelector('.tts-pause')
+      const pause =
+        card.querySelector(
+          '.tts-pause'
+        )
 
-    if (!status) {
-      return
-    }
-
-    const active = id === speakingCardId
-
-    card.classList.toggle('speaking', active)
-
-    if (active) {
-      status.textContent = speechPaused
-        ? 'Dijeda'
-        : 'Sedang membaca bahasa Jepang...'
-
-      if (play) {
-        play.innerHTML = `
-              <i class="bi bi-stop-fill"></i>
-            `
+      if (!status) {
+        return
       }
 
-      if (pause) {
-        pause.innerHTML = speechPaused
-          ? `
-                  <i class="bi bi-play-fill"></i>
-                `
-          : `
-                  <i class="bi bi-pause-fill"></i>
-                `
-      }
-    } else {
-      status.textContent = 'TTS Jepang siap'
+      const active =
+        id ===
+        speakingCardId
 
-      if (play) {
-        play.innerHTML = `
-              <i class="bi bi-play-fill"></i>
-            `
-      }
+      card.classList.toggle(
+        'speaking',
+        active
+      )
 
-      if (pause) {
-        pause.innerHTML = `
-              <i class="bi bi-pause-fill"></i>
-            `
+      if (active) {
+        status.textContent =
+          speechPaused
+            ? 'Dijeda'
+            : 'Sedang membaca bahasa Jepang...'
+
+        if (play) {
+          play.innerHTML = `
+            <i class="bi bi-stop-fill"></i>
+          `
+        }
+
+        if (pause) {
+          pause.innerHTML =
+            speechPaused
+              ? `
+                <i class="bi bi-play-fill"></i>
+              `
+              : `
+                <i class="bi bi-pause-fill"></i>
+              `
+        }
+      } else {
+        status.textContent =
+          '読み上げ機能'
+
+        if (play) {
+          play.innerHTML = `
+            <i class="bi bi-play-fill"></i>
+          `
+        }
+
+        if (pause) {
+          pause.innerHTML = `
+            <i class="bi bi-pause-fill"></i>
+          `
+        }
       }
-    }
-  })
+    })
 }
 
 /* =========================================================
    MAIN SPEECH
 ========================================================= */
 
-window.handleMainSpeech = function (id) {
-  const item = findItemById(id)
+window.handleMainSpeech =
+  function (id) {
+    const item =
+      findItemById(id)
 
-  if (!item) {
-    return
+    if (!item) {
+      return
+    }
+
+    if (
+      speakingCardId ===
+      String(id)
+    ) {
+      stopSpeech()
+
+      return
+    }
+
+    startSpeech(item)
   }
-
-  if (speakingCardId === String(id)) {
-    stopSpeech()
-    return
-  }
-
-  startSpeech(item)
-}
 
 /* =========================================================
    FIND ITEM
 ========================================================= */
 
-function findItemById (id) {
-  return getAllGrammar().find(item => String(item.id) === String(id))
+function findItemById(id) {
+  return getAllGrammar().find(
+    item =>
+      String(item.id) ===
+      String(id)
+  )
 }
 
 /* =========================================================
    EXAMPLE STATE
 ========================================================= */
 
-function createExampleState (item, example, index) {
+function createExampleState(
+  item,
+  example,
+  index
+) {
   return {
-    exampleId: `${item.id}_${index}`,
+    exampleId:
+      `${item.id}_${index}`,
 
-    originalHTML: String(example),
+    originalHTML:
+      String(example ?? ''),
 
-    originalText: stripHTML(example),
+    originalText:
+      stripHTML(example),
+
+    furiganaHTML:
+      '',
+
+    furiganaReady:
+      false,
 
     translated: false,
 
     translation: '',
 
-    sourceLanguage: null,
+    sourceLanguage:
+      null,
 
-    targetLanguage: null,
+    targetLanguage:
+      null,
 
-    key: null
+    key: null,
+
+    busy: false
   }
+}
+
+/* =========================================================
+   GET EXAMPLE ORIGINAL DISPLAY
+========================================================= */
+
+function getExampleOriginalHTML(
+  state
+) {
+  if (
+    state?.furiganaHTML
+  ) {
+    return state.furiganaHTML
+  }
+
+  return (
+    state?.originalHTML ||
+    escapeHTML(
+      state?.originalText ||
+        ''
+    )
+  )
 }
 
 /* =========================================================
    RESET EXAMPLE
 ========================================================= */
 
-function resetExampleDisplay (exampleBox, state) {
-  if (!exampleBox || !state) {
+function resetExampleDisplay(
+  exampleBox,
+  state
+) {
+  if (
+    !exampleBox ||
+    !state
+  ) {
     return
   }
 
-  const timer = exampleTranslationTimers.get(state.key)
+  const timer =
+    exampleTranslationTimers.get(
+      state.key
+    )
 
   if (timer) {
     clearTimeout(timer)
   }
 
-  exampleTranslationTimers.delete(state.key)
+  if (state.key) {
+    exampleTranslationTimers.delete(
+      state.key
+    )
+  }
 
-  exampleBox.classList.remove('translating', 'translated', 'copied')
+  exampleBox.classList.remove(
+    'translating',
+    'translated',
+    'copied'
+  )
 
   exampleBox.innerHTML = `
     <i class="bi bi-caret-right-fill"></i>
-    <span>${state.originalHTML}</span>
+
+    <span class="example-content">
+      ${getExampleOriginalHTML(
+        state
+      )}
+    </span>
   `
 
-  state.translated = false
+  state.translated =
+    false
 
-  state.translation = ''
+  state.translation =
+    ''
 
-  state.key = null
+  state.sourceLanguage =
+    null
+
+  state.targetLanguage =
+    null
+
+  state.key =
+    null
+
+  state.busy =
+    false
 }
 
 /* =========================================================
    SHOW EXAMPLE TRANSLATION
 ========================================================= */
 
-async function showExampleTranslation (exampleBox) {
-  const state = exampleBox._translationState
+async function showExampleTranslation(
+  exampleBox
+) {
+  const state =
+    exampleBox?._translationState
 
   if (!state) {
     return
   }
 
-  /*
-      Double-click kedua:
-      langsung kembali ke original.
-  */
-
-  if (state.translated) {
-    resetExampleDisplay(exampleBox, state)
+  if (
+    state.translated
+  ) {
+    resetExampleDisplay(
+      exampleBox,
+      state
+    )
 
     return
   }
 
-  const originalText = state.originalText
+  if (
+    state.busy
+  ) {
+    return
+  }
+
+  const originalText =
+    state.originalText
 
   if (!originalText) {
     return
   }
 
-  const sourceLanguage = detectLanguage(originalText)
+  const sourceLanguage =
+    detectLanguage(
+      originalText
+    )
 
-  const targetLanguage = getTargetLanguage(sourceLanguage)
+  const targetLanguage =
+    getTargetLanguage(
+      sourceLanguage
+    )
 
-  state.sourceLanguage = sourceLanguage
+  state.sourceLanguage =
+    sourceLanguage
 
-  state.targetLanguage = targetLanguage
+  state.targetLanguage =
+    targetLanguage
 
-  const key = [
+  const requestKey = [
     state.exampleId,
     sourceLanguage,
     targetLanguage,
     originalText
   ].join('::')
 
-  state.key = key
+  state.key =
+    requestKey
 
-  exampleBox.classList.add('translating')
+  state.busy =
+    true
+
+  exampleBox.classList.add(
+    'translating'
+  )
+
+  exampleBox.classList.remove(
+    'translated',
+    'copied'
+  )
 
   exampleBox.innerHTML = `
     <i class="bi bi-translate"></i>
+
     <span>
-      ${getLanguageText('translating')}
+      ${escapeHTML(
+        getLanguageText(
+          'translating'
+        )
+      )}
     </span>
   `
 
-  const translated = await translateText(
-    originalText,
-    sourceLanguage,
-    targetLanguage
-  )
+  try {
+    const translated =
+      await translateText(
+        originalText,
+        sourceLanguage,
+        targetLanguage
+      )
 
-  if (!document.body.contains(exampleBox)) {
-    return
-  }
+    if (
+      !document.body.contains(
+        exampleBox
+      )
+    ) {
+      return
+    }
 
-  if (
-    !exampleBox._translationState ||
-    exampleBox._translationState.key !== key
-  ) {
-    return
-  }
+    const latestState =
+      exampleBox?._translationState
 
-  if (!translated) {
-    exampleBox.classList.remove('translating')
+    if (!latestState) {
+      return
+    }
+
+    if (
+      latestState.key !==
+      requestKey
+    ) {
+      return
+    }
+
+    if (
+      !translated
+    ) {
+      exampleBox.classList.remove(
+        'translating'
+      )
+
+      exampleBox.innerHTML = `
+        <i class="bi bi-info-circle"></i>
+
+        <span>
+          ${escapeHTML(
+            getLanguageText(
+              'translationFailed'
+            )
+          )}
+        </span>
+      `
+
+      const errorTimer =
+        setTimeout(() => {
+          if (
+            document.body.contains(
+              exampleBox
+            )
+          ) {
+            resetExampleDisplay(
+              exampleBox,
+              latestState
+            )
+          }
+        }, 1800)
+
+      exampleTranslationTimers.set(
+        requestKey,
+        errorTimer
+      )
+
+      return
+    }
+
+    latestState.translation =
+      translated
+
+    latestState.translated =
+      true
+
+    latestState.busy =
+      false
+
+    exampleBox.classList.remove(
+      'translating'
+    )
+
+    exampleBox.classList.add(
+      'translated'
+    )
 
     exampleBox.innerHTML = `
-      <i class="bi bi-exclamation-circle"></i>
+      <i class="bi bi-translate"></i>
+
       <span>
-        ${getLanguageText('translationFailed')}
+        ${escapeHTML(
+          translated
+        )}
       </span>
     `
 
-    const errorTimer = setTimeout(() => {
-      if (document.body.contains(exampleBox)) {
-        resetExampleDisplay(exampleBox, state)
-      }
-    }, 2000)
+    const timer =
+      setTimeout(() => {
+        if (
+          !document.body.contains(
+            exampleBox
+          )
+        ) {
+          return
+        }
 
-    exampleTranslationTimers.set(key, errorTimer)
+        const currentState =
+          exampleBox?._translationState
 
-    return
+        if (
+          currentState?.translated
+        ) {
+          resetExampleDisplay(
+            exampleBox,
+            currentState
+          )
+        }
+      }, 5000)
+
+    exampleTranslationTimers.set(
+      requestKey,
+      timer
+    )
+  } catch (error) {
+    console.warn(
+      'Example translation failed:',
+      error
+    )
+
+    if (
+      document.body.contains(
+        exampleBox
+      )
+    ) {
+      resetExampleDisplay(
+        exampleBox,
+        state
+      )
+    }
+  } finally {
+    state.busy =
+      false
   }
-
-  state.translation = translated
-
-  state.translated = true
-
-  exampleBox.classList.remove('translating')
-
-  exampleBox.classList.add('translated')
-
-  exampleBox.innerHTML = `
-    <i class="bi bi-translate"></i>
-    <span>
-      ${escapeHTML(translated)}
-    </span>
-  `
-
-  /*
-      Otomatis balik setelah 5 detik.
-  */
-
-  const timer = setTimeout(() => {
-    if (!document.body.contains(exampleBox)) {
-      return
-    }
-
-    if (!exampleBox._translationState?.translated) {
-      return
-    }
-
-    resetExampleDisplay(exampleBox, exampleBox._translationState)
-  }, 5000)
-
-  exampleTranslationTimers.set(key, timer)
 }
 
 /* =========================================================
    COPY EXAMPLE
 ========================================================= */
 
-async function copyExampleText (exampleBox) {
-  const state = exampleBox?._translationState
+async function copyExampleText(
+  exampleBox
+) {
+  const state =
+    exampleBox?._translationState
 
   if (!state) {
     return
   }
 
-  /*
-      Ketika translation sedang tampil,
-      yang disalin adalah translation.
-
-      Ketika original tampil,
-      yang disalin adalah original.
-  */
-
   const text =
-    state.translated && state.translation
+    state.translated &&
+    state.translation
       ? state.translation
       : state.originalText
 
@@ -1214,180 +2645,390 @@ async function copyExampleText (exampleBox) {
     return
   }
 
-  const message = state.translated
-    ? getLanguageText('copiedTranslation')
-    : getLanguageText('copiedOriginal')
+  const message =
+    state.translated
+      ? getLanguageText(
+          'copiedTranslation'
+        )
+      : getLanguageText(
+          'copiedOriginal'
+        )
 
   try {
-    await navigator.clipboard.writeText(text)
-
-    const previousHTML = exampleBox.innerHTML
-
-    exampleBox.classList.add('copied')
-
-    exampleBox.innerHTML = `
-      <i class="bi bi-check-circle-fill"></i>
-      <span>${message}</span>
-    `
-
-    setTimeout(() => {
-      if (!document.body.contains(exampleBox)) {
-        return
-      }
-
-      exampleBox.innerHTML = previousHTML
-
-      exampleBox.classList.remove('copied')
-    }, 900)
-  } catch (error) {
-    console.warn('Copy failed:', error)
-
-    const textarea = document.createElement('textarea')
-
-    textarea.value = text
-
-    textarea.style.position = 'fixed'
-
-    textarea.style.opacity = '0'
-
-    document.body.appendChild(textarea)
-
-    textarea.select()
-
-    try {
-      document.execCommand('copy')
-
-      const previousHTML = exampleBox.innerHTML
-
-      exampleBox.classList.add('copied')
-
-      exampleBox.innerHTML = `
-        <i class="bi bi-check-circle-fill"></i>
-        <span>${message}</span>
-      `
-
-      setTimeout(() => {
-        if (document.body.contains(exampleBox)) {
-          exampleBox.innerHTML = previousHTML
-
-          exampleBox.classList.remove('copied')
-        }
-      }, 900)
-    } catch (fallbackError) {
-      console.warn('Fallback copy failed:', fallbackError)
+    if (
+      navigator.clipboard &&
+      typeof navigator
+        .clipboard
+        .writeText ===
+        'function'
+    ) {
+      await navigator.clipboard.writeText(
+        text
+      )
+    } else {
+      throw new Error(
+        'Clipboard API unavailable'
+      )
     }
 
-    document.body.removeChild(textarea)
+    showCopyFeedback(
+      exampleBox,
+      message
+    )
+  } catch (error) {
+    console.warn(
+      'Clipboard API failed:',
+      error
+    )
+
+    const textarea =
+      document.createElement(
+        'textarea'
+      )
+
+    textarea.value =
+      text
+
+    textarea.style.position =
+      'fixed'
+
+    textarea.style.left =
+      '-9999px'
+
+    textarea.style.top =
+      '0'
+
+    textarea.style.opacity =
+      '0'
+
+    document.body.appendChild(
+      textarea
+    )
+
+    textarea.focus()
+    textarea.select()
+
+    let copied = false
+
+    try {
+      copied =
+        document.execCommand(
+          'copy'
+        )
+    } catch (
+      fallbackError
+    ) {
+      console.warn(
+        'Fallback copy failed:',
+        fallbackError
+      )
+    }
+
+    textarea.remove()
+
+    if (copied) {
+      showCopyFeedback(
+        exampleBox,
+        message
+      )
+    }
   }
+}
+
+/* =========================================================
+   COPY FEEDBACK
+========================================================= */
+
+function showCopyFeedback(
+  exampleBox,
+  message
+) {
+  if (
+    !document.body.contains(
+      exampleBox
+    )
+  ) {
+    return
+  }
+
+  const previousHTML =
+    exampleBox.innerHTML
+
+  exampleBox.classList.add(
+    'copied'
+  )
+
+  exampleBox.innerHTML = `
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      ${escapeHTML(
+        message
+      )}
+    </span>
+  `
+
+  setTimeout(() => {
+    if (
+      !document.body.contains(
+        exampleBox
+      )
+    ) {
+      return
+    }
+
+    const state =
+      exampleBox?._translationState
+
+    if (
+      state?.translated
+    ) {
+      exampleBox.innerHTML = `
+        <i class="bi bi-translate"></i>
+
+        <span>
+          ${escapeHTML(
+            state.translation
+          )}
+        </span>
+      `
+    } else {
+      exampleBox.innerHTML =
+        previousHTML
+    }
+
+    exampleBox.classList.remove(
+      'copied'
+    )
+  }, 900)
 }
 
 /* =========================================================
    SINGLE CLICK
 ========================================================= */
 
-document.addEventListener('click', event => {
-  const exampleBox = event.target.closest('.example-box')
+let exampleClickTimer =
+  null
 
-  if (!exampleBox) {
-    return
+document.addEventListener(
+  'click',
+  event => {
+    const exampleBox =
+      event.target.closest(
+        '.example-box'
+      )
+
+    if (!exampleBox) {
+      return
+    }
+
+    const state =
+      exampleBox?._translationState
+
+    if (!state) {
+      return
+    }
+
+    if (
+      exampleClickTimer
+    ) {
+      clearTimeout(
+        exampleClickTimer
+      )
+    }
+
+    exampleClickTimer =
+      setTimeout(() => {
+        copyExampleText(
+          exampleBox
+        )
+
+        exampleClickTimer =
+          null
+      }, 220)
   }
-
-  const state = exampleBox._translationState
-
-  if (!state) {
-    return
-  }
-
-  copyExampleText(exampleBox)
-})
+)
 
 /* =========================================================
    DOUBLE CLICK
 ========================================================= */
 
-document.addEventListener('dblclick', event => {
-  const exampleBox = event.target.closest('.example-box')
+document.addEventListener(
+  'dblclick',
+  event => {
+    const exampleBox =
+      event.target.closest(
+        '.example-box'
+      )
 
-  if (!exampleBox) {
-    return
+    if (!exampleBox) {
+      return
+    }
+
+    if (
+      !exampleBox?._translationState
+    ) {
+      return
+    }
+
+    event.preventDefault()
+
+    if (
+      exampleClickTimer
+    ) {
+      clearTimeout(
+        exampleClickTimer
+      )
+
+      exampleClickTimer =
+        null
+    }
+
+    showExampleTranslation(
+      exampleBox
+    )
   }
+)
 
-  if (!exampleBox._translationState) {
-    return
+/* =========================================================
+   KEYBOARD EXAMPLE SUPPORT
+========================================================= */
+
+document.addEventListener(
+  'keydown',
+  event => {
+    const target =
+      event.target.closest(
+        '.example-box'
+      )
+
+    if (!target) {
+      return
+    }
+
+    if (
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+      event.preventDefault()
+
+      copyExampleText(target)
+    }
   }
-
-  event.preventDefault()
-
-  showExampleTranslation(exampleBox)
-})
+)
 
 /* =========================================================
    CREATE CARD
 ========================================================= */
 
-function createCardHTML (item, index) {
-  const savedStatus = getStatus(item)
+function createCardHTML(
+  item,
+  index
+) {
+  const savedStatus =
+    getStatus(item)
 
-  const examples = Array.isArray(item.examples) ? item.examples : []
+  const examples =
+    Array.isArray(
+      item.examples
+    )
+      ? item.examples
+      : []
+
+  const lang =
+    normalizeLanguage(
+      currentLanguage
+    )
 
   const meaning =
-    currentLanguage === 'en'
-      ? item.meaning?.en || '-'
-      : currentLanguage === 'cn'
-      ? item.meaning?.cn || item.meaning?.zh || '-'
-      : item.meaning?.id || '-'
+    lang === 'en'
+      ? item.meaning?.en ||
+        '-'
+      : lang === 'cn'
+      ? item.meaning?.cn ||
+        item.meaning?.zh ||
+        '-'
+      : item.meaning?.id ||
+        '-'
 
-  const examplesHTML = examples
-    .map((example, exampleIndex) => {
-      const state = createExampleState(item, example, exampleIndex)
+  const examplesHTML =
+    examples
+      .map(
+        (
+          example,
+          exampleIndex
+        ) => {
+          const state =
+            createExampleState(
+              item,
+              example,
+              exampleIndex
+            )
 
-      return `
+          return `
             <div
               class="example-box"
               role="button"
               tabindex="0"
-              title="${escapeHTML(getLanguageText('translateTitle'))}"
-              data-example-id="${escapeHTML(state.exampleId)}"
+              title="${escapeHTML(
+                getLanguageText(
+                  'translateTitle'
+                )
+              )}"
+              data-example-id="${escapeHTML(
+                state.exampleId
+              )}"
             >
               <i class="bi bi-caret-right-fill"></i>
 
-              <span>
+              <span class="example-content">
                 ${example}
               </span>
             </div>
           `
-    })
-    .join('')
+        }
+      )
+      .join('')
 
-  const reading = item.reading || item.yomi || item.furigana || ''
+  const reading =
+    item.reading ||
+    item.yomi ||
+    item.furigana ||
+    ''
 
   const moduleText =
     item.module ||
     item.lesson ||
-    `M${String(item._week).replace('week', '')} - H${String(item._day).replace(
+    `M${String(
+      item._week
+    ).replace(
+      'week',
+      ''
+    )} - H${String(
+      item._day
+    ).replace(
       'day',
       ''
     )}`
 
-  /*
-      Penting:
-      explanation asli tetap diambil dari
-      item.explanation, tetapi isinya nanti
-      otomatis diterjemahkan sesuai bahasa.
-  */
-
   return `
     <article
       class="grammar-card"
-      data-id="${escapeHTML(item.id)}"
-      style="animation-delay:${index * 0.045}s"
+      data-id="${escapeHTML(
+        item.id
+      )}"
+      style="animation-delay:${
+        index * 0.045
+      }s"
     >
 
       <div class="card-top">
 
         <span class="day-badge">
           <i class="bi bi-bookmark-star-fill"></i>
-          ${escapeHTML(moduleText)}
+          ${escapeHTML(
+            moduleText
+          )}
         </span>
 
         ${
@@ -1408,40 +3049,56 @@ function createCardHTML (item, index) {
 
       </div>
 
-
       <div class="rule-area">
 
         <div class="rule-reading">
-          ${escapeHTML(reading)}
+          ${escapeHTML(
+            reading
+          )}
         </div>
 
         <div class="grammar-rule">
-          ${item.rule || '-'}
+          ${
+            item.rule ||
+            '-'
+          }
         </div>
 
         <div class="meaning-main">
 
-          <span class="
-            ${currentLanguage === 'id' ? '' : 'hidden'}
-          ">
-            ${currentLanguage === 'id' ? item.meaning?.id || '' : ''}
-          </span>
+          ${
+            lang === 'id'
+              ? `
+                <span>
+                  ${item.meaning?.id || ''}
+                </span>
+              `
+              : ''
+          }
 
-          <span class="
-            ${currentLanguage === 'en' ? '' : 'hidden'}
-          ">
-            ${currentLanguage === 'en' ? item.meaning?.en || '' : ''}
-          </span>
+          ${
+            lang === 'en'
+              ? `
+                <span>
+                  ${item.meaning?.en || ''}
+                </span>
+              `
+              : ''
+          }
 
-          <span class="
-            ${currentLanguage === 'cn' ? '' : 'hidden'}
-          ">
-            ${
-              currentLanguage === 'cn'
-                ? item.meaning?.cn || item.meaning?.zh || ''
-                : ''
-            }
-          </span>
+          ${
+            lang === 'cn'
+              ? `
+                <span>
+                  ${
+                    item.meaning?.cn ||
+                    item.meaning?.zh ||
+                    ''
+                  }
+                </span>
+              `
+              : ''
+          }
 
         </div>
 
@@ -1450,7 +3107,9 @@ function createCardHTML (item, index) {
           type="button"
           onclick="
             handleMainSpeech(
-              '${escapeForJS(item.id)}'
+              '${escapeForJS(
+                item.id
+              )}'
             )
           "
           title="Bacakan bahasa Jepang"
@@ -1461,48 +3120,56 @@ function createCardHTML (item, index) {
 
       </div>
 
-
       <div class="card-body">
-
-
-        <!-- =================================================
-             MEANING
-        ================================================== -->
 
         <div class="info-block">
 
           <div class="info-label">
             <i class="bi bi-info-circle-fill"></i>
-            ${escapeHTML(getLanguageText('meaning'))}
+            ${escapeHTML(
+              getLanguageText(
+                'meaning'
+              )
+            )}
           </div>
 
           <div class="info-text">
 
             ${
-              currentLanguage === 'id'
+              lang === 'id'
                 ? `
                   <span class="lang-id">
-                    ${item.meaning?.id || '-'}
+                    ${
+                      item.meaning?.id ||
+                      '-'
+                    }
                   </span>
                 `
                 : ''
             }
 
             ${
-              currentLanguage === 'en'
+              lang === 'en'
                 ? `
                   <span class="lang-en">
-                    ${item.meaning?.en || '-'}
+                    ${
+                      item.meaning?.en ||
+                      '-'
+                    }
                   </span>
                 `
                 : ''
             }
 
             ${
-              currentLanguage === 'cn'
+              lang === 'cn'
                 ? `
                   <span class="lang-cn">
-                    ${item.meaning?.cn || item.meaning?.zh || '-'}
+                    ${
+                      item.meaning?.cn ||
+                      item.meaning?.zh ||
+                      '-'
+                    }
                   </span>
                 `
                 : ''
@@ -1512,34 +3179,42 @@ function createCardHTML (item, index) {
 
         </div>
 
-
-        <!-- =================================================
-             EXPLANATION
-        ================================================== -->
-
         <div class="info-block">
-
-
-
 
           <div
             class="translation-box"
-            data-explanation-id="${escapeHTML(item.id)}"
+            data-explanation-id="${escapeHTML(
+              item.id
+            )}"
           >
 
             <div class="translation-label">
               <i class="bi bi-globe2"></i>
 
               <span>
-                ${escapeHTML(getLanguageText('explanation'))}
+                ${escapeHTML(
+                  getLanguageText(
+                    'explanation'
+                  )
+                )}
               </span>
             </div>
 
             <span class="id-explanation">
               ${
-                currentLanguage === 'id'
-                  ? escapeHTML(stripHTML(item.explanation || '')) || '—'
-                  : 'Menerjemahkan...'
+                lang === 'id'
+                  ? escapeHTML(
+                      stripHTML(
+                        item.explanation ||
+                          ''
+                      )
+                    ) ||
+                    '—'
+                  : escapeHTML(
+                      getLanguageText(
+                        'translating'
+                      )
+                    )
               }
             </span>
 
@@ -1547,21 +3222,33 @@ function createCardHTML (item, index) {
 
         </div>
 
-
-        <!-- =================================================
-             EXAMPLES
-        ================================================== -->
-
         <div class="info-block examples">
 
-<div class="info-label">
-  <i class="bi bi-chat-square-text-fill"></i>
-  <span class="example-label">
-    <span class="lang-id">Contoh Kalimat</span>
-    <span class="lang-en">Example Sentences</span>
-    <span class="lang-cn">例句</span>
-  </span>
-</div>
+          <div class="info-label">
+            <i class="bi bi-chat-square-text-fill"></i>
+
+            <span class="example-label">
+
+              ${
+                lang === 'id'
+                  ? 'Contoh Kalimat'
+                  : ''
+              }
+
+              ${
+                lang === 'en'
+                  ? 'Example Sentences'
+                  : ''
+              }
+
+              ${
+                lang === 'cn'
+                  ? '例句'
+                  : ''
+              }
+
+            </span>
+          </div>
 
           ${
             examplesHTML ||
@@ -1570,7 +3257,11 @@ function createCardHTML (item, index) {
                 <i class="bi bi-dash-circle"></i>
 
                 <span>
-                  ${escapeHTML(getLanguageText('noExample'))}
+                  ${escapeHTML(
+                    getLanguageText(
+                      'noExample'
+                    )
+                  )}
                 </span>
               </div>
             `
@@ -1580,15 +3271,10 @@ function createCardHTML (item, index) {
 
       </div>
 
-
-      <!-- =================================================
-           TTS
-      ================================================== -->
-
       <div class="tts-toolbar">
 
         <div class="tts-status">
-          TTS Jepang siap
+          読み上げ機能
         </div>
 
         <button
@@ -1596,7 +3282,9 @@ function createCardHTML (item, index) {
           type="button"
           onclick="
             handleMainSpeech(
-              '${escapeForJS(item.id)}'
+              '${escapeForJS(
+                item.id
+              )}'
             )
           "
           title="Play / Stop"
@@ -1633,23 +3321,24 @@ function createCardHTML (item, index) {
 
       </div>
 
-
-      <!-- =================================================
-           STATUS
-      ================================================== -->
-
       <div class="card-footer">
 
         <button
           class="
             status-btn
             btn-0
-            ${savedStatus === '0' ? 'active' : ''}
+            ${
+              savedStatus === '0'
+                ? 'active'
+                : ''
+            }
           "
           type="button"
           onclick="
             updateStatus(
-              '${escapeForJS(item.id)}',
+              '${escapeForJS(
+                item.id
+              )}',
               '0',
               this
             )
@@ -1662,17 +3351,22 @@ function createCardHTML (item, index) {
           </span>
         </button>
 
-
         <button
           class="
             status-btn
             btn-1
-            ${savedStatus === '1' ? 'active' : ''}
+            ${
+              savedStatus === '1'
+                ? 'active'
+                : ''
+            }
           "
           type="button"
           onclick="
             updateStatus(
-              '${escapeForJS(item.id)}',
+              '${escapeForJS(
+                item.id
+              )}',
               '1',
               this
             )
@@ -1685,17 +3379,22 @@ function createCardHTML (item, index) {
           </span>
         </button>
 
-
         <button
           class="
             status-btn
             btn-2
-            ${savedStatus === '2' ? 'active' : ''}
+            ${
+              savedStatus === '2'
+                ? 'active'
+                : ''
+            }
           "
           type="button"
           onclick="
             updateStatus(
-              '${escapeForJS(item.id)}',
+              '${escapeForJS(
+                item.id
+              )}',
               '2',
               this
             )
@@ -1718,23 +3417,47 @@ function createCardHTML (item, index) {
    INITIALIZE EXAMPLE STATES
 ========================================================= */
 
-function initializeExampleStates (items) {
+function initializeExampleStates(
+  items
+) {
   items.forEach(item => {
-    const examples = Array.isArray(item.examples) ? item.examples : []
+    const examples =
+      Array.isArray(
+        item.examples
+      )
+        ? item.examples
+        : []
 
-    examples.forEach((example, index) => {
-      const selector = `.grammar-card[data-id="${CSS.escape(
-        String(item.id)
-      )}"] .example-box[data-example-id="${CSS.escape(`${item.id}_${index}`)}"]`
+    examples.forEach(
+      (
+        example,
+        index
+      ) => {
+        const selector =
+          `.grammar-card[data-id="${CSS.escape(
+            String(item.id)
+          )}"] .example-box[data-example-id="${CSS.escape(
+            `${item.id}_${index}`
+          )}"]`
 
-      const exampleBox = document.querySelector(selector)
+        const exampleBox =
+          document.querySelector(
+            selector
+          )
 
-      if (!exampleBox) {
-        return
+        if (!exampleBox) {
+          return
+        }
+
+        exampleBox
+          ._translationState =
+          createExampleState(
+            item,
+            example,
+            index
+          )
       }
-
-      exampleBox._translationState = createExampleState(item, example, index)
-    })
+    )
   })
 }
 
@@ -1742,50 +3465,114 @@ function initializeExampleStates (items) {
    LOAD EXPLANATIONS
 ========================================================= */
 
-async function loadCardTranslations (items) {
-  await Promise.all(
-    items.map(async item => {
-      const box = document.querySelector(
-        `.translation-box[data-explanation-id="${CSS.escape(String(item.id))}"]`
-      )
+async function loadCardTranslations(
+  items
+) {
+  const selectedLanguage =
+    normalizeLanguage(
+      currentLanguage
+    )
+
+  if (
+    selectedLanguage ===
+    'id'
+  ) {
+    items.forEach(item => {
+      const box =
+        document.querySelector(
+          `.translation-box[data-explanation-id="${CSS.escape(
+            String(item.id)
+          )}"]`
+        )
 
       if (!box) {
         return
       }
 
-      const target = box.querySelector('.id-explanation')
+      const target =
+        box.querySelector(
+          '.id-explanation'
+        )
 
       if (!target) {
         return
       }
 
-      /*
-            Indonesia = langsung pakai
-            explanation dari data.
-        */
-
-      if (currentLanguage === 'id') {
-        target.textContent = stripHTML(item.explanation || '') || '—'
-
-        return
-      }
-
-      /*
-            English / Chinese =
-            otomatis translate dari
-            explanation Indonesia.
-        */
-
-      target.textContent = getLanguageText('translating')
-
-      const translated = await getExplanationForLanguage(item)
-
-      if (!document.body.contains(target)) {
-        return
-      }
-
-      target.textContent = translated || '—'
+      target.textContent =
+        stripHTML(
+          item.explanation ||
+            ''
+        ) || '—'
     })
+
+    return
+  }
+
+  await Promise.allSettled(
+    items.map(
+      async item => {
+        const box =
+          document.querySelector(
+            `.translation-box[data-explanation-id="${CSS.escape(
+              String(item.id)
+            )}"]`
+          )
+
+        if (!box) {
+          return
+        }
+
+        const target =
+          box.querySelector(
+            '.id-explanation'
+          )
+
+        if (!target) {
+          return
+        }
+
+        target.textContent =
+          getLanguageText(
+            'translating'
+          )
+
+        try {
+          const translated =
+            await getExplanationForLanguage(
+              item
+            )
+
+          if (
+            !document.body.contains(
+              target
+            )
+          ) {
+            return
+          }
+
+          target.textContent =
+            translated ||
+            '—'
+        } catch (error) {
+          console.warn(
+            'Explanation translation failed:',
+            error
+          )
+
+          if (
+            document.body.contains(
+              target
+            )
+          ) {
+            target.textContent =
+              stripHTML(
+                item.explanation ||
+                  ''
+              ) || '—'
+          }
+        }
+      }
+    )
   )
 }
 
@@ -1793,32 +3580,78 @@ async function loadCardTranslations (items) {
    RENDER CARDS
 ========================================================= */
 
-async function renderCards () {
+async function renderCards() {
   stopSpeech()
 
-  if (activeDay === 'day7' && !currentSearch) {
-    grammarCards.innerHTML = ''
+  if (
+    activeDay ===
+      'day7' &&
+    !currentSearch
+  ) {
+    if (
+      grammarCards
+    ) {
+      grammarCards.innerHTML =
+        ''
 
-    grammarCards.classList.add('hidden')
+      grammarCards.classList.add(
+        'hidden'
+      )
+    }
 
-    emptyState.classList.add('hidden')
+    if (
+      emptyState
+    ) {
+      emptyState.classList.add(
+        'hidden'
+      )
+    }
 
-    resultCounter.textContent = 'Full Exam'
+    if (
+      resultCounter
+    ) {
+      resultCounter.textContent =
+        'Full Exam'
+    }
 
     updateProgress([])
 
     return
   }
 
-  grammarCards.classList.remove('hidden')
+  if (
+    grammarCards
+  ) {
+    grammarCards.classList.remove(
+      'hidden'
+    )
+  }
 
-  const items = getFilteredItems()
+  const items =
+    getFilteredItems()
 
-  grammarCards.innerHTML = ''
+  if (
+    grammarCards
+  ) {
+    grammarCards.innerHTML =
+      ''
+  }
 
-  emptyState.classList.toggle('hidden', items.length !== 0)
+  if (
+    emptyState
+  ) {
+    emptyState.classList.toggle(
+      'hidden',
+      items.length !== 0
+    )
+  }
 
-  resultCounter.textContent = `${items.length} materi`
+  if (
+    resultCounter
+  ) {
+    resultCounter.textContent =
+      `${items.length} materi`
+  }
 
   if (!items.length) {
     updateProgress([])
@@ -1826,81 +3659,189 @@ async function renderCards () {
     return
   }
 
-  items.forEach((item, index) => {
-    grammarCards.insertAdjacentHTML('beforeend', createCardHTML(item, index))
-  })
+  items.forEach(
+    (
+      item,
+      index
+    ) => {
+      if (
+        grammarCards
+      ) {
+        grammarCards.insertAdjacentHTML(
+          'beforeend',
+          createCardHTML(
+            item,
+            index
+          )
+        )
+      }
+    }
+  )
 
-  initializeExampleStates(items)
+  initializeExampleStates(
+    items
+  )
 
-  updateProgress(items)
+  updateProgress(
+    items
+  )
 
-  loadCardTranslations(items)
+  /*
+     Translation penjelasan
+  */
+  loadCardTranslations(
+    items
+  )
+
+  /*
+     Furigana otomatis.
+     Tidak di-await agar render awal
+     tetap cepat.
+  */
+  applyFuriganaToExamples()
 }
 
 /* =========================================================
    PROGRESS
 ========================================================= */
 
-function updateProgress (items) {
-  if (!items.length) {
-    progressPercent.textContent = '0%'
+function updateProgress(
+  items
+) {
+  if (
+    !elementExists(
+      progressPercent
+    )
+  ) {
+    return
+  }
 
-    progressBarFill.style.width = '0%'
+  if (!items.length) {
+    progressPercent.textContent =
+      '0%'
+
+    if (
+      progressBarFill
+    ) {
+      progressBarFill.style.width =
+        '0%'
+    }
 
     return
   }
 
-  const mastered = items.filter(item => getStatus(item) === '2').length
+  const mastered =
+    items.filter(
+      item =>
+        getStatus(item) ===
+        '2'
+    ).length
 
-  const percentage = Math.round((mastered / items.length) * 100)
+  const percentage =
+    Math.round(
+      (mastered /
+        items.length) *
+        100
+    )
 
-  progressPercent.textContent = `${percentage}%`
+  progressPercent.textContent =
+    `${percentage}%`
 
-  progressBarFill.style.width = `${percentage}%`
+  if (
+    progressBarFill
+  ) {
+    progressBarFill.style.width =
+      `${percentage}%`
+  }
 }
 
 /* =========================================================
    HEADER
 ========================================================= */
 
-function updateContentHeader () {
-  if (currentSearch) {
-    weekTitle.textContent = 'Hasil Pencarian'
+function updateContentHeader() {
+  if (
+    !elementExists(
+      weekTitle
+    ) ||
+    !elementExists(
+      dayTitle
+    )
+  ) {
+    return
+  }
 
-    dayTitle.textContent = `Menemukan materi untuk "${currentSearch}"`
+  if (
+    currentSearch
+  ) {
+    weekTitle.textContent =
+      'Hasil Pencarian'
+
+    dayTitle.textContent =
+      `Menemukan materi untuk "${currentSearch}"`
 
     return
   }
 
-  const week = courseData[activeWeek]
+  const week =
+    courseData[
+      activeWeek
+    ]
 
-  const day = week?.days[activeDay]
+  const day =
+    week?.days?.[
+      activeDay
+    ]
 
   weekTitle.textContent =
-    activeDay === 'day7'
+    activeDay ===
+      'day7'
       ? `${week?.title || ''}`
-      : week?.title || 'Materi JLPT N1'
+      : week?.title ||
+        'Materi JLPT N1'
 
-  dayTitle.textContent = day?.title || ''
+  dayTitle.textContent =
+    day?.title ||
+    ''
 }
 
 /* =========================================================
    FILTER LABEL
 ========================================================= */
 
-function updateFilterLabel () {
-  if (currentSearch) {
-    activeFilterLabel.textContent = `Pencarian: "${currentSearch}"`
+function updateFilterLabel() {
+  if (
+    !elementExists(
+      activeFilterLabel
+    )
+  ) {
+    return
+  }
+
+  if (
+    currentSearch
+  ) {
+    activeFilterLabel.textContent =
+      `Pencarian: "${currentSearch}"`
 
     return
   }
 
-  const weekNumber = activeWeek.replace('week', '')
+  const weekNumber =
+    activeWeek.replace(
+      'week',
+      ''
+    )
 
-  const dayNumber = activeDay.replace('day', '')
+  const dayNumber =
+    activeDay.replace(
+      'day',
+      ''
+    )
 
   activeFilterLabel.textContent =
-    activeDay === 'day7'
+    activeDay ===
+      'day7'
       ? `Minggu ${weekNumber} • Hari 7 • Full Exam`
       : `Minggu ${weekNumber} • Hari ${dayNumber}`
 }
@@ -1909,39 +3850,72 @@ function updateFilterLabel () {
    EXAM
 ========================================================= */
 
-function renderExam (examData) {
-  if (currentSearch) {
-    miniExam.classList.add('hidden')
+function renderExam(
+  examData
+) {
+  if (
+    !elementExists(
+      miniExam
+    )
+  ) {
+    return
+  }
+
+  if (
+    currentSearch
+  ) {
+    miniExam.classList.add(
+      'hidden'
+    )
 
     return
   }
 
   if (!examData) {
-    miniExam.classList.add('hidden')
+    miniExam.classList.add(
+      'hidden'
+    )
 
     return
   }
 
-  miniExam.classList.remove('hidden')
+  miniExam.classList.remove(
+    'hidden'
+  )
 
-  if (typeof examData === 'string') {
-    examContent.innerHTML = examData
+  if (
+    typeof examData ===
+    'string'
+  ) {
+    examContent.innerHTML =
+      examData
 
     initializeHTMLExam()
 
     return
   }
 
-  if (examData.type === 'html') {
-    examContent.innerHTML = examData.content || ''
+  if (
+    examData.type ===
+    'html'
+  ) {
+    examContent.innerHTML =
+      examData.content ||
+      ''
 
     initializeHTMLExam()
 
     return
   }
 
-  if (Array.isArray(examData.questions)) {
-    renderObjectExam(examData)
+  if (
+    Array.isArray(
+      examData.questions
+    )
+  ) {
+    renderObjectExam(
+      examData
+    )
 
     return
   }
@@ -1958,20 +3932,50 @@ function renderExam (examData) {
    HTML EXAM
 ========================================================= */
 
-function initializeHTMLExam () {
-  const buttons = examContent.querySelectorAll('.exam-btn')
+function initializeHTMLExam() {
+  if (!examContent) {
+    return
+  }
 
-  buttons.forEach((button, index) => {
-    button.dataset.examOption = String(index + 1)
+  const buttons =
+    examContent.querySelectorAll(
+      '.exam-btn'
+    )
 
-    button.style.animationDelay = `${index * 0.015}s`
-  })
+  buttons.forEach(
+    (
+      button,
+      index
+    ) => {
+      button.dataset.examOption =
+        String(
+          index + 1
+        )
 
-  const paragraphs = examContent.querySelectorAll('.exam-q')
+      button.style.animationDelay =
+        `${index * 0.015}s`
+    }
+  )
 
-  paragraphs.forEach((question, index) => {
-    question.style.animationDelay = `${index * 0.035}s`
-  })
+  const paragraphs =
+    examContent.querySelectorAll(
+      '.exam-q'
+    )
+
+  paragraphs.forEach(
+    (
+      question,
+      index
+    ) => {
+      question.style.animationDelay =
+        `${index * 0.035}s`
+    }
+  )
+
+  window.currentObjectExam =
+    null
+
+  examAnswers = {}
 
   updateExamProgress()
 }
@@ -1982,13 +3986,20 @@ function initializeHTMLExam () {
 
 let examAnswers = {}
 
-function renderObjectExam (examData) {
+function renderObjectExam(
+  examData
+) {
   examAnswers = {}
 
-  let html = `<div class="exam-container">`
+  let html =
+    `<div class="exam-container">`
 
-  examData.questions.forEach((question, index) => {
-    html += `
+  examData.questions.forEach(
+    (
+      question,
+      index
+    ) => {
+      html += `
         <div
           class="exam-q"
           data-question-index="${index}"
@@ -2005,8 +4016,12 @@ function renderObjectExam (examData) {
           <div>
       `
 
-    question.options.forEach((option, optionIndex) => {
-      html += `
+      question.options.forEach(
+        (
+          option,
+          optionIndex
+        ) => {
+          html += `
             <button
               class="exam-opt-btn"
               type="button"
@@ -2022,9 +4037,10 @@ function renderObjectExam (examData) {
               ${option}
             </button>
           `
-    })
+        }
+      )
 
-    html += `
+      html += `
           </div>
 
           <div
@@ -2034,7 +4050,8 @@ function renderObjectExam (examData) {
 
         </div>
       `
-  })
+    }
+  )
 
   html += `
     <button
@@ -2092,9 +4109,11 @@ function renderObjectExam (examData) {
     </div>
   `
 
-  examContent.innerHTML = html
+  examContent.innerHTML =
+    html
 
-  window.currentObjectExam = examData
+  window.currentObjectExam =
+    examData
 
   updateExamProgress()
 }
@@ -2103,98 +4122,181 @@ function renderObjectExam (examData) {
    OBJECT EXAM ANSWER
 ========================================================= */
 
-window.chooseExamAnswer = function (questionIndex, optionIndex, button) {
-  if (examAnswers[questionIndex] !== undefined) {
-    return
-  }
-
-  examAnswers[questionIndex] = optionIndex
-
-  const parent = button.parentElement
-
-  const buttons = parent.querySelectorAll('button')
-
-  buttons.forEach(btn => (btn.disabled = true))
-
-  const question = window.currentObjectExam?.questions[questionIndex]
-
-  if (!question) {
-    return
-  }
-
-  if (optionIndex === question.correct) {
-    button.style.background = 'var(--success)'
-
-    button.style.color = 'white'
-
-    document.getElementById(`exam-feedback-${questionIndex}`).innerHTML = `
-        <span
-          style="color:var(--success)"
-        >
-          <i
-            class="bi bi-check-circle-fill"
-          ></i>
-          Benar!
-        </span>
-      `
-  } else {
-    button.style.background = 'var(--danger)'
-
-    button.style.color = 'white'
-
-    if (buttons[question.correct]) {
-      buttons[question.correct].style.background = 'var(--success)'
-
-      buttons[question.correct].style.color = 'white'
+window.chooseExamAnswer =
+  function (
+    questionIndex,
+    optionIndex,
+    button
+  ) {
+    if (
+      examAnswers[
+        questionIndex
+      ] !== undefined
+    ) {
+      return
     }
 
-    document.getElementById(`exam-feedback-${questionIndex}`).innerHTML = `
-        <span
-          style="color:var(--danger)"
-        >
-          <i
-            class="bi bi-x-circle-fill"
-          ></i>
-          Kurang tepat.
-        </span>
-      `
-  }
+    examAnswers[
+      questionIndex
+    ] =
+      optionIndex
 
-  updateExamProgress()
-}
+    const parent =
+      button.parentElement
+
+    const buttons =
+      parent.querySelectorAll(
+        'button'
+      )
+
+    buttons.forEach(
+      btn =>
+        (btn.disabled = true)
+    )
+
+    const question =
+      window.currentObjectExam
+        ?.questions?.[
+        questionIndex
+      ]
+
+    if (!question) {
+      return
+    }
+
+    const feedback =
+      document.getElementById(
+        `exam-feedback-${questionIndex}`
+      )
+
+    if (
+      optionIndex ===
+      question.correct
+    ) {
+      button.style.background =
+        'var(--success)'
+
+      button.style.color =
+        'white'
+
+      if (feedback) {
+        feedback.innerHTML = `
+          <span
+            style="color:var(--success)"
+          >
+            <i
+              class="bi bi-check-circle-fill"
+            ></i>
+            Benar!
+          </span>
+        `
+      }
+    } else {
+      button.style.background =
+        'var(--danger)'
+
+      button.style.color =
+        'white'
+
+      if (
+        buttons[
+          question.correct
+        ]
+      ) {
+        buttons[
+          question.correct
+        ].style.background =
+          'var(--success)'
+
+        buttons[
+          question.correct
+        ].style.color =
+          'white'
+      }
+
+      if (feedback) {
+        feedback.innerHTML = `
+          <span
+            style="color:var(--danger)"
+          >
+            <i
+              class="bi bi-x-circle-fill"
+            ></i>
+            Kurang tepat.
+          </span>
+        `
+      }
+    }
+
+    updateExamProgress()
+  }
 
 /* =========================================================
    FINISH OBJECT EXAM
 ========================================================= */
 
-window.finishObjectExam = function () {
-  const exam = window.currentObjectExam
+window.finishObjectExam =
+  function () {
+    const exam =
+      window.currentObjectExam
 
-  if (!exam) {
-    return
-  }
-
-  if (Object.keys(examAnswers).length < exam.questions.length) {
-    alert('Jawab semua pertanyaan terlebih dahulu.')
-
-    return
-  }
-
-  let score = 0
-
-  exam.questions.forEach((question, index) => {
-    if (examAnswers[index] === question.correct) {
-      score++
+    if (!exam) {
+      return
     }
-  })
 
-  const percentage = Math.round((score / exam.questions.length) * 100)
+    if (
+      Object.keys(
+        examAnswers
+      ).length <
+      exam.questions.length
+    ) {
+      alert(
+        'Jawab semua pertanyaan terlebih dahulu.'
+      )
 
-  const result = document.getElementById('objectExamResult')
+      return
+    }
 
-  result.classList.remove('hidden')
+    let score = 0
 
-  result.innerHTML = `
+    exam.questions.forEach(
+      (
+        question,
+        index
+      ) => {
+        if (
+          examAnswers[index] ===
+          question.correct
+        ) {
+          score++
+        }
+      }
+    )
+
+    const percentage =
+      exam.questions.length >
+      0
+        ? Math.round(
+            (score /
+              exam.questions.length) *
+              100
+          )
+        : 0
+
+    const result =
+      document.getElementById(
+        'objectExamResult'
+      )
+
+    if (!result) {
+      return
+    }
+
+    result.classList.remove(
+      'hidden'
+    )
+
+    result.innerHTML = `
       <i class="bi bi-trophy-fill"></i>
 
       Skor:
@@ -2203,321 +4305,637 @@ window.finishObjectExam = function () {
 
       <br>
 
-      ${percentage >= 70 ? 'よくできました！' : 'もう一度復習しましょう。'}
+      ${
+        percentage >= 70
+          ? 'よくできました！'
+          : 'もう一度復習しましょう。'
+      }
     `
-}
+  }
 
 /* =========================================================
    EXAM PROGRESS
 ========================================================= */
 
-function updateExamProgress () {
-  const questionBlocks = examContent.querySelectorAll('.exam-q')
+function updateExamProgress() {
+  if (
+    !elementExists(
+      examContent
+    )
+  ) {
+    return
+  }
 
-  if (window.currentObjectExam && questionBlocks.length) {
-    const total = questionBlocks.length
+  const questionBlocks =
+    examContent.querySelectorAll(
+      '.exam-q'
+    )
 
-    const answered = Object.keys(examAnswers).length
+  if (
+    window.currentObjectExam &&
+    questionBlocks.length
+  ) {
+    const total =
+      questionBlocks.length
 
-    const percentage = Math.round((answered / total) * 100)
+    const answered =
+      Object.keys(
+        examAnswers
+      ).length
 
-    examAnswered.textContent = `${percentage}%`
+    const percentage =
+      total > 0
+        ? Math.round(
+            (answered /
+              total) *
+              100
+          )
+        : 0
 
-    examProgressFill.style.width = `${percentage}%`
+    if (examAnswered) {
+      examAnswered.textContent =
+        `${percentage}%`
+    }
+
+    if (
+      examProgressFill
+    ) {
+      examProgressFill.style.width =
+        `${percentage}%`
+    }
 
     return
   }
 
-  examAnswered.textContent = '25 Soal'
+  if (examAnswered) {
+    examAnswered.textContent =
+      '25 Soal'
+  }
 
-  examProgressFill.style.width = '0%'
+  if (
+    examProgressFill
+  ) {
+    examProgressFill.style.width =
+      '0%'
+  }
 }
 
 /* =========================================================
    STATUS UPDATE
 ========================================================= */
 
-window.updateStatus = function (id, status, button) {
-  localStorage.setItem(`status_${id}`, status)
+window.updateStatus =
+  function (
+    id,
+    status,
+    button
+  ) {
+    localStorage.setItem(
+      `status_${id}`,
+      status
+    )
 
-  button.parentElement
-    .querySelectorAll('.status-btn')
-    .forEach(btn => btn.classList.remove('active'))
+    if (
+      button?.parentElement
+    ) {
+      button.parentElement
+        .querySelectorAll(
+          '.status-btn'
+        )
+        .forEach(
+          btn =>
+            btn.classList.remove(
+              'active'
+            )
+        )
 
-  button.classList.add('active')
+      button.classList.add(
+        'active'
+      )
+    }
 
-  updateProgress(getFilteredItems())
-}
+    updateProgress(
+      getFilteredItems()
+    )
+  }
 
 /* =========================================================
    SEARCH
 ========================================================= */
 
-searchInput.addEventListener('input', event => {
-  currentSearch = event.target.value.trim().toLowerCase()
+if (searchInput) {
+  searchInput.addEventListener(
+    'input',
+    event => {
+      currentSearch =
+        event.target.value
+          .trim()
+          .toLowerCase()
 
-  updateContentHeader()
-  updateFilterLabel()
-  renderCards()
+      updateContentHeader()
 
-  renderExam(courseData[activeWeek]?.days[activeDay]?.exam)
-})
+      updateFilterLabel()
+
+      renderCards()
+
+      renderExam(
+        courseData[
+          activeWeek
+        ]?.days?.[
+          activeDay
+        ]?.exam
+      )
+    }
+  )
+}
 
 /* =========================================================
    WEEK CHANGE
 ========================================================= */
 
-weekSelect.addEventListener('change', event => {
-  activeWeek = event.target.value
+if (weekSelect) {
+  weekSelect.addEventListener(
+    'change',
+    event => {
+      activeWeek =
+        event.target.value
 
-  activeDay = 'day1'
+      activeDay =
+        'day1'
 
-  currentSearch = ''
+      currentSearch =
+        ''
 
-  searchInput.value = ''
+      if (searchInput) {
+        searchInput.value =
+          ''
+      }
 
-  daySelect.value = activeDay
+      if (daySelect) {
+        daySelect.value =
+          activeDay
+      }
 
-  updateContentHeader()
-  updateFilterLabel()
-  renderCards()
+      updateContentHeader()
 
-  renderExam(courseData[activeWeek]?.days[activeDay]?.exam)
-})
+      updateFilterLabel()
+
+      renderCards()
+
+      renderExam(
+        courseData[
+          activeWeek
+        ]?.days?.[
+          activeDay
+        ]?.exam
+      )
+    }
+  )
+}
 
 /* =========================================================
    DAY CHANGE
 ========================================================= */
 
-daySelect.addEventListener('change', event => {
-  activeDay = event.target.value
+if (daySelect) {
+  daySelect.addEventListener(
+    'change',
+    event => {
+      activeDay =
+        event.target.value
 
-  currentSearch = ''
+      currentSearch =
+        ''
 
-  searchInput.value = ''
+      if (searchInput) {
+        searchInput.value =
+          ''
+      }
 
-  updateContentHeader()
-  updateFilterLabel()
-  renderCards()
+      updateContentHeader()
 
-  renderExam(courseData[activeWeek]?.days[activeDay]?.exam)
-})
+      updateFilterLabel()
+
+      renderCards()
+
+      renderExam(
+        courseData[
+          activeWeek
+        ]?.days?.[
+          activeDay
+        ]?.exam
+      )
+    }
+  )
+}
 
 /* =========================================================
    STATUS FILTER
 ========================================================= */
 
-statusSelect.addEventListener('change', event => {
-  currentStatus = event.target.value
+if (statusSelect) {
+  statusSelect.addEventListener(
+    'change',
+    event => {
+      currentStatus =
+        event.target.value
 
-  if (activeDay === 'day7' && !currentSearch) {
-    return
-  }
+      if (
+        activeDay ===
+          'day7' &&
+        !currentSearch
+      ) {
+        return
+      }
 
-  renderCards()
-})
+      renderCards()
+    }
+  )
+}
 
 /* =========================================================
    RESET
 ========================================================= */
 
-function resetFilters () {
-  currentSearch = ''
+function resetFilters() {
+  currentSearch =
+    ''
 
-  currentStatus = 'all'
+  currentStatus =
+    'all'
 
-  activeWeek = 'week1'
+  activeWeek =
+    'week1'
 
-  activeDay = 'day1'
+  activeDay =
+    'day1'
 
-  searchInput.value = ''
+  if (searchInput) {
+    searchInput.value =
+      ''
+  }
 
-  statusSelect.value = 'all'
+  if (statusSelect) {
+    statusSelect.value =
+      'all'
+  }
 
-  weekSelect.value = 'week1'
+  if (weekSelect) {
+    weekSelect.value =
+      'week1'
+  }
 
-  daySelect.value = 'day1'
+  if (daySelect) {
+    daySelect.value =
+      'day1'
+  }
 
   updateContentHeader()
+
   updateFilterLabel()
+
   renderCards()
 
-  renderExam(courseData.week1?.days.day1?.exam)
+  renderExam(
+    courseData.week1?.days
+      ?.day1?.exam
+  )
 }
 
-resetFiltersBtn.addEventListener('click', resetFilters)
+if (resetFiltersBtn) {
+  resetFiltersBtn.addEventListener(
+    'click',
+    resetFilters
+  )
+}
 
-emptyResetBtn.addEventListener('click', resetFilters)
+if (emptyResetBtn) {
+  emptyResetBtn.addEventListener(
+    'click',
+    resetFilters
+  )
+}
 
 /* =========================================================
    CTRL + K
 ========================================================= */
 
-document.addEventListener('keydown', event => {
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-    event.preventDefault()
-    searchInput.focus()
+document.addEventListener(
+  'keydown',
+  event => {
+    if (
+      (event.ctrlKey ||
+        event.metaKey) &&
+      event.key.toLowerCase() ===
+        'k'
+    ) {
+      event.preventDefault()
+
+      if (searchInput) {
+        searchInput.focus()
+      }
+    }
   }
-})
+)
 
 /* =========================================================
    SPACE = PAUSE
 ========================================================= */
 
-document.addEventListener('keydown', event => {
-  if (event.code !== 'Space') {
-    return
-  }
+document.addEventListener(
+  'keydown',
+  event => {
+    if (
+      event.code !== 'Space'
+    ) {
+      return
+    }
 
-  if (
-    event.target.tagName === 'INPUT' ||
-    event.target.tagName === 'TEXTAREA' ||
-    event.target.tagName === 'SELECT'
-  ) {
-    return
-  }
+    const target =
+      event.target
 
-  if (speakingCardId !== null) {
-    event.preventDefault()
-    togglePauseSpeech()
+    if (
+      target?.tagName ===
+        'INPUT' ||
+      target?.tagName ===
+        'TEXTAREA' ||
+      target?.tagName ===
+        'SELECT' ||
+      target?.isContentEditable
+    ) {
+      return
+    }
+
+    if (
+      speakingCardId !==
+      null
+    ) {
+      event.preventDefault()
+
+      togglePauseSpeech()
+    }
   }
-})
+)
 
 /* =========================================================
    MEMO MODE
 ========================================================= */
 
-memoToggle.addEventListener('click', () => {
-  memoMode = !memoMode
+if (memoToggle) {
+  memoToggle.addEventListener(
+    'click',
+    () => {
+      memoMode =
+        !memoMode
 
-  document.body.classList.toggle('memo-mode', memoMode)
+      document.body.classList.toggle(
+        'memo-mode',
+        memoMode
+      )
 
-  memoToggle.classList.toggle('active', memoMode)
+      memoToggle.classList.toggle(
+        'active',
+        memoMode
+      )
 
-  memoToggle.innerHTML = memoMode
-    ? `
-          <i class="bi bi-eye-slash-fill"></i>
-        `
-    : `
-          <i class="bi bi-eye"></i>
-        `
-})
+      memoToggle.innerHTML =
+        memoMode
+          ? `
+            <i class="bi bi-eye-slash-fill"></i>
+          `
+          : `
+            <i class="bi bi-eye"></i>
+          `
+    }
+  )
+}
 
 /* =========================================================
    DARK MODE
 ========================================================= */
 
-themeToggle.addEventListener('click', () => {
-  const dark = document.body.classList.toggle('dark-mode')
+if (themeToggle) {
+  themeToggle.addEventListener(
+    'click',
+    () => {
+      const dark =
+        document.body.classList.toggle(
+          'dark-mode'
+        )
 
-  themeToggle.innerHTML = dark
-    ? `
-          <i class="bi bi-sun-fill"></i>
-        `
-    : `
-          <i class="bi bi-moon-stars-fill"></i>
-        `
+      themeToggle.innerHTML =
+        dark
+          ? `
+            <i class="bi bi-sun-fill"></i>
+          `
+          : `
+            <i class="bi bi-moon-stars-fill"></i>
+          `
 
-  localStorage.setItem('n1_dark_mode', dark ? '1' : '0')
-})
+      localStorage.setItem(
+        'n1_dark_mode',
+        dark
+          ? '1'
+          : '0'
+      )
+    }
+  )
+}
 
-if (localStorage.getItem('n1_dark_mode') === '1') {
-  document.body.classList.add('dark-mode')
+if (
+  localStorage.getItem(
+    'n1_dark_mode'
+  ) === '1'
+) {
+  document.body.classList.add(
+    'dark-mode'
+  )
 
-  themeToggle.innerHTML = `
-    <i class="bi bi-sun-fill"></i>
-  `
+  if (themeToggle) {
+    themeToggle.innerHTML = `
+      <i class="bi bi-sun-fill"></i>
+    `
+  }
 }
 
 /* =========================================================
    APPLY LANGUAGE
 ========================================================= */
 
-function applyLanguage (lang) {
-  currentLanguage = normalizeLanguage(lang)
+function applyLanguage(
+  lang
+) {
+  currentLanguage =
+    normalizeLanguage(lang)
 
-  localStorage.setItem('n1_language', currentLanguage)
-
-  document.body.className = document.body.className.replace(
-    /\blang-show-\w+(?:-\w+)?\b/g,
-    ''
+  localStorage.setItem(
+    'n1_language',
+    currentLanguage
   )
 
-  document.body.classList.add(`lang-show-${currentLanguage}`)
+  document.body.className =
+    document.body.className.replace(
+      /\blang-show-\w+(?:-\w+)?\b/g,
+      ''
+    )
+
+  document.body.classList.add(
+    `lang-show-${currentLanguage}`
+  )
 
   renderCards()
 }
 
 /* =========================================================
-   LANGUAGE MENU
+   LANGUAGE UI
 ========================================================= */
 
-function initializeLanguageUI () {
-  currentLanguage = normalizeLanguage(currentLanguage)
+function initializeLanguageUI() {
+  currentLanguage =
+    normalizeLanguage(
+      currentLanguage
+    )
 
-  document.body.classList.add(`lang-show-${currentLanguage}`)
+  document.body.classList.add(
+    `lang-show-${currentLanguage}`
+  )
 
-  document.querySelectorAll('#languageMenu button').forEach(button => {
-    const buttonLang = normalizeLanguage(button.dataset.lang)
+  document
+    .querySelectorAll(
+      '#languageMenu button'
+    )
+    .forEach(button => {
+      const buttonLang =
+        normalizeLanguage(
+          button.dataset.lang
+        )
 
-    button.classList.toggle('active', buttonLang === currentLanguage)
-  })
+      button.classList.toggle(
+        'active',
+        buttonLang ===
+          currentLanguage
+      )
+    })
 }
 
-langToggleBtn.addEventListener('click', event => {
-  event.stopPropagation()
+if (langToggleBtn) {
+  langToggleBtn.addEventListener(
+    'click',
+    event => {
+      event.stopPropagation()
 
-  languageMenu.classList.toggle('hidden')
-})
+      if (languageMenu) {
+        languageMenu.classList.toggle(
+          'hidden'
+        )
+      }
+    }
+  )
+}
 
-document.querySelectorAll('#languageMenu button').forEach(button => {
-  button.addEventListener('click', event => {
-    event.stopPropagation()
+document
+  .querySelectorAll(
+    '#languageMenu button'
+  )
+  .forEach(button => {
+    button.addEventListener(
+      'click',
+      event => {
+        event.stopPropagation()
 
-    applyLanguage(button.dataset.lang)
+        applyLanguage(
+          button.dataset.lang
+        )
 
-    document
-      .querySelectorAll('#languageMenu button')
-      .forEach(btn => btn.classList.remove('active'))
+        document
+          .querySelectorAll(
+            '#languageMenu button'
+          )
+          .forEach(btn =>
+            btn.classList.remove(
+              'active'
+            )
+          )
 
-    button.classList.add('active')
+        button.classList.add(
+          'active'
+        )
 
-    languageMenu.classList.add('hidden')
+        if (
+          languageMenu
+        ) {
+          languageMenu.classList.add(
+            'hidden'
+          )
+        }
+      }
+    )
   })
-})
 
-document.addEventListener('click', event => {
-  if (!languageMenu.contains(event.target) && event.target !== langToggleBtn) {
-    languageMenu.classList.add('hidden')
+document.addEventListener(
+  'click',
+  event => {
+    if (
+      languageMenu &&
+      !languageMenu.contains(
+        event.target
+      ) &&
+      event.target !==
+        langToggleBtn
+    ) {
+      languageMenu.classList.add(
+        'hidden'
+      )
+    }
   }
-})
+)
 
 /* =========================================================
    TIME
 ========================================================= */
 
-function getTimePeriod (hour) {
-  if (hour >= 0 && hour < 3) {
+function getTimePeriod(
+  hour
+) {
+  if (
+    hour >= 0 &&
+    hour < 3
+  ) {
     return 'larut-malam'
   }
 
-  if (hour >= 3 && hour < 5) {
+  if (
+    hour >= 3 &&
+    hour < 5
+  ) {
     return 'subuh'
   }
 
-  if (hour >= 5 && hour < 10) {
+  if (
+    hour >= 5 &&
+    hour < 10
+  ) {
     return 'pagi'
   }
 
-  if (hour >= 10 && hour < 15) {
+  if (
+    hour >= 10 &&
+    hour < 15
+  ) {
     return 'siang'
   }
 
-  if (hour >= 15 && hour < 18) {
+  if (
+    hour >= 15 &&
+    hour < 18
+  ) {
     return 'sore'
   }
 
-  if (hour >= 18 && hour < 23) {
+  if (
+    hour >= 18 &&
+    hour < 23
+  ) {
     return 'malam'
   }
 
@@ -2528,16 +4946,21 @@ function getTimePeriod (hour) {
    GREETING
 ========================================================= */
 
-function updateTimeAndGreeting () {
-  const now = new Date()
+function updateTimeAndGreeting() {
+  const now =
+    new Date()
 
-  const hour = now.getHours()
+  const hour =
+    now.getHours()
 
-  const minute = now.getMinutes()
+  const minute =
+    now.getMinutes()
 
-  const second = now.getSeconds()
+  const second =
+    now.getSeconds()
 
-  const period = getTimePeriod(hour)
+  const period =
+    getTimePeriod(hour)
 
   document.body.classList.remove(
     'theme-subuh',
@@ -2549,142 +4972,242 @@ function updateTimeAndGreeting () {
     'theme-larut-malam'
   )
 
-  document.body.classList.add(`theme-${period}`)
+  document.body.classList.add(
+    `theme-${period}`
+  )
 
-  liveClock.textContent = [hour, minute, second]
-    .map(value => String(value).padStart(2, '0'))
-    .join(':')
+  if (liveClock) {
+    liveClock.textContent =
+      [hour, minute, second]
+        .map(value =>
+          String(
+            value
+          ).padStart(
+            2,
+            '0'
+          )
+        )
+        .join(':')
+  }
 
   const data = {
     'larut-malam': {
-      label: 'LARUT MALAM',
-      japanese: 'こんばんは',
+      label:
+        'LARUT MALAM',
+      japanese:
+        'こんばんは',
       message:
         'Kalau masih belajar, cukup lakukan review ringan. Besok masih ada waktu untuk melanjutkannya.',
-      icon: 'bi-stars',
-      period: 'Larut malam'
+      icon:
+        'bi-stars',
+      period:
+        'Larut malam'
     },
 
     subuh: {
-      label: 'SELAMAT SUBUH',
-      japanese: 'おはようございます',
+      label:
+        'SELAMAT SUBUH',
+      japanese:
+        'おはようございます',
       message:
         'Waktu yang tenang untuk mengulang bunpou sebelum aktivitas dimulai.',
-      icon: 'bi-cloud-sun-fill',
-      period: 'Subuh'
+      icon:
+        'bi-cloud-sun-fill',
+      period:
+        'Subuh'
     },
 
     pagi: {
-      label: 'SELAMAT PAGI',
-      japanese: 'おはようございます',
+      label:
+        'SELAMAT PAGI',
+      japanese:
+        'おはようございます',
       message:
         'Mulai hari dengan sedikit latihan. Satu bunpou yang benar-benar dipahami lebih berharga daripada banyak yang hanya dibaca.',
-      icon: 'bi-sun-fill',
-      period: 'Pagi'
+      icon:
+        'bi-sun-fill',
+      period:
+        'Pagi'
     },
 
     siang: {
-      label: 'SELAMAT SIANG',
-      japanese: 'こんにちは',
+      label:
+        'SELAMAT SIANG',
+      japanese:
+        'こんにちは',
       message:
         'Tetap konsisten. Sedikit demi sedikit pola tata bahasa N1 akan menjadi semakin familiar.',
-      icon: 'bi-brightness-high-fill',
-      period: 'Siang'
+      icon:
+        'bi-brightness-high-fill',
+      period:
+        'Siang'
     },
 
     sore: {
-      label: 'SELAMAT SORE',
-      japanese: 'こんにちは',
+      label:
+        'SELAMAT SORE',
+      japanese:
+        'こんにちは',
       message:
         'Matahari mulai turun. Waktunya review beberapa bunpou sebelum target harian terlewat.',
-      icon: 'bi-sun',
-      period: 'Sore'
+      icon:
+        'bi-sun',
+      period:
+        'Sore'
     },
 
     malam: {
-      label: 'SELAMAT MALAM',
-      japanese: 'こんばんは',
+      label:
+        'SELAMAT MALAM',
+      japanese:
+        'こんばんは',
       message:
         'Hari hampir selesai. Perkuat pola yang masih terasa samar sebelum menutup hari.',
-      icon: 'bi-moon-stars-fill',
-      period: 'Malam'
+      icon:
+        'bi-moon-stars-fill',
+      period:
+        'Malam'
     },
 
     'tengah-malam': {
-      label: 'TENGAH MALAM',
-      japanese: 'こんばんは',
+      label:
+        'TENGAH MALAM',
+      japanese:
+        'こんばんは',
       message:
         'Sudah cukup malam. Review singkat tetap berarti, tetapi jangan memaksakan diri terlalu lama.',
-      icon: 'bi-moon-fill',
-      period: 'Tengah malam'
+      icon:
+        'bi-moon-fill',
+      period:
+        'Tengah malam'
     }
   }
 
-  const greeting = data[period]
+  const greeting =
+    data[period]
 
-  greetingLabel.textContent = greeting.label
+  if (greetingLabel) {
+    greetingLabel.textContent =
+      greeting.label
+  }
 
-  greetingJapanese.textContent = greeting.japanese
+  if (
+    greetingJapanese
+  ) {
+    greetingJapanese.textContent =
+      greeting.japanese
+  }
 
-  greetingMessage.textContent = greeting.message
+  if (
+    greetingMessage
+  ) {
+    greetingMessage.textContent =
+      greeting.message
+  }
 
-  greetingIcon.className = `bi ${greeting.icon}`
+  if (
+    greetingIcon
+  ) {
+    greetingIcon.className =
+      `bi ${greeting.icon}`
+  }
 
-  timePeriodText.textContent = greeting.period
+  if (
+    timePeriodText
+  ) {
+    timePeriodText.textContent =
+      greeting.period
+  }
 
-  const root = getComputedStyle(document.body)
+  const root =
+    getComputedStyle(
+      document.body
+    )
 
-  const primary = root.getPropertyValue('--primary')
+  const primary =
+    root.getPropertyValue(
+      '--primary'
+    )
 
   document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', primary.trim())
+    .querySelector(
+      'meta[name="theme-color"]'
+    )
+    ?.setAttribute(
+      'content',
+      primary.trim()
+    )
 }
 
 /* =========================================================
    VISIBILITY
 ========================================================= */
 
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden && speakingCardId !== null) {
+document.addEventListener(
+  'visibilitychange',
+  () => {
     /*
-          Jangan stop otomatis.
-      */
+       Jangan stop TTS otomatis.
+    */
   }
-})
+)
 
 /* =========================================================
    BEFORE UNLOAD
 ========================================================= */
 
-window.addEventListener('beforeunload', () => {
-  stopSpeech()
-})
+window.addEventListener(
+  'beforeunload',
+  () => {
+    stopSpeech()
+  }
+)
 
 /* =========================================================
    INIT
 ========================================================= */
 
-function init () {
+function init() {
   populateWeekSelect()
+
   populateDaySelect()
 
-  weekSelect.value = activeWeek
+  if (weekSelect) {
+    weekSelect.value =
+      activeWeek
+  }
 
-  daySelect.value = activeDay
+  if (daySelect) {
+    daySelect.value =
+      activeDay
+  }
 
   initializeLanguageUI()
 
   updateContentHeader()
+
   updateFilterLabel()
 
   renderCards()
 
-  renderExam(courseData.week1?.days.day1?.exam)
+  renderExam(
+    courseData.week1?.days
+      ?.day1?.exam
+  )
 
   updateTimeAndGreeting()
 
-  setInterval(updateTimeAndGreeting, 1000)
+  /*
+     Mulai load analyzer di background.
+     Ini membuat furigana siap lebih cepat
+     saat kartu pertama kali ditampilkan.
+  */
+  initializeFurigana()
+
+  setInterval(
+    updateTimeAndGreeting,
+    1000
+  )
 }
 
 /* =========================================================
