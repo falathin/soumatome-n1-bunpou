@@ -3035,19 +3035,35 @@ function renderObjectExam(
 
       ${questionsHTML}
 
-      <button
-        class="exam-submit"
-        type="button"
-        onclick="finishObjectExam()"
-      >
-        <i
-          class="bi bi-send-check"
-          style="font-size:18px;"
-        ></i>
-
-        Selesai & Lihat Skor
-
-      </button>
+<button
+  type="button"
+  onclick="finishObjectExam()"
+  style="
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    padding:11px 20px;
+    border:none;
+    border-radius:10px;
+    background:#BC002D;
+    color:#fff;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.2px;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(188,0,45,.25);
+    transition:all .2s ease;
+  "
+  onmouseover="this.style.background='#A80028';this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 16px rgba(188,0,45,.32)'"
+  onmouseout="this.style.background='#BC002D';this.style.transform='translateY(0)';this.style.boxShadow='0 4px 12px rgba(188,0,45,.25)'"
+>
+  <i
+    class="bi bi-send-check"
+    style="font-size:17px;"
+  ></i>
+  Selesai & Lihat Skor
+</button>
 
       <div
         id="objectExamResult"
