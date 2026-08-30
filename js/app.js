@@ -593,11 +593,9 @@ function getTargetLanguage (sourceLanguage) {
 ========================================================= */
 
 const translationCacheKey = 'n1_translation_cache'
-
 const explanationCacheKey = 'n1_explanation_translation_cache'
 
 const exampleTranslationTimers = new Map()
-
 const translationPending = new Map()
 
 let translationMemoryCache = null
@@ -606,11 +604,8 @@ let explanationMemoryCache = null
 const TRANSLATION_CONFIG = {
   timeout: 12000,
   retries: 2,
-
   myMemory: 'https://api.mymemory.translated.net/get',
-
   google: 'https://translate.googleapis.com/translate_a/single',
-
   explanationConcurrency: 2
 }
 
@@ -918,10 +913,13 @@ async function getExplanationForLanguage (item) {
 
 let availableVoices = []
 let speakingCardId = null
+
 let speechQueue = []
 let speechIndex = 0
+
 let speechPaused = false
 let currentSpeakingItem = null
+
 let speechRequestId = 0
 
 function loadVoices () {
@@ -937,6 +935,10 @@ loadVoices()
 if ('speechSynthesis' in window) {
   window.speechSynthesis.addEventListener('voiceschanged', loadVoices)
 }
+
+/* =========================================================
+   JAPANESE VOICE
+========================================================= */
 
 function findJapaneseVoice () {
   loadVoices()
@@ -969,47 +971,120 @@ function findJapaneseVoice () {
   return null
 }
 
+/* =========================================================
+   TTS TEXT CLEANER
+========================================================= */
+
+function cleanSpeechText (text) {
+  const clean = stripHTML(text)
+
+  return clean
+    .replace(/\s+/g, ' ')
+    .replace(/→/g, '。')
+    .replace(/・/g, '、')
+    .trim()
+}
+
+/* =========================================================
+   BUILD TTS QUEUE
+========================================================= */
+
+/*
+  URUTAN TTS:
+
+  1. Bunpou / pola grammar
+  2. Penjelasan Jepang
+  3. Contoh kalimat 1
+  4. Contoh kalimat 2
+  5. Contoh kalimat 3
+
+  Hanya maksimal 3 contoh yang dibaca.
+*/
+
 function buildSpeechQueue (item) {
   const queue = []
 
-  if (item?.rule) {
-    queue.push({
-      text: `文法 ${stripHTML(item.rule)}`
-    })
-  }
+  const rule = cleanSpeechText(item?.rule || '')
 
-  if (item?.reading || item?.yomi) {
-    queue.push({
-      text: stripHTML(item.reading || item.yomi)
-    })
-  }
+  const reading = cleanSpeechText(item?.reading || item?.yomi || '')
 
-  if (item?.explanationJP) {
-    const explanationJP = stripHTML(item.explanationJP)
+  const explanationJP = cleanSpeechText(item?.explanationJP || '')
 
-    if (explanationJP) {
-      queue.push({
-        text: `簡単な説明。${explanationJP}`
-      })
+  /*
+    ========================================================
+    1. BUNPOU
+    ========================================================
+  */
+
+  if (rule) {
+    let bunpouText = rule
+
+    /*
+      Kalau ada reading, gabungkan dalam satu bagian
+      agar TTS membaca:
+
+      ～てこそ
+      てこそ
+
+      atau pattern + reading.
+    */
+
+    if (reading && reading !== rule) {
+      bunpouText += `。${reading}`
     }
+
+    queue.push({
+      type: 'bunpou',
+      text: bunpouText
+    })
+  } else if (reading) {
+    queue.push({
+      type: 'bunpou',
+      text: reading
+    })
   }
+
+  /*
+    ========================================================
+    2. PENJELASAN
+    ========================================================
+  */
+
+  if (explanationJP) {
+    queue.push({
+      type: 'explanation',
+      text: explanationJP
+    })
+  }
+
+  /*
+    ========================================================
+    3. CONTOH — MAKSIMAL 3
+    ========================================================
+  */
 
   if (Array.isArray(item?.examples)) {
-    item.examples.forEach((example, index) => {
-      const clean = stripHTML(example)
+    item.examples.slice(0, 3).forEach((example, index) => {
+      const clean = cleanSpeechText(example)
 
       if (!clean) {
         return
       }
 
       queue.push({
-        text: `例文 ${index + 1}。${clean}`
+        type: 'example',
+        index: index + 1,
+        text: clean
       })
     })
   }
 
   return queue
 }
+
+/* =========================================================
+   STOP SPEECH
+========================================================= */
 
 function stopSpeech () {
   speechRequestId++
@@ -1033,6 +1108,50 @@ function stopSpeech () {
 
 window.stopSpeech = stopSpeech
 
+/* =========================================================
+   SPEECH RATE BY TYPE
+========================================================= */
+
+function getSpeechRate (type) {
+  switch (type) {
+    case 'bunpou':
+      return 0.82
+
+    case 'explanation':
+      return 0.84
+
+    case 'example':
+      return 0.88
+
+    default:
+      return 0.85
+  }
+}
+
+/* =========================================================
+   SPEECH PITCH BY TYPE
+========================================================= */
+
+function getSpeechPitch (type) {
+  switch (type) {
+    case 'bunpou':
+      return 1.0
+
+    case 'explanation':
+      return 1.0
+
+    case 'example':
+      return 1.0
+
+    default:
+      return 1.0
+  }
+}
+
+/* =========================================================
+   START SPEECH
+========================================================= */
+
 async function startSpeech (item) {
   if (!('speechSynthesis' in window)) {
     alert('Browser ini tidak mendukung Text to Speech.')
@@ -1040,7 +1159,17 @@ async function startSpeech (item) {
     return
   }
 
+  if (!item) {
+    return
+  }
+
   stopSpeech()
+
+  /*
+    Ambil request ID setelah stopSpeech()
+    supaya request lama tidak bisa mengganggu
+    pembacaan baru.
+  */
 
   const requestId = speechRequestId
 
@@ -1050,9 +1179,19 @@ async function startSpeech (item) {
 
   updateSpeechButtons()
 
+  /*
+    Bangun queue baru:
+    Bunpou → Penjelasan → 3 Contoh
+  */
+
   speechQueue = buildSpeechQueue(item)
 
   if (requestId !== speechRequestId || speakingCardId !== String(item.id)) {
+    return
+  }
+
+  if (!speechQueue.length) {
+    stopSpeech()
     return
   }
 
@@ -1062,6 +1201,10 @@ async function startSpeech (item) {
   speakCurrentChunk(requestId)
 }
 
+/* =========================================================
+   SPEAK CURRENT CHUNK
+========================================================= */
+
 function speakCurrentChunk (requestId) {
   if (requestId !== speechRequestId || !speakingCardId) {
     return
@@ -1069,7 +1212,6 @@ function speakCurrentChunk (requestId) {
 
   if (!speechQueue.length || speechIndex >= speechQueue.length) {
     stopSpeech()
-
     return
   }
 
@@ -1077,9 +1219,16 @@ function speakCurrentChunk (requestId) {
 
   const utterance = new SpeechSynthesisUtterance(chunk.text)
 
+  /*
+    SELALU BAHASA JEPANG
+  */
+
   utterance.lang = 'ja-JP'
-  utterance.rate = 0.88
-  utterance.pitch = 1
+
+  utterance.rate = getSpeechRate(chunk.type)
+
+  utterance.pitch = getSpeechPitch(chunk.type)
+
   utterance.volume = 1
 
   const voice = findJapaneseVoice()
@@ -1099,13 +1248,40 @@ function speakCurrentChunk (requestId) {
       return
     }
 
-    speechIndex++
+    /*
+      Delay kecil antar bagian agar:
+      bunpou
+      → penjelasan
+      → contoh
 
-    speakCurrentChunk(requestId)
+      tidak terasa menempel.
+    */
+
+    const nextIndex = speechIndex + 1
+
+    speechIndex = nextIndex
+
+    setTimeout(() => {
+      if (requestId !== speechRequestId) {
+        return
+      }
+
+      speakCurrentChunk(requestId)
+    }, 220)
   }
 
   utterance.onerror = event => {
     if (requestId !== speechRequestId) {
+      return
+    }
+
+    /*
+      Browser kadang mengirim "canceled"
+      ketika stopSpeech() dipanggil.
+      Itu bukan error penting.
+    */
+
+    if (event?.error === 'canceled') {
       return
     }
 
@@ -1122,6 +1298,10 @@ function speakCurrentChunk (requestId) {
     stopSpeech()
   }
 }
+
+/* =========================================================
+   PAUSE / RESUME
+========================================================= */
 
 window.togglePauseSpeech = function () {
   if (!('speechSynthesis' in window) || speakingCardId === null) {
@@ -1141,11 +1321,19 @@ window.togglePauseSpeech = function () {
   updateSpeechButtons()
 }
 
+/* =========================================================
+   REPLAY SPEECH
+========================================================= */
+
 window.replaySpeech = function () {
   if (currentSpeakingItem) {
     startSpeech(currentSpeakingItem)
   }
 }
+
+/* =========================================================
+   TTS BUTTON UI
+========================================================= */
 
 function updateSpeechButtons () {
   document.querySelectorAll('.grammar-card').forEach(card => {
@@ -1168,7 +1356,7 @@ function updateSpeechButtons () {
     status.textContent = active
       ? speechPaused
         ? 'Dijeda'
-        : 'Sedang membaca bahasa Jepang...'
+        : 'Sedang membaca: bunpou → penjelasan → 3 contoh'
       : '読み上げ機能'
 
     if (play) {
@@ -1186,6 +1374,10 @@ function updateSpeechButtons () {
   })
 }
 
+/* =========================================================
+   MAIN SPEECH HANDLER
+========================================================= */
+
 window.handleMainSpeech = function (id) {
   const item = findItemById(id)
 
@@ -1195,7 +1387,6 @@ window.handleMainSpeech = function (id) {
 
   if (speakingCardId === String(id)) {
     stopSpeech()
-
     return
   }
 
@@ -1493,7 +1684,9 @@ function showCopyFeedback (exampleBox, message) {
 
   exampleBox.innerHTML = `
     <i class="bi bi-check-circle-fill"></i>
-    <span>${escapeHTML(message)}</span>
+    <span>
+      ${escapeHTML(message)}
+    </span>
   `
 
   setTimeout(() => {
@@ -1668,8 +1861,8 @@ function createCardHTML (item, index) {
           class="speaker-main-btn"
           type="button"
           onclick="handleMainSpeech('${escapeForJS(item?.id)}')"
-          title="Bacakan bahasa Jepang"
-          aria-label="Bacakan bahasa Jepang"
+          title="Bacakan: bunpou → penjelasan → 3 contoh"
+          aria-label="Bacakan bunpou, penjelasan, dan tiga contoh"
         >
           <i class="bi bi-volume-up-fill"></i>
         </button>
@@ -2108,7 +2301,6 @@ function updateProgress (items) {
 
   if (isExamDay()) {
     syncExamToMainProgress()
-
     return
   }
 
