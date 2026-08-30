@@ -1,5 +1,5 @@
 window.W1H7 = {
-  title: '７日目 実戦問題 (Ujian Minggu 1)',
+  title: '７日目 実戦問題 (第1週テスト)',
   grammar: [],
   exam: {
     type: 'quiz',

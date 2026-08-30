@@ -7,11 +7,9 @@ window.W1H5 = {
       formal: false,
       conjunction: 'V/A/na/N(普通形) + とみえて / とみえる',
       explanation:
-        '【ID】Ibarat melihat jejak kaki basah—berdasarkan bukti nyata yang terlihat di depan mata, kita menyimpulkan kondisi X.\n【EN】Used to make an inference based on visible objective evidence present right in front of you.\n【JP】目の前の状況や観察できる事実から「どうやら〜のようだ」と推測する。',
+        '【観察による推測】目に見える直接的な状況や観察可能な事実から、「どうやら〜のようだ」と推量・判断する。',
       meaning: {
-        id: 'Tampaknya / Kelihatannya...',
-        en: 'It seems that...',
-        cn: '似乎/看来...'
+        jp: '（目に見える様子から）〜のようだ／どうやら〜らしい'
       },
       examples: [
         '田中さんは忙しいとみえて、このごろ電話もしてこない。',
@@ -25,11 +23,9 @@ window.W1H5 = {
       formal: false,
       conjunction: 'V/A/na/N(普通形) + とみられる',
       explanation:
-        '【ID】Ibarat ramalan cuaca atau prediksi pakar—diperkirakan/dianalisis akan menjadi kondisi X (sering di berita).\n【EN】Used in objective reporting to express an expert expectation or probability.\n【JP】専門家や客観的なデータに基づいて「〜と予想・判断される」（ニュース報道で汎用）。',
+        '【客観的予測・見解】データや専門的な根拠に基づいて、「〜と予想・判断される」と客観的に述べるときに使う（ニュース報道で頻出）。',
       meaning: {
-        id: 'Diperkirakan bahwa...',
-        en: 'It is expected/believed that...',
-        cn: '预计/被认为...'
+        jp: '（客観的に・データから）〜と予想・判断されている'
       },
       examples: [
         'この地域では、今後も大きい地震が来るとみられている。',
@@ -43,11 +39,9 @@ window.W1H5 = {
       formal: false,
       conjunction: 'V/A/na/N(普通形) + とみると',
       explanation:
-        '【ID】Ibarat ksatria yang sigap atau orang pragmatis—begitu menilai/mengetahui situasi X, langsung bereaksi cepat menyikapinya.\n【EN】Used when someone instantly reacts or changes their attitude as soon as they judge a situation X.\n【JP】〜という状況だと判断するやいなや、素早く次の行動や態度の変化を起こす。',
+        '【素早い判断と行動】「〜という状況だと判断するやいなや、即座に次の行動や態度の変化を起こす」様子を表す。',
       meaning: {
-        id: 'Ketika menyadari/melihat bahwa..., langsung...',
-        en: 'As soon as one realizes that...',
-        cn: '一旦发现...就...'
+        jp: '〜という状況だと判断すると、すぐに（態度や行動を変える）'
       },
       examples: [
         '彼は問題がちょっと難しいとみると、自分で考えないで人に聞く。',
@@ -99,6 +93,3 @@ window.W1H5 = {
     ]
   }
 };
-
-
-

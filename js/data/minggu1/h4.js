@@ -7,11 +7,9 @@ window.W1H4 = {
       formal: false,
       conjunction: 'V/A/na/N(普通形) + とされる',
       explanation:
-        '【ID】Ibarat berita di surat kabar—suatu klaim/teori X secara umum diakui, dipercayai, atau ditetapkan oleh publik.\n【EN】Used in news or formal writing to state a generally accepted belief, rule, or consensus.\n【JP】一般的に〜と考えられている／〜と社会的に決まっている（ニュースなどで多用）。',
+        '【一般的客観判断】一般的に〜と考えられている、あるいは社会的に〜と決まっていることを表す（ニュースや解説文で多用）。',
       meaning: {
-        id: 'Dianggap/dikatakan bahwa...',
-        en: 'It is considered that...',
-        cn: '被认为是...'
+        jp: '一般に〜と考えられている／決められている'
       },
       examples: [
         'この国には、よい指導者がいないのが一番の問題だとされている。',
@@ -23,13 +21,11 @@ window.W1H4 = {
       id: 'w1_d4_2',
       rule: '〜が思いだされる',
       formal: true,
-      conjunction: '(〜が) Vられる (自発の受身形: 意志と関係なく自然にそうなる)',
+      conjunction: '(〜が) Vられる (自発動詞)',
       explanation:
-        '【ID】Ibarat gelembung air yang muncul sendiri—suatu ingatan/perasaan X meluap keluar secara spontan tanpa dipaksa.\n【EN】Expresses feelings or thoughts that naturally/spontaneously surge up without conscious intention.\n【JP】自分の意思とは関係なく、自然と〜という気持ちや記憶が湧き上がってくる。',
+        '【自然な自発感情】自分の意志とは関係なく、あるきっかけによって自然と感情や記憶が湧き上がってくることを表す。',
       meaning: {
-        id: 'Spontan teringat/terpikirkan...',
-        en: 'Spontaneously comes to mind...',
-        cn: '不禁让人想起...'
+        jp: '自分の意志と関係なく、自然と〜という気持ちや記憶が湧く'
       },
       examples: [
         'この曲を聴くと、学生時代のことが思いだされる。',
@@ -41,13 +37,11 @@ window.W1H4 = {
       id: 'w1_d4_3',
       rule: '〜させられる',
       formal: false,
-      conjunction: 'Vさせられる (自発の使役受身形)',
+      conjunction: 'Vさせられる (自発の使役受身表現)',
       explanation:
-        '【ID】Ibarat terseret arus emosi—suatu peristiwa luar membuat emosi/pikiran kita terpancing dan tergerak secara mendalam.\n【EN】Used when an external force or event deep inside moves your emotions or forces a reaction.\n【JP】外部からの刺激によって、感情や考えが強制的に動かされる。',
+        '【外部からの強い感情誘発】外部からの刺激や事実によって、心が強く動かされたり、強制的にそう思わされたりする様子。',
       meaning: {
-        id: 'Dibuat merasa/tergerak...',
-        en: 'Made to feel...',
-        cn: '使人.../让人感到...'
+        jp: '外部からの刺激によって、強い感情や考えを起こされる'
       },
       examples: [
         '彼の仕事ぶりには感心させられる。',
@@ -61,11 +55,9 @@ window.W1H4 = {
       formal: false,
       conjunction: 'Nに言わせれば / Nから言わせれば (N=人)',
       explanation:
-        '【ID】Ibarat sudut pandang pengamat khusus—jika dinilai berdasarkan perspektif/keyakinan personal dari subjek X.\n【EN】Used to introduce a personal opinion or subjective critique from a specific person’s standpoint.\n【JP】〜の立場や意見から評価・主張すると（他人の一般的な見解とは異なる個人的な意見）。',
+        '【立場からの意見】特定の人の立場や独自の見解から意見・主観的な評価を述べるときに使用する。',
       meaning: {
-        id: 'Menurut pendapat (seseorang)...',
-        en: 'If you ask..., according to...',
-        cn: '依...来看'
+        jp: '〜の立場や意見から主張すると'
       },
       examples: [
         '彼は天才と言われているが、私に言わせれば、単なる努力家だ。',
@@ -117,4 +109,3 @@ window.W1H4 = {
     ]
   }
 };
-

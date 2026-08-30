@@ -7,11 +7,9 @@ window.W1H2 = {
       formal: false,
       conjunction: 'V-辞書形 + くらいなら / ぐらいなら',
       explanation:
-        '【ID】Ibarat memilih antara racun dan obat pahit—daripada memilih skenario terburuk A, lebih baik memilih alternatif B yang masih bisa ditoleransi.\n【EN】Expresses strong aversion to option A, stating that option B (even if unfavorable) is much preferable.\n【JP】〜という最悪な状態・感情になるよりは、まだ後者のほうがマシだ。',
+        '【忌避と選択】「〜という最悪な状態になるよりは、まだ後者のほうがマシだ」という話し手の強い嫌悪感や選択を表す。',
       meaning: {
-        id: 'Daripada (harus) melakukan..., lebih baik...',
-        en: 'Rather than doing..., better to...',
-        cn: '与其...不如...'
+        jp: '〜という最悪な状況になるよりは、まだ〜ほうがいい'
       },
       examples: [
         'そんなことをするくらいなら、死んだほうがましだ。',
@@ -25,11 +23,9 @@ window.W1H2 = {
       formal: false,
       conjunction: 'N + くらい / ぐらい + のものだ',
       explanation:
-        '【ID】Ibarat satu-satunya pahlawan di kota—hanya subjek X yang mampu/memungkinkan melakukan hal tersebut, tidak ada pilihan lain.\n【EN】Used to emphasize that subjek X is the sole exception or only entity capable of a specific action.\n【JP】〜できるのは、この人／この物くらいで他には絶対にいない。',
+        '【限定と強調】「〜できるのは、この人／この物くらいで他には絶対にいない」と、唯一の存在であることを強調する。',
       meaning: {
-        id: 'Hanya... (tidak ada yang lain)',
-        en: 'Only... (is capable/enough)',
-        cn: '也就只有...'
+        jp: '〜できるのはこれ（この人）だけで、他にはいない'
       },
       examples: [
         '彼が仕事を辞めないように説得できるのは、君ぐらいのものだ。',
@@ -43,11 +39,9 @@ window.W1H2 = {
       formal: false,
       conjunction: 'V/A/na/N(普通形) + ものとして (na/Nだ→である)',
       explanation:
-        '【ID】Ibarat membuat skenario simulasi—menganggap suatu kondisi X sudah menjadi kenyataan sebagai fondasi untuk mengambil langkah Y.\n【EN】Used when acting or planning under the assumption/premise that X is established as true.\n【JP】〜と前提・仮定して、あるいは事実とみなして次の行動を進める。',
+        '【仮定と前提】実際には確定していなくても、「〜と仮定・前提して次の行動や計画を進める」という意味を表す。',
       meaning: {
-        id: 'Dengan anggapan bahwa... / Berasumsi bahwa...',
-        en: 'Assuming that...',
-        cn: '当作...'
+        jp: '〜と仮定して／〜という前提で（行動する）'
       },
       examples: [
         '中級漢字はできるものとして、上級漢字のクラスを取った。',
@@ -61,11 +55,9 @@ window.W1H2 = {
       formal: true,
       conjunction: 'V-辞書形 + ものとする',
       explanation:
-        '【ID】Ibarat pasal dalam Kitab Undang-Undang atau kontrak formal—digunakan untuk menetapkan aturan resminya hukum/perjanjian.\n【EN】Formal legal/contractual phrasing used to declare mandates, stipulations, or regulations.\n【JP】契約書や公的な規則・文書で「〜と決定する／義務付ける」ことを表す。',
+        '【決定と義務】契約書・法律・公式な規約などで、「〜と決定する／公式な義務として定める」ことを表す硬い表現。',
       meaning: {
-        id: 'Ditetapkan bahwa... / Memutuskan untuk...',
-        en: 'Shall be / It is decided that...',
-        cn: '规定/约定...'
+        jp: '（契約や規則で）〜と定める／決定する'
       },
       examples: [
         '採用試験は、毎年10月に行うものとする。',

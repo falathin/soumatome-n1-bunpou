@@ -7,11 +7,9 @@ window.W1H3 = {
       formal: false,
       conjunction: 'V-辞書形 + ことのないよう（に）',
       explanation:
-        '【ID】Ibarat memasang jaring pengaman—melakukan antisipasi atau tindakan pencegahan Y agar potensi masalah X tidak terjadi.\n【EN】Used when warning or taking preventive measures so that an undesirable situation X does not occur.\n【JP】問題や失敗といった悪い事態が起きないように、注意・予防策をとる。',
+        '【予防と注意】「〜という悪い事態や失敗が起こらないように、前もって対策や注意をする」という意味。',
       meaning: {
-        id: 'Agar tidak (terjadi)...',
-        en: 'So as not to...',
-        cn: '为了不...'
+        jp: '悪い事態にならないように（注意・予防する）'
       },
       examples: [
         '災害が来ても慌てることのないよう、日頃から準備しておこう。',
@@ -25,11 +23,9 @@ window.W1H3 = {
       formal: true,
       conjunction: 'V-辞書形 + ことなしに（は）',
       explanation:
-        '【ID】Ibarat berjalan tanpa memakai alas kaki—melakukan suatu tindakan tanpa disertai/melalui kondisi dasar X sama sekali.\n【EN】A formal literary expression meaning "without doing X" or "unless X is done first".\n【JP】〜をしないで／〜という前提がない状態のままで（「〜しないで」の硬い表現）。',
+        '【付帯状況の否定】「〜をしないで／〜という前提がないままで、別のことを行う（行うことはできない）」を表す硬い表現。',
       meaning: {
-        id: 'Tanpa...',
-        en: 'Without doing...',
-        cn: '在不...的情况下'
+        jp: '〜をしないで／〜がないままで'
       },
       examples: [
         '今の状況を知ることなしに、未来を予測することはできない。',
@@ -43,11 +39,9 @@ window.W1H3 = {
       formal: false,
       conjunction: 'N + のことだから',
       explanation:
-        '【ID】Ibarat meramal teman dekat—karena sudah sangat memahami sifat/kebiasaan karakter X, kita bisa yakin menebak perilakunya.\n【EN】Used when making a confident deduction based on known typical character traits or habits of a person.\n【JP】〜の性格や日頃の行動パターンをよく知っているから、きっと〜だろうと推量する。',
+        '【性格に基づく推量】「その人の普段の性格や行動パターンをよく知っているから、きっと〜だろう」と推測する表現。',
       meaning: {
-        id: 'Karena (sifat/karakter) dia..., pasti...',
-        en: 'Knowing him/her, surely...',
-        cn: '因为是...（他肯定...）'
+        jp: '〜の性格や特徴から考えて、きっと…だろう'
       },
       examples: [
         'よくできる彼のことだから、合格は間違いないでしょう。',
@@ -59,13 +53,11 @@ window.W1H3 = {
       id: 'w1_d3_4',
       rule: '〜ことにする／なる',
       formal: false,
-      conjunction: 'V-た / A-かった / Na(だ) / N(だ) + ことにする／になる (Na/N bisa pakai である)',
+      conjunction: 'V-た / A-かった / Na(だ) / N(だ) + ことにする／になる (Na/Nは「である」も可)',
       explanation:
-        '【ID】Ibarat memakai topeng—memperlakukan atau memanipulasi kenyataan seolah-olah terjadi fakta X, padahal kenyataannya tidak.\n【EN】Used when intentionally treating something contrary to reality, or pretending a state exists.\n【JP】実際はそうではないのに、事実とは反対の状態として扱ったり偽ったりする。',
+        '【見なし・偽装】実際は事実と異なっていても、「事実とは反対の状態として扱ったり、装ったりする」ことを表す。',
       meaning: {
-        id: 'Menganggap seolah-olah... / Berpura-pura bahwa...',
-        en: 'Pretend/Treat as if...',
-        cn: '就当是...'
+        jp: '事実とは違うが、〜ということに扱う／装う'
       },
       examples: [
         'この話は聞かなかったことにしてください。',
@@ -117,4 +109,3 @@ window.W1H3 = {
     ]
   }
 };
-

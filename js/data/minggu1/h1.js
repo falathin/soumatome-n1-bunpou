@@ -7,11 +7,9 @@ window.W1H1 = {
       formal: false,
       conjunction: 'V-て + こそ',
       explanation:
-        '【ID】Ibarat pintu kunci yang baru terbuka setelah memegang kuncinya—hanya setelah melakukan syarat X, nilai/manfaat Y baru benar-benar terwujud.\n【EN】Only after doing X does Y become meaningful or possible (not used for past facts).\n【JP】〜して初めて、本当の価値や意義・効果がわかる。',
+        '【条件と本質】〜という条件が満たされて初めて、本当の価値や意義・結果が現れることを強調する。「〜して初めて…できる」という意味。',
       meaning: {
-        id: 'Hanya setelah (melakukan sesuatu), barulah bisa...',
-        en: 'Only after doing...',
-        cn: '只有...才能...'
+        jp: '〜して初めて（本当の効果・意義がわかる）'
       },
       examples: [
         '親になってこそ、親の苦労や気持ちがわかるものだ。',
@@ -25,11 +23,9 @@ window.W1H1 = {
       formal: true,
       conjunction: 'N + こそあれ / Na-で + こそあれ',
       explanation:
-        '【ID】Ibarat riak kecil di permukaan air—meskipun ada sedikit kekurangan/hal X, hal itu tidak mempengaruhi kualitas atau esensi utama Y.\n【EN】Used in formal contexts to show that although X exists, the main assessment/status Y remains unaffected.\n【JP】〜はあるけれど、本質や全体的な評価には影響がない。',
+        '【譲歩と事実】〜というマイナス面や不完全な点はあるものの、全体的な評価や本質には全く問題がないことを表す硬い表現。',
       meaning: {
-        id: 'Meskipun ada X, tetapi (hal utamanya tetap Y)...',
-        en: 'Although there is...',
-        cn: '虽然有...但是...'
+        jp: '〜はあるけれど（全体・本質には影響ない）'
       },
       examples: [
         '苦労こそあれ、介護の仕事はやりがいがある。',
@@ -41,13 +37,11 @@ window.W1H1 = {
       id: 'w1_d1_3',
       rule: '〜こそすれ',
       formal: true,
-      conjunction: 'V-ます(buang masu) + こそすれ / N + こそすれ',
+      conjunction: 'V-ます(語幹) + こそすれ / N + こそすれ',
       explanation:
-        '【ID】Ibarat dua kutub magnet yang berlawanan—mungkin/pasti terjadi aksi X, tetapi SAMA SEKALI TIDAK MUNGKIN terjadi kebalikannya (Y).\n【EN】Emphasizes that X definitely happens/applies, while the opposite condition Y is strictly impossible.\n【JP】〜することはあっても、絶対にその逆（対比となる状態）はない。',
+        '【強い対比】「〜することはあっても、その反対の事態（〜ない）は絶対にあり得ない」と強く主張する表現。',
       meaning: {
-        id: 'Yang ada justru X, dan sama sekali tidak Y...',
-        en: 'May do X, but definitely not Y...',
-        cn: '只有...绝不...'
+        jp: '絶対に〜するだけで、その逆のことはない'
       },
       examples: [
         'あなたには感謝こそすれ、恨んでなどいません。',
@@ -61,11 +55,9 @@ window.W1H1 = {
       formal: false,
       conjunction: 'N + こそ + [ 悪いが… / 〜が… / 〜けれど… ]',
       explanation:
-        '【ID】Ibarat buah durian—memang kulit luar/elemen X-nya buruk, tetapi bagian dalam/aspek utamanya sangat berkualitas.\n【EN】Acknowledges a minor visual/superficial negative point X, while strongly praising the core quality Y.\n【JP】〜という一部のマイナス面はあるが、最も重要な本質・内容は素晴らしい。',
+        '【一部の肯定・否定】表面的な部分や一部の要素（X）は良くないが、最も重要な本質・中身（Y）は素晴らしいと評価する表現。',
       meaning: {
-        id: 'Memang buruk di aspek X, tetapi...',
-        en: 'It may be bad in terms of X, but...',
-        cn: '虽然...不好，但是...'
+        jp: '〜という点（見た目など）は良くないが、本質は良い'
       },
       examples: [
         '父の料理は見ためこそ悪いが、とてもいい味をしている。',
