@@ -9,7 +9,9 @@ window.W1H2 = {
       explanation:
         '【接続】動詞辞書形 ＋ くらいなら／ぐらいなら\n【意味・解説】「〜という最悪な状況・行動になるよりは、まだ後者のほうがマシだ」という強く嫌がる気持ちや強い選択を表す。',
       meaning: {
-        jp: '〜という最悪な状況になるよりは、まだ〜ほうがいい'
+        id: 'Daripada harus (hal buruk)..., lebih baik...',
+        en: 'Rather than..., I would rather...',
+        cn: '与其...不如...'
       },
       examples: [
         'そんなことをするくらいなら、死んだほうがましだ。',
@@ -25,7 +27,9 @@ window.W1H2 = {
       explanation:
         '【接続】名詞 ＋ くらい／ぐらい ＋ のものだ\n【意味・解説】「〜できるのは、これ（この人）だけで他には全くいない」と、唯一の存在であることを強調するときに使う。',
       meaning: {
-        jp: '〜できるのはこれ（この人）だけで、他にはいない'
+        id: 'Hanya (orang/hal) ini saja yang bisa...',
+        en: 'It is only... that can...',
+        cn: '也就只有...才会/能...'
       },
       examples: [
         '彼が仕事を辞めないように説得できるのは、君ぐらいのものだ。',
@@ -41,7 +45,9 @@ window.W1H2 = {
       explanation:
         '【接続】普通形 ＋ ものとして （※な形-である／名詞-である）\n【意味・解説】現実には決まっていなくても、「〜と仮定・前提して次の行動や計画を進める」という状況で使う。',
       meaning: {
-        jp: '〜と仮定して／〜という前提で（行動する）'
+        id: 'Dengan anggapan/asumsi bahwa...',
+        en: 'On the assumption that...',
+        cn: '假设.../作为...（来进行）'
       },
       examples: [
         '中級漢字はできるものとして、上級漢字のクラスを取った。',
@@ -57,7 +63,9 @@ window.W1H2 = {
       explanation:
         '【接続】動詞辞書形 ＋ ものとする\n【意味・解説】契約書・法律・利用規約などの公式文書で、「〜と決定する／〜することを義務として定める」際に使う非常に硬い表現。',
       meaning: {
-        jp: '（契約や規則で）〜と定める／決定する'
+        id: 'Dianggap/ditetapkan bahwa... (aturan resmi)',
+        en: 'It shall be assumed that... / It is decided that...',
+        cn: '规定.../定为...'
       },
       examples: [
         '採用試験は、毎年10月に行うものとする。',
@@ -109,3 +117,4 @@ window.W1H2 = {
     ]
   }
 };
+

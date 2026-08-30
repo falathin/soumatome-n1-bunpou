@@ -9,7 +9,9 @@ window.W1H4 = {
       explanation:
         '【接続】普通形 ＋ とされる\n【意味・解説】一般的に〜と考えられている、または社会的に〜と認められている・決まっているという客観的事実や通説を述べる文章（ニュースや解説文）で使う。',
       meaning: {
-        jp: '一般に〜と考えられている／決められている'
+        id: 'Dianggap / diyakini bahwa...',
+        en: 'It is considered that...',
+        cn: '被认为是...'
       },
       examples: [
         'この国には、よい指導者がいないのが一番の問題だとされている。',
@@ -25,7 +27,9 @@ window.W1H4 = {
       explanation:
         '【接続】動詞の受身形（自発）\n【意味・解説】自分の意志で意識するのではなく、外部のきっかけによって「自然と気持ちや過去の記憶が湧き上がってくる」状態を表す。',
       meaning: {
-        jp: '自分の意志と関係なく、自然と〜という気持ちや記憶が湧く'
+        id: 'Secara tak sadar/spontan teringat/terpikirkan...',
+        en: 'Spontaneously rembered / naturally felt...',
+        cn: '不禁想起/不禁感到...'
       },
       examples: [
         'この曲を聴くと、学生時代のことが思いだされる。',
@@ -41,7 +45,9 @@ window.W1H4 = {
       explanation:
         '【接続】動詞の使役受身形\n【意味・解説】他人の素晴らしい行動や予期せぬ出来事によって、自分の心が強く動かされ「強制的に〜という感情にさせられる」ときに使う。',
       meaning: {
-        jp: '外部からの刺激によって、強い感情や考えを起こされる'
+        id: 'Dibuat merasa/tergugah oleh...',
+        en: 'To be made to feel...',
+        cn: '让人感到...'
       },
       examples: [
         '彼の仕事ぶりには感心させられる。',
@@ -57,7 +63,9 @@ window.W1H4 = {
       explanation:
         '【接続】名詞（※人・立場の表出）＋ に言わせれば／から言わせれば\n【意味・解説】「〜の立場や独自の見解から主張させてもらうと」と、自分の意見や評価を述べるときに使う。',
       meaning: {
-        jp: '〜の立場や意見から主張すると'
+        id: 'Menurut pandangan / jika (seseorang) boleh berkata...',
+        en: 'If you ask... / In the opinion of...',
+        cn: '依...之见 / 在...看来'
       },
       examples: [
         '彼は天才と言われているが、私に言わせれば、単なる努力家だ。',

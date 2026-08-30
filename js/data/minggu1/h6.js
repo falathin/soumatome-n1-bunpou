@@ -9,7 +9,9 @@ window.W1H6 = {
       explanation:
         '【接続】動詞・い形普通形 ＋ ところを ／ な形＋な ＋ ところを ／ 名詞＋の ＋ ところを\n【意味・解説】相手が忙しかったり大変だったりする状況に対して、お詫びや感謝の気持ちを丁寧に伝える際の前置きとして使う。',
       meaning: {
-        jp: '〜という大変な／お忙しい状況であるのに（申し訳ありません／感謝します）'
+        id: 'Padahal dalam keadaan (sibuk/susah)..., terima kasih/maaf...',
+        en: 'At the time when / Although you are in the middle of...',
+        cn: '百忙之中/在...之际（表示感谢或歉意）'
       },
       examples: [
         '交通事故で命が危ないところを、その医者に助けてもらった。',
@@ -25,7 +27,9 @@ window.W1H6 = {
       explanation:
         '【接続】名詞 ／ 数量詞 ＋ というところだ／といったところだ\n【意味・解説】「最高でもせいぜい〜の程度だ／だいたい〜くらいだ」と、大体の限界や目安の範囲を示すときに使う。',
       meaning: {
-        jp: '最高でも〜ぐらいだ／だいたい〜という程度だ'
+        id: 'Paling-paling cuma sebatas / sekitar...',
+        en: 'At most / At best around...',
+        cn: '最多也就是.../充其量是...'
       },
       examples: [
         '勉強時間は２、３時間というところだ。',
@@ -41,7 +45,9 @@ window.W1H6 = {
       explanation:
         '【接続】動詞た形 ＋ ところで\n【意味・解説】「たとえどんなに頑張って〜しても、決して良い結果は得られない／意味がない」という無駄であることを主張するときに使う。',
       meaning: {
-        jp: 'たとえ〜しても（良い結果は得られない／無駄だ）'
+        id: 'Sekalipun / meskipun (melakukan)..., tetap saja tidak ada gunanya',
+        en: 'Even if..., it won\'t matter / it\'s useless',
+        cn: '即使...也（无济于事）'
       },
       examples: [
         '何回読んだところで、意味は全くわからない。',
@@ -57,7 +63,9 @@ window.W1H6 = {
       explanation:
         '【接続】普通形 ＋ としたところで／としたって\n【意味・解説】「仮に〜と想定・仮定したとしても、結局状況や結果は変わらない」と立場や条件の無意味さを述べる。',
       meaning: {
-        jp: '仮に〜と仮定しても（結果は同じだ）'
+        id: 'Bahkan jika diandaikan..., hasilnya tetap...',
+        en: 'Even assuming that..., still...',
+        cn: '即使假设...也（改变不了什么）'
       },
       examples: [
         'これは忘れようとしたところで、忘れられない出来事だ。',

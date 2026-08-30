@@ -9,7 +9,9 @@ window.W1H3 = {
       explanation:
         '【接続】動詞辞書形 ＋ ことのないよう（に）\n【意味・解説】「〜という悪い事態や失敗が発生しないように、事前に注意・予防・対策をする」という目的を表す。',
       meaning: {
-        jp: '悪い事態にならないように（注意・予防する）'
+        id: 'Agar tidak (terjadi hal buruk)...',
+        en: 'So that... does not happen',
+        cn: '为了不发生...'
       },
       examples: [
         '災害が来ても慌てることのないよう、日頃から準備しておこう。',
@@ -25,7 +27,9 @@ window.W1H3 = {
       explanation:
         '【接続】動詞辞書形 ＋ ことなしに（は）\n【意味・解説】「〜を行わないで／〜という前提がないままで、別の事態が起こる（または起こせない）」を表す硬い表現。',
       meaning: {
-        jp: '〜をしないで／〜がないままで'
+        id: 'Tanpa (melakukan)...',
+        en: 'Without doing...',
+        cn: '不...就（不能）...'
       },
       examples: [
         '今の状況を知ることなしに、未来を予測することはできない。',
@@ -41,7 +45,9 @@ window.W1H3 = {
       explanation:
         '【接続】名詞（※主に人）＋ のことだから\n【意味・解説】その人の普段の性格や行動パターンをよく理解しているため、「〜だからきっと…だろう」と信頼や確信を持って推測するときに使う。',
       meaning: {
-        jp: '〜の性格や特徴から考えて、きっと…だろう'
+        id: 'Karena dia (karakternya)..., pasti...',
+        en: 'Knowing him/her, s/he will probably...',
+        cn: '既然是...，想必/一定...'
       },
       examples: [
         'よくできる彼のことだから、合格は間違いないでしょう。',
@@ -57,7 +63,9 @@ window.W1H3 = {
       explanation:
         '【接続】普通形 ＋ ことにする／になる\n【意味・解説】実際の事実とは異なっていても、「事実とは反対の状態として扱ったり、装ったりする」という場面で用いる。',
       meaning: {
-        jp: '事実とは違うが、〜ということに扱う／装う'
+        id: 'Dianggap / berpura-pura bahwa...',
+        en: 'Pretend that... / Treat as if...',
+        cn: '就当作.../被当作...'
       },
       examples: [
         'この話は聞かなかったことにしてください。',

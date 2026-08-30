@@ -9,7 +9,9 @@ window.W1H5 = {
       explanation:
         '【接続】普通形 ＋ とみえて／とみえる\n【意味・解説】目で見える直接的な様子や相手の行動を観察して、「どうやら〜のようだ／〜らしく見える」と判断・推量するときに使う。',
       meaning: {
-        jp: '（目に見える様子から）〜のようだ／どうやら〜らしい'
+        id: 'Tampaknya / kelihatannya...',
+        en: 'It seems that...',
+        cn: '看来/似乎...'
       },
       examples: [
         '田中さんは忙しいとみえて、このごろ電話もしてこない。',
@@ -25,7 +27,9 @@ window.W1H5 = {
       explanation:
         '【接続】普通形 ＋ とみられる\n【意味・解説】客観的な状況・データ・専門家の見解などに基づいて、「〜と予想・判断される」とニュースや報道で論理的に述べるときに使う。',
       meaning: {
-        jp: '（客観的に・データから）〜と予想・判断されている'
+        id: 'Diperkirakan / diduga bahwa... (berdasarkan data/bukti)',
+        en: 'It is expected/believed that...',
+        cn: '据估计/预计...'
       },
       examples: [
         'この地域では、今後も大きい地震が来るとみられている。',
@@ -41,7 +45,9 @@ window.W1H5 = {
       explanation:
         '【接続】普通形 ＋ とみると\n【意味・解説】「〜という状況だと素早く判断するやいなや、直ちに自分の行動や態度を変化させる」という場面を表す。',
       meaning: {
-        jp: '〜という状況だと判断すると、すぐに（態度や行動を変える）'
+        id: 'Begitu menyadari/melihat kondisi..., langsung...',
+        en: 'As soon as one realizes that..., one...',
+        cn: '一旦发现/看到...就（立刻）...'
       },
       examples: [
         '彼は問題がちょっと難しいとみると、自分で考えないで人に聞く。',

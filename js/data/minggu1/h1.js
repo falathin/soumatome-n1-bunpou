@@ -5,7 +5,9 @@ window.W1H1 = {
       id: 'w1_d1_1',
       rule: '〜てこそ',
       formal: false,
-      explanation: '(= Vて はじめて) 過去のことには使えない。',
+      conjunction: 'V-て + こそ',
+      explanation:
+        '【接続】動詞て形 ＋ こそ\n【意味・解説】〜という条件が満たされて初めて、本当の効果・価値・結果が現れることを強調する表現。「〜して初めて…できる」と言いたいときに使う。',
       meaning: {
         id: 'Hanya setelah (melakukan sesuatu), barulah bisa...',
         en: 'Only after doing... can one...',
@@ -21,7 +23,9 @@ window.W1H1 = {
       id: 'w1_d1_2',
       rule: '〜こそあれ',
       formal: true,
-      explanation: '(= 〜はあるけれど) Nこそあれ / naでこそあれ',
+      conjunction: 'N + こそあれ / Na-で + こそあれ',
+      explanation:
+        '【接続】名詞 ＋ こそあれ ／ な形容詞語幹＋で ＋ こそあれ\n【意味・解説】〜というマイナス面や不十分な点は認めつつも、「全体・本質としては全く問題がない」と評価する時に使う書き言葉的表現。',
       meaning: {
         id: 'Meskipun ada / walaupun...',
         en: 'Although there is...',
@@ -37,8 +41,9 @@ window.W1H1 = {
       id: 'w1_d1_3',
       rule: '〜こそすれ',
       formal: true,
+      conjunction: 'V-ます(語幹) + こそすれ / N + こそすれ',
       explanation:
-        '(= 〜はしているけれど、絶対に〜ない) 後文が「絶対〜ではない」という強調。',
+        '【接続】動詞ます形（語幹）＋ こそすれ ／ サ変名詞 ＋ こそすれ\n【意味・解説】「絶対〜するだけで、その反対の事態（〜ない）は100％あり得ない」と強く主張・否定する場面で使う。',
       meaning: {
         id: 'Sama sekali tidak... yang ada justru...',
         en: 'May do..., but definitely not...',
@@ -54,7 +59,9 @@ window.W1H1 = {
       id: 'w1_d1_4',
       rule: '〜こそ悪いが…',
       formal: false,
-      explanation: 'Nこそ [〜が… / 〜けれど…]',
+      conjunction: 'N + こそ + [ 悪いが… / 〜が… / 〜けれど… ]',
+      explanation:
+        '【接続】名詞 ＋ こそ ＋ [ 悪いが… / 〜が… / 〜けれど… ]\n【意味・解説】表面的な部分や一部の見た目（X）は良くないが、最も重要な本質・中身（Y）は良いと相反する要素を評価する際に使う。',
       meaning: {
         id: 'Memang buruk di aspek X, tetapi...',
         en: 'It may be bad in terms of X, but...',
@@ -96,14 +103,16 @@ window.W1H1 = {
         correct: 1
       },
       {
-        question: '君のやったことは、___ ___ ___ ___ ではない。',
+        question: '君のやったことは、___ ___ ★ ___ ではない。',
         options: ['1 非難される', '2 すれ', '3 ほめられこそ', '4 もの'],
-        correct: '3-2-1-4'
+        correct: 0,
+        fullSentence: '君のやったことは、【 3 ほめられこそ 】【 2 すれ 】【 1★ 非難される 】【 4 もの 】 ではない。'
       },
       {
-        question: 'その2つの ___ ___ ___ ___ 中身に大きな違いはない。',
+        question: 'その2つの ___ ___ ★ ___ 中身に大きな違いはない。',
         options: ['1 製品は', '2 名前', '3 違うが', '4 こそ'],
-        correct: '1-2-4-3'
+        correct: 3,
+        fullSentence: 'その2つの 【 1 製品は 】【 2 名前 】【 4★ こそ 】【 3 違うが 】 中身に大きな違いはない。'
       }
     ]
   }
