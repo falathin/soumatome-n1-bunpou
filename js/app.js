@@ -92,11 +92,65 @@ function createEmptyDay (week, day) {
 }
 
 /* =========================================================
+   PERSISTENT PAGE STATE
+========================================================= */
+
+const PAGE_STATE_KEY = 'n1_page_state'
+
+function getSavedPageState () {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(PAGE_STATE_KEY) || '{}')
+
+    if (!parsed || typeof parsed !== 'object') {
+      return null
+    }
+
+    const week = String(parsed.week || '')
+    const day = String(parsed.day || '')
+
+    if (/^week[1-8]$/.test(week) && /^day[1-7]$/.test(day)) {
+      return {
+        week,
+        day
+      }
+    }
+  } catch (error) {
+    console.warn('Page state read failed:', error)
+  }
+
+  return null
+}
+
+function savePageState () {
+  try {
+    localStorage.setItem(
+      PAGE_STATE_KEY,
+      JSON.stringify({
+        week: activeWeek,
+        day: activeDay
+      })
+    )
+  } catch (error) {
+    console.warn('Page state save failed:', error)
+  }
+}
+
+const savedPageState = getSavedPageState()
+
+/* =========================================================
    STATE
 ========================================================= */
 
-let activeWeek = 'week1'
-let activeDay = 'day1'
+let activeWeek =
+  savedPageState?.week && courseData[savedPageState.week]
+    ? savedPageState.week
+    : 'week1'
+
+let activeDay =
+  savedPageState?.day && courseData[activeWeek]?.days?.[savedPageState.day]
+    ? savedPageState.day
+    : 'day1'
+
 let currentSearch = ''
 let currentStatus = 'all'
 let memoMode = false
@@ -212,6 +266,7 @@ const emptyResetBtn = document.getElementById('emptyResetBtn')
 const weekTitle = document.getElementById('weekTitle')
 const dayTitle = document.getElementById('dayTitle')
 
+const progressLabel = document.getElementById('progressLabel')
 const progressPercent = document.getElementById('progressPercent')
 const progressBarFill = document.getElementById('progressBarFill')
 
@@ -990,6 +1045,7 @@ async function startSpeech (item) {
   const requestId = speechRequestId
 
   currentSpeakingItem = item
+
   speakingCardId = String(item.id)
 
   updateSpeechButtons()
@@ -1013,6 +1069,7 @@ function speakCurrentChunk (requestId) {
 
   if (!speechQueue.length || speechIndex >= speechQueue.length) {
     stopSpeech()
+
     return
   }
 
@@ -1138,6 +1195,7 @@ window.handleMainSpeech = function (id) {
 
   if (speakingCardId === String(id)) {
     stopSpeech()
+
     return
   }
 
@@ -1908,6 +1966,72 @@ async function loadCardTranslations (items, version) {
 }
 
 /* =========================================================
+   PROGRESS LABEL
+========================================================= */
+
+function isExamDay () {
+  return activeDay === 'day7' && !currentSearch
+}
+
+function updateProgressLabel () {
+  if (!progressLabel) {
+    return
+  }
+
+  progressLabel.textContent = isExamDay()
+    ? 'Progress ujian'
+    : 'Progress hafalan'
+}
+
+/* =========================================================
+   EXAM STATE
+========================================================= */
+
+let examAnswers = {}
+
+window.currentObjectExam = null
+
+/* =========================================================
+   EXAM PROGRESS → MAIN PROGRESS
+========================================================= */
+
+function syncExamToMainProgress () {
+  updateProgressLabel()
+
+  if (!isExamDay()) {
+    return
+  }
+
+  const questionBlocks = examContent?.querySelectorAll('.exam-q') || []
+
+  const total = questionBlocks.length
+
+  if (window.currentObjectExam && total > 0) {
+    const answered = Object.keys(examAnswers).length
+
+    const percentage = Math.round((answered / total) * 100)
+
+    if (progressPercent) {
+      progressPercent.textContent = `${percentage}%`
+    }
+
+    if (progressBarFill) {
+      progressBarFill.style.width = `${percentage}%`
+    }
+
+    return
+  }
+
+  if (progressPercent) {
+    progressPercent.textContent = '0%'
+  }
+
+  if (progressBarFill) {
+    progressBarFill.style.width = '0%'
+  }
+}
+
+/* =========================================================
    RENDER CARDS
 ========================================================= */
 
@@ -1917,6 +2041,8 @@ function renderCards () {
   explanationLoadVersion++
 
   stopSpeech()
+
+  updateProgressLabel()
 
   if (activeDay === 'day7' && !currentSearch) {
     if (grammarCards) {
@@ -1984,6 +2110,14 @@ function renderCards () {
 ========================================================= */
 
 function updateProgress (items) {
+  updateProgressLabel()
+
+  if (isExamDay()) {
+    syncExamToMainProgress()
+
+    return
+  }
+
   if (!progressPercent) {
     return
   }
@@ -2062,14 +2196,6 @@ function updateFilterLabel () {
 }
 
 /* =========================================================
-   EXAM STATE
-========================================================= */
-
-let examAnswers = {}
-
-window.currentObjectExam = null
-
-/* =========================================================
    RENDER EXAM
 ========================================================= */
 
@@ -2090,6 +2216,7 @@ function renderExam (examData) {
     examAnswers = {}
 
     updateExamProgress()
+    syncExamToMainProgress()
 
     return
   }
@@ -2134,6 +2261,7 @@ function renderExam (examData) {
   examAnswers = {}
 
   updateExamProgress()
+  syncExamToMainProgress()
 }
 
 /* =========================================================
@@ -2160,6 +2288,7 @@ function initializeHTMLExam () {
   examAnswers = {}
 
   updateExamProgress()
+  syncExamToMainProgress()
 }
 
 /* =========================================================
@@ -2229,35 +2358,43 @@ function renderObjectExam (examData) {
 
       ${questionsHTML}
 
-<button
-  type="button"
-  onclick="finishObjectExam()"
-  style="
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:9px;
-    padding:11px 20px;
-    border:none;
-    border-radius:10px;
-    background:#BC002D;
-    color:#fff;
-    font-size:14px;
-    font-weight:600;
-    letter-spacing:.2px;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(188,0,45,.25);
-    transition:all .2s ease;
-  "
-  onmouseover="this.style.background='#A80028';this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 16px rgba(188,0,45,.32)'"
-  onmouseout="this.style.background='#BC002D';this.style.transform='translateY(0)';this.style.boxShadow='0 4px 12px rgba(188,0,45,.25)'"
->
-  <i
-    class="bi bi-send-check"
-    style="font-size:17px;"
-  ></i>
-  Selesai & Lihat Skor
-</button>
+      <button
+        type="button"
+        onclick="finishObjectExam()"
+        style="
+          display:inline-flex;
+          align-items:center;
+          justify-content:center;
+          gap:9px;
+          padding:11px 20px;
+          border:none;
+          border-radius:10px;
+          background:#BC002D;
+          color:#fff;
+          font-size:14px;
+          font-weight:600;
+          letter-spacing:.2px;
+          cursor:pointer;
+          box-shadow:0 4px 12px rgba(188,0,45,.25);
+          transition:all .2s ease;
+        "
+        onmouseover="
+          this.style.background='#A80028';
+          this.style.transform='translateY(-1px)';
+          this.style.boxShadow='0 6px 16px rgba(188,0,45,.32)'
+        "
+        onmouseout="
+          this.style.background='#BC002D';
+          this.style.transform='translateY(0)';
+          this.style.boxShadow='0 4px 12px rgba(188,0,45,.25)'
+        "
+      >
+        <i
+          class="bi bi-send-check"
+          style="font-size:17px;"
+        ></i>
+        Selesai & Lihat Skor
+      </button>
 
       <div
         id="objectExamResult"
@@ -2268,6 +2405,7 @@ function renderObjectExam (examData) {
   `
 
   updateExamProgress()
+  syncExamToMainProgress()
 }
 
 /* =========================================================
@@ -2338,6 +2476,7 @@ window.chooseExamAnswer = function (questionIndex, optionIndex, button) {
   }
 
   updateExamProgress()
+  syncExamToMainProgress()
 }
 
 /* =========================================================
@@ -2391,6 +2530,8 @@ window.finishObjectExam = function () {
 
       ${percentage >= 70 ? 'よくできました！' : 'もう一度復習しましょう。'}
     `
+
+  syncExamToMainProgress()
 }
 
 /* =========================================================
@@ -2419,6 +2560,8 @@ function updateExamProgress () {
       examProgressFill.style.width = `${percentage}%`
     }
 
+    syncExamToMainProgress()
+
     return
   }
 
@@ -2429,6 +2572,8 @@ function updateExamProgress () {
   if (examProgressFill) {
     examProgressFill.style.width = '0%'
   }
+
+  syncExamToMainProgress()
 }
 
 /* =========================================================
@@ -2467,6 +2612,8 @@ if (searchInput) {
       renderCards()
 
       renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
+
+      updateProgressLabel()
     }, 220)
   })
 }
@@ -2485,6 +2632,8 @@ if (weekSelect) {
 
     clearTimeout(searchDebounceTimer)
 
+    savePageState()
+
     if (searchInput) {
       searchInput.value = ''
     }
@@ -2498,6 +2647,8 @@ if (weekSelect) {
     renderCards()
 
     renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
+
+    updateProgressLabel()
   })
 }
 
@@ -2513,6 +2664,8 @@ if (daySelect) {
 
     clearTimeout(searchDebounceTimer)
 
+    savePageState()
+
     if (searchInput) {
       searchInput.value = ''
     }
@@ -2522,6 +2675,8 @@ if (daySelect) {
     renderCards()
 
     renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
+
+    updateProgressLabel()
   })
 }
 
@@ -2554,6 +2709,8 @@ function resetFilters () {
   activeWeek = 'week1'
   activeDay = 'day1'
 
+  savePageState()
+
   if (searchInput) {
     searchInput.value = ''
   }
@@ -2575,6 +2732,8 @@ function resetFilters () {
   renderCards()
 
   renderExam(courseData.week1?.days?.day1?.exam)
+
+  updateProgressLabel()
 }
 
 if (resetFiltersBtn) {
@@ -2956,9 +3115,13 @@ function init () {
 
   updateFilterLabel()
 
+  updateProgressLabel()
+
   renderCards()
 
-  renderExam(courseData.week1?.days?.day1?.exam)
+  renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
+
+  updateProgressLabel()
 
   updateTimeAndGreeting()
 
