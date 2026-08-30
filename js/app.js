@@ -1664,12 +1664,6 @@ function createCardHTML (item, index) {
           ${item?.rule || '-'}
         </div>
 
-        <div class="meaning-main">
-          <span>
-            ${meaning}
-          </span>
-        </div>
-
         <button
           class="speaker-main-btn"
           type="button"
