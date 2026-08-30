@@ -789,7 +789,6 @@ async function translateText (text, from = 'ja', to = 'id') {
   }
 
   const source = normalizeApiLanguage(from)
-
   const target = normalizeApiLanguage(to)
 
   if (source === target) {
@@ -986,82 +985,96 @@ function cleanSpeechText (text) {
 }
 
 /* =========================================================
+   TRANSLATE MEANING → JAPANESE FOR TTS
+========================================================= */
+
+async function translateMeaningForSpeech (item) {
+  const meaningSource =
+    item?.meaning?.id ||
+    item?.meaning?.en ||
+    item?.meaning?.cn ||
+    item?.meaning?.zh ||
+    ''
+
+  const cleanMeaning = cleanSpeechText(meaningSource)
+
+  if (!cleanMeaning || cleanMeaning === '-') {
+    return ''
+  }
+
+  const sourceLanguage = detectLanguage(cleanMeaning)
+
+  if (normalizeApiLanguage(sourceLanguage) === 'ja') {
+    return cleanMeaning
+  }
+
+  try {
+    const translated = await translateText(cleanMeaning, sourceLanguage, 'ja')
+
+    return cleanSpeechText(translated)
+  } catch (error) {
+    console.warn('Meaning translation for TTS failed:', error)
+
+    return ''
+  }
+}
+
+/* =========================================================
    BUILD TTS QUEUE
 ========================================================= */
 
 /*
-  URUTAN TTS:
+  URUTAN TTS BARU:
 
-  1. Bunpou / pola grammar
-  2. Penjelasan Jepang
-  3. Contoh kalimat 1
-  4. Contoh kalimat 2
-  5. Contoh kalimat 3
+  1. Grammar rule
+  2. 「簡単な説明」 + arti yang otomatis diterjemahkan ke Jepang
+  3. 「例文」
+  4. Contoh kalimat 1
+  5. 「例文」
+  6. Contoh kalimat 2
+  7. 「例文」
+  8. Contoh kalimat 3
 
-  Hanya maksimal 3 contoh yang dibaca.
+  Semua bagian TTS menggunakan bahasa Jepang.
 */
 
-function buildSpeechQueue (item) {
+async function buildSpeechQueue (item) {
   const queue = []
+
+  /* ========================================================
+     1. GRAMMAR RULE
+  ======================================================== */
 
   const rule = cleanSpeechText(item?.rule || '')
 
-  const reading = cleanSpeechText(item?.reading || item?.yomi || '')
-
-  const explanationJP = cleanSpeechText(item?.explanationJP || '')
-
-  /*
-    ========================================================
-    1. BUNPOU
-    ========================================================
-  */
-
   if (rule) {
-    let bunpouText = rule
-
-    /*
-      Kalau ada reading, gabungkan dalam satu bagian
-      agar TTS membaca:
-
-      ～てこそ
-      てこそ
-
-      atau pattern + reading.
-    */
-
-    if (reading && reading !== rule) {
-      bunpouText += `。${reading}`
-    }
-
     queue.push({
       type: 'bunpou',
-      text: bunpouText
-    })
-  } else if (reading) {
-    queue.push({
-      type: 'bunpou',
-      text: reading
+      text: rule
     })
   }
 
-  /*
-    ========================================================
-    2. PENJELASAN
-    ========================================================
-  */
+  /* ========================================================
+     2. KANTAN NA SETSUMEI
+  ======================================================== */
 
-  if (explanationJP) {
+  const meaningJP = await translateMeaningForSpeech(item)
+
+  if (meaningJP) {
     queue.push({
-      type: 'explanation',
-      text: explanationJP
+      type: 'meaning-label',
+      text: `簡単な説明。${meaningJP}`
+    })
+  } else {
+    queue.push({
+      type: 'meaning-label',
+      text: '簡単な説明。'
     })
   }
 
-  /*
-    ========================================================
-    3. CONTOH — MAKSIMAL 3
-    ========================================================
-  */
+  /* ========================================================
+     3. REIBUN
+  ======================================================== */
 
   if (Array.isArray(item?.examples)) {
     item.examples.slice(0, 3).forEach((example, index) => {
@@ -1070,6 +1083,12 @@ function buildSpeechQueue (item) {
       if (!clean) {
         return
       }
+
+      queue.push({
+        type: 'example-label',
+        index: index + 1,
+        text: `例文。`
+      })
 
       queue.push({
         type: 'example',
@@ -1117,7 +1136,10 @@ function getSpeechRate (type) {
     case 'bunpou':
       return 0.82
 
-    case 'explanation':
+    case 'meaning-label':
+      return 0.84
+
+    case 'example-label':
       return 0.84
 
     case 'example':
@@ -1137,7 +1159,10 @@ function getSpeechPitch (type) {
     case 'bunpou':
       return 1.0
 
-    case 'explanation':
+    case 'meaning-label':
+      return 1.0
+
+    case 'example-label':
       return 1.0
 
     case 'example':
@@ -1180,11 +1205,21 @@ async function startSpeech (item) {
   updateSpeechButtons()
 
   /*
-    Bangun queue baru:
-    Bunpou → Penjelasan → 3 Contoh
+    Bangun queue baru secara async karena
+    arti harus diterjemahkan ke bahasa Jepang dahulu.
   */
 
-  speechQueue = buildSpeechQueue(item)
+  try {
+    speechQueue = await buildSpeechQueue(item)
+  } catch (error) {
+    console.warn('Speech queue build failed:', error)
+
+    if (requestId === speechRequestId) {
+      stopSpeech()
+    }
+
+    return
+  }
 
   if (requestId !== speechRequestId || speakingCardId !== String(item.id)) {
     return
@@ -1251,7 +1286,8 @@ function speakCurrentChunk (requestId) {
     /*
       Delay kecil antar bagian agar:
       bunpou
-      → penjelasan
+      → 簡単な説明
+      → 例文
       → contoh
 
       tidak terasa menempel.
@@ -1356,7 +1392,7 @@ function updateSpeechButtons () {
     status.textContent = active
       ? speechPaused
         ? 'Dijeda'
-        : 'Sedang membaca: bunpou → penjelasan → 3 contoh'
+        : 'Sedang membaca: bunpou → 簡単な説明 → 例文 1-3'
       : '読み上げ機能'
 
     if (play) {
@@ -1861,8 +1897,8 @@ function createCardHTML (item, index) {
           class="speaker-main-btn"
           type="button"
           onclick="handleMainSpeech('${escapeForJS(item?.id)}')"
-          title="Bacakan: bunpou → penjelasan → 3 contoh"
-          aria-label="Bacakan bunpou, penjelasan, dan tiga contoh"
+          title="Bacakan: bunpou → 簡単な説明 → 例文"
+          aria-label="Bacakan bunpou, penjelasan bahasa Jepang, dan tiga contoh"
         >
           <i class="bi bi-volume-up-fill"></i>
         </button>
