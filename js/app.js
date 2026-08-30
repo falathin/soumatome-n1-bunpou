@@ -3,6 +3,7 @@
    CLEAN VERSION — NO FURIGANA
 ========================================================= */
 
+
 /* =========================================================
    COURSE DATA
 ========================================================= */
@@ -39,6 +40,7 @@ for (let week = 1; week <= 8; week++) {
   }
 }
 
+
 /* =========================================================
    NORMALIZE DAY DATA
 ========================================================= */
@@ -59,6 +61,7 @@ function normalizeDayData (data) {
     exam: data.exam || null
   }
 }
+
 
 /* =========================================================
    EMPTY DAY
@@ -90,6 +93,7 @@ function createEmptyDay (week, day) {
     exam: null
   }
 }
+
 
 /* =========================================================
    PERSISTENT PAGE STATE
@@ -137,6 +141,7 @@ function savePageState () {
 
 const savedPageState = getSavedPageState()
 
+
 /* =========================================================
    STATE
 ========================================================= */
@@ -160,6 +165,7 @@ let explanationLoadVersion = 0
 let searchDebounceTimer = null
 
 let allGrammarCache = null
+
 
 /* =========================================================
    LANGUAGE
@@ -244,6 +250,7 @@ function getApiLanguage (lang) {
   }
 }
 
+
 /* =========================================================
    ELEMENTS
 ========================================================= */
@@ -286,6 +293,7 @@ const timePeriodText = document.getElementById('timePeriodText')
 const examAnswered = document.getElementById('examAnswered')
 const examProgressFill = document.getElementById('examProgressFill')
 
+
 /* =========================================================
    SAFE HELPERS
 ========================================================= */
@@ -293,6 +301,7 @@ const examProgressFill = document.getElementById('examProgressFill')
 function elementExists (element) {
   return !!element && typeof element === 'object'
 }
+
 
 /* =========================================================
    HTML HELPERS
@@ -303,7 +312,9 @@ function stripHTML (html) {
 
   temp.innerHTML = html || ''
 
-  return (temp.textContent || temp.innerText || '').replace(/\s+/g, ' ').trim()
+  return (temp.textContent || temp.innerText || '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 function escapeHTML (value) {
@@ -324,6 +335,7 @@ function escapeForJS (value) {
     .replace(/\n/g, '\\n')
 }
 
+
 /* =========================================================
    STATUS
 ========================================================= */
@@ -335,6 +347,7 @@ function getStatus (item) {
 
   return localStorage.getItem(`status_${item.id}`) || '0'
 }
+
 
 /* =========================================================
    ALL GRAMMAR CACHE
@@ -369,12 +382,15 @@ function getAllGrammar () {
 
   allGrammarCache = output
 
-  return output
+  return allGrammarCache
 }
 
 function findItemById (id) {
-  return getAllGrammar().find(item => String(item.id) === String(id))
+  return getAllGrammar().find(
+    item => String(item.id) === String(id)
+  )
 }
+
 
 /* =========================================================
    SELECTS
@@ -411,13 +427,17 @@ function populateDaySelect () {
 
     option.value = `day${day}`
 
-    option.textContent = day === 7 ? 'Hari 7 — Full Exam' : `Hari ${day}`
+    option.textContent =
+      day === 7
+        ? 'Hari 7 — Full Exam'
+        : `Hari ${day}`
 
     daySelect.appendChild(option)
   }
 
   daySelect.value = activeDay
 }
+
 
 /* =========================================================
    SEARCH
@@ -447,14 +467,18 @@ function matchesSearch (item, query) {
     .join(' ')
     .toLowerCase()
 
-  return searchText.includes(String(query).toLowerCase())
+  return searchText.includes(
+    String(query).toLowerCase()
+  )
 }
 
 function getFilteredItems () {
   let items = []
 
   if (currentSearch) {
-    items = getAllGrammar().filter(item => matchesSearch(item, currentSearch))
+    items = getAllGrammar().filter(item =>
+      matchesSearch(item, currentSearch)
+    )
   } else {
     const day = courseData[activeWeek]?.days?.[activeDay]
 
@@ -468,11 +492,14 @@ function getFilteredItems () {
   }
 
   if (currentStatus !== 'all') {
-    items = items.filter(item => getStatus(item) === currentStatus)
+    items = items.filter(
+      item => getStatus(item) === currentStatus
+    )
   }
 
   return items
 }
+
 
 /* =========================================================
    LANGUAGE DETECTION
@@ -551,7 +578,11 @@ function normalizeApiLanguage (lang) {
     .trim()
     .toLowerCase()
 
-  if (value === 'zh' || value === 'zh-cn' || value === 'cn') {
+  if (
+    value === 'zh' ||
+    value === 'zh-cn' ||
+    value === 'cn'
+  ) {
     return 'zh-CN'
   }
 
@@ -588,6 +619,7 @@ function getTargetLanguage (sourceLanguage) {
   return selected
 }
 
+
 /* =========================================================
    TRANSLATION CACHE
 ========================================================= */
@@ -615,14 +647,21 @@ function getTranslationCache () {
   }
 
   try {
-    const parsed = JSON.parse(localStorage.getItem(translationCacheKey) || '{}')
+    const parsed = JSON.parse(
+      localStorage.getItem(translationCacheKey) || '{}'
+    )
 
     translationMemoryCache =
-      parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      parsed &&
+      typeof parsed === 'object' &&
+      !Array.isArray(parsed)
         ? parsed
         : {}
   } catch (error) {
-    console.warn('Translation cache read failed:', error)
+    console.warn(
+      'Translation cache read failed:',
+      error
+    )
 
     translationMemoryCache = {}
   }
@@ -634,9 +673,15 @@ function saveTranslationCache (cache) {
   translationMemoryCache = cache
 
   try {
-    localStorage.setItem(translationCacheKey, JSON.stringify(cache))
+    localStorage.setItem(
+      translationCacheKey,
+      JSON.stringify(cache)
+    )
   } catch (error) {
-    console.warn('Translation cache save skipped:', error)
+    console.warn(
+      'Translation cache save skipped:',
+      error
+    )
   }
 }
 
@@ -646,14 +691,21 @@ function getExplanationCache () {
   }
 
   try {
-    const parsed = JSON.parse(localStorage.getItem(explanationCacheKey) || '{}')
+    const parsed = JSON.parse(
+      localStorage.getItem(explanationCacheKey) || '{}'
+    )
 
     explanationMemoryCache =
-      parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      parsed &&
+      typeof parsed === 'object' &&
+      !Array.isArray(parsed)
         ? parsed
         : {}
   } catch (error) {
-    console.warn('Explanation cache read failed:', error)
+    console.warn(
+      'Explanation cache read failed:',
+      error
+    )
 
     explanationMemoryCache = {}
   }
@@ -665,11 +717,18 @@ function saveExplanationCache (cache) {
   explanationMemoryCache = cache
 
   try {
-    localStorage.setItem(explanationCacheKey, JSON.stringify(cache))
+    localStorage.setItem(
+      explanationCacheKey,
+      JSON.stringify(cache)
+    )
   } catch (error) {
-    console.warn('Explanation cache save skipped:', error)
+    console.warn(
+      'Explanation cache save skipped:',
+      error
+    )
   }
 }
+
 
 /* =========================================================
    FETCH TIMEOUT
@@ -682,7 +741,10 @@ async function fetchWithTimeout (
 ) {
   const controller = new AbortController()
 
-  const timeoutId = setTimeout(() => controller.abort(), timeout)
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    timeout
+  )
 
   try {
     return await fetch(url, {
@@ -698,12 +760,19 @@ async function fetchWithTimeout (
   }
 }
 
+
 /* =========================================================
    MYMEMORY
 ========================================================= */
 
-async function translateWithMyMemory (text, from, to) {
-  const url = new URL(TRANSLATION_CONFIG.myMemory)
+async function translateWithMyMemory (
+  text,
+  from,
+  to
+) {
+  const url = new URL(
+    TRANSLATION_CONFIG.myMemory
+  )
 
   url.searchParams.set('q', text)
 
@@ -712,84 +781,145 @@ async function translateWithMyMemory (text, from, to) {
     `${normalizeApiLanguage(from)}|${normalizeApiLanguage(to)}`
   )
 
-  const response = await fetchWithTimeout(url.toString())
+  const response = await fetchWithTimeout(
+    url.toString()
+  )
 
   if (!response.ok) {
-    throw new Error(`MyMemory HTTP ${response.status}`)
+    throw new Error(
+      `MyMemory HTTP ${response.status}`
+    )
   }
 
   const data = await response.json()
 
-  if (data?.responseStatus && Number(data.responseStatus) !== 200) {
-    throw new Error(`MyMemory API status ${data.responseStatus}`)
+  if (
+    data?.responseStatus &&
+    Number(data.responseStatus) !== 200
+  ) {
+    throw new Error(
+      `MyMemory API status ${data.responseStatus}`
+    )
   }
 
   if (data?.quotaFinished === true) {
-    throw new Error('MyMemory quota finished')
+    throw new Error(
+      'MyMemory quota finished'
+    )
   }
 
   const translated = String(
-    data?.responseData?.translatedText || data?.matches?.[0]?.translation || ''
+    data?.responseData?.translatedText ||
+    data?.matches?.[0]?.translation ||
+    ''
   ).trim()
 
   if (!translated) {
-    throw new Error('MyMemory returned empty translation')
+    throw new Error(
+      'MyMemory returned empty translation'
+    )
   }
 
   return translated
 }
 
+
 /* =========================================================
    GOOGLE FALLBACK
 ========================================================= */
 
-async function translateWithGoogleFallback (text, from, to) {
-  const url = new URL(TRANSLATION_CONFIG.google)
+async function translateWithGoogleFallback (
+  text,
+  from,
+  to
+) {
+  const url = new URL(
+    TRANSLATION_CONFIG.google
+  )
 
-  url.searchParams.set('client', 'gtx')
-  url.searchParams.set('sl', normalizeApiLanguage(from))
-  url.searchParams.set('tl', normalizeApiLanguage(to))
-  url.searchParams.set('dt', 't')
-  url.searchParams.set('q', text)
+  url.searchParams.set(
+    'client',
+    'gtx'
+  )
 
-  const response = await fetchWithTimeout(url.toString())
+  url.searchParams.set(
+    'sl',
+    normalizeApiLanguage(from)
+  )
+
+  url.searchParams.set(
+    'tl',
+    normalizeApiLanguage(to)
+  )
+
+  url.searchParams.set(
+    'dt',
+    't'
+  )
+
+  url.searchParams.set(
+    'q',
+    text
+  )
+
+  const response = await fetchWithTimeout(
+    url.toString()
+  )
 
   if (!response.ok) {
-    throw new Error(`Google fallback HTTP ${response.status}`)
+    throw new Error(
+      `Google fallback HTTP ${response.status}`
+    )
   }
 
   const data = await response.json()
 
   const translated =
-    Array.isArray(data) && Array.isArray(data[0])
+    Array.isArray(data) &&
+    Array.isArray(data[0])
       ? data[0]
-          .map(part => (Array.isArray(part) ? part[0] : ''))
+          .map(part =>
+            Array.isArray(part)
+              ? part[0]
+              : ''
+          )
           .filter(Boolean)
           .join('')
       : ''
 
-  const result = String(translated || '').trim()
+  const result =
+    String(translated || '').trim()
 
   if (!result) {
-    throw new Error('Google fallback returned empty result')
+    throw new Error(
+      'Google fallback returned empty result'
+    )
   }
 
   return result
 }
 
+
 /* =========================================================
    TRANSLATE TEXT
 ========================================================= */
 
-async function translateText (text, from = 'ja', to = 'id') {
+async function translateText (
+  text,
+  from = 'ja',
+  to = 'id'
+) {
   const clean = stripHTML(text)
 
   if (!clean) {
     return ''
   }
 
-  const source = normalizeApiLanguage(from)
-  const target = normalizeApiLanguage(to)
+  const source =
+    normalizeApiLanguage(from)
+
+  const target =
+    normalizeApiLanguage(to)
 
   if (source === target) {
     return clean
@@ -797,9 +927,13 @@ async function translateText (text, from = 'ja', to = 'id') {
 
   const cache = getTranslationCache()
 
-  const cacheKey = `${source}__${target}__${clean}`
+  const cacheKey =
+    `${source}__${target}__${clean}`
 
-  if (typeof cache[cacheKey] === 'string' && cache[cacheKey]) {
+  if (
+    typeof cache[cacheKey] === 'string' &&
+    cache[cacheKey]
+  ) {
     return cache[cacheKey]
   }
 
@@ -810,9 +944,18 @@ async function translateText (text, from = 'ja', to = 'id') {
   const requestPromise = (async () => {
     let lastError = null
 
-    for (let attempt = 0; attempt < TRANSLATION_CONFIG.retries; attempt++) {
+    for (
+      let attempt = 0;
+      attempt < TRANSLATION_CONFIG.retries;
+      attempt++
+    ) {
       try {
-        const result = await translateWithMyMemory(clean, source, target)
+        const result =
+          await translateWithMyMemory(
+            clean,
+            source,
+            target
+          )
 
         if (result) {
           cache[cacheKey] = result
@@ -824,21 +967,32 @@ async function translateText (text, from = 'ja', to = 'id') {
       } catch (error) {
         lastError = error
 
-        if (attempt < TRANSLATION_CONFIG.retries - 1) {
-          await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)))
+        if (
+          attempt <
+          TRANSLATION_CONFIG.retries - 1
+        ) {
+          await new Promise(
+            resolve =>
+              setTimeout(
+                resolve,
+                500 * (attempt + 1)
+              )
+          )
         }
       }
     }
 
     try {
-      const fallbackResult = await translateWithGoogleFallback(
-        clean,
-        source,
-        target
-      )
+      const fallbackResult =
+        await translateWithGoogleFallback(
+          clean,
+          source,
+          target
+        )
 
       if (fallbackResult) {
-        cache[cacheKey] = fallbackResult
+        cache[cacheKey] =
+          fallbackResult
 
         saveTranslationCache(cache)
 
@@ -848,136 +1002,208 @@ async function translateText (text, from = 'ja', to = 'id') {
       lastError = error
     }
 
-    console.warn('Translation unavailable:', {
-      source,
-      target,
-      error: lastError?.message || 'Unknown translation error'
-    })
+    console.warn(
+      'Translation unavailable:',
+      {
+        source,
+        target,
+        error:
+          lastError?.message ||
+          'Unknown translation error'
+      }
+    )
 
     return ''
   })()
 
-  translationPending.set(cacheKey, requestPromise)
+  translationPending.set(
+    cacheKey,
+    requestPromise
+  )
 
   try {
     return await requestPromise
   } finally {
-    translationPending.delete(cacheKey)
+    translationPending.delete(
+      cacheKey
+    )
   }
 }
+
 
 /* =========================================================
    EXPLANATION TRANSLATION
 ========================================================= */
 
-async function getExplanationForLanguage (item) {
-  const source = stripHTML(item?.explanation || '')
+async function getExplanationForLanguage (
+  item
+) {
+  const source =
+    stripHTML(
+      item?.explanation || ''
+    )
 
   if (!source) {
     return ''
   }
 
-  const lang = normalizeLanguage(currentLanguage)
+  const lang =
+    normalizeLanguage(
+      currentLanguage
+    )
 
   if (lang === 'id') {
     return source
   }
 
-  const target = getApiLanguage(lang)
+  const target =
+    getApiLanguage(lang)
 
-  const cache = getExplanationCache()
+  const cache =
+    getExplanationCache()
 
-  const cacheKey = `${lang}::${source}`
+  const cacheKey =
+    `${lang}::${source}`
 
-  if (typeof cache[cacheKey] === 'string' && cache[cacheKey]) {
+  if (
+    typeof cache[cacheKey] === 'string' &&
+    cache[cacheKey]
+  ) {
     return cache[cacheKey]
   }
 
-  const translated = await translateText(source, 'id', target)
+  const translated =
+    await translateText(
+      source,
+      'id',
+      target
+    )
 
   if (!translated) {
     return source
   }
 
-  cache[cacheKey] = translated
+  cache[cacheKey] =
+    translated
 
   saveExplanationCache(cache)
 
   return translated
 }
 
+
 /* =========================================================
-   TTS
+   TTS ENGINE
 ========================================================= */
 
+/*
+  PERBAIKAN UTAMA TTS
+
+  Queue:
+
+    1. 文法
+    2. 例文
+    3. 例文
+    4. 例文
+
+  TIDAK lagi membaca:
+    - 簡単な説明
+    - arti Indonesia
+    - hasil translate arti
+
+  State:
+
+    idle
+    loading
+    speaking
+    paused
+    stopping
+*/
+
+
 let availableVoices = []
+
 let speakingCardId = null
+let currentSpeakingItem = null
 
 let speechQueue = []
 let speechIndex = 0
 
 let speechPaused = false
-let currentSpeakingItem = null
+let speechLoading = false
 
 let speechRequestId = 0
+let speechStopTimer = null
+
+
+/* =========================================================
+   LOAD VOICES
+========================================================= */
 
 function loadVoices () {
   if (!('speechSynthesis' in window)) {
     return
   }
 
-  availableVoices = window.speechSynthesis.getVoices() || []
+  availableVoices =
+    window.speechSynthesis.getVoices() || []
 }
 
 loadVoices()
 
 if ('speechSynthesis' in window) {
-  window.speechSynthesis.addEventListener('voiceschanged', loadVoices)
+  window.speechSynthesis.addEventListener(
+    'voiceschanged',
+    loadVoices
+  )
 }
 
+
 /* =========================================================
-   VOICE FINDER
+   JAPANESE VOICE
 ========================================================= */
 
-function findVoiceByLanguage (language) {
+function findJapaneseVoice () {
   loadVoices()
 
   if (!availableVoices.length) {
     return null
   }
 
-  const normalized = normalizeApiLanguage(language)
-
   const priorities = [
     voice =>
-      /microsoft/i.test(voice.name) &&
-      /online|natural/i.test(voice.name) &&
-      new RegExp(`^${normalized}`, 'i').test(voice.lang),
+      /microsoft/i.test(
+        voice.name
+      ) &&
+      /online|natural/i.test(
+        voice.name
+      ) &&
+      /^ja/i.test(
+        voice.lang
+      ),
 
     voice =>
-      /microsoft/i.test(voice.name) &&
-      new RegExp(`^${normalized}`, 'i').test(voice.lang),
+      /microsoft/i.test(
+        voice.name
+      ) &&
+      /^ja/i.test(
+        voice.lang
+      ),
 
     voice =>
-      new RegExp(`^${normalized}`, 'i').test(voice.lang),
+      /^ja-JP/i.test(
+        voice.lang
+      ),
 
-    voice => {
-      const voiceLang = normalizeApiLanguage(voice.lang)
-
-      if (normalized === 'zh-CN') {
-        return (
-          voiceLang === 'zh-cn' ||
-          voiceLang === 'zh' ||
-          /^zh/i.test(voice.lang)
-        )
-      }
-
-      return voiceLang === normalized
-    }
+    voice =>
+      /^ja/i.test(
+        voice.lang
+      )
   ]
 
   for (const test of priorities) {
-    const found = availableVoices.find(test)
+    const found =
+      availableVoices.find(test)
 
     if (found) {
       return found
@@ -987,20 +1213,14 @@ function findVoiceByLanguage (language) {
   return null
 }
 
-/* =========================================================
-   JAPANESE VOICE
-========================================================= */
-
-function findJapaneseVoice () {
-  return findVoiceByLanguage('ja-JP')
-}
 
 /* =========================================================
    TTS TEXT CLEANER
 ========================================================= */
 
 function cleanSpeechText (text) {
-  const clean = stripHTML(text)
+  const clean =
+    stripHTML(text)
 
   return clean
     .replace(/\s+/g, ' ')
@@ -1009,216 +1229,161 @@ function cleanSpeechText (text) {
     .trim()
 }
 
-/* =========================================================
-   GET DISPLAYED EXPLANATION
-========================================================= */
-
-/*
-  Mengambil teks penjelasan yang benar-benar sedang tampil
-  pada card.
-
-  Urutan prioritas:
-  1. Teks .id-explanation pada card
-  2. item.explanation
-*/
-
-function getDisplayedExplanationText (item) {
-  if (!item?.id) {
-    return ''
-  }
-
-  const selector = `.translation-box[data-explanation-id="${CSS.escape(
-    String(item.id)
-  )}"]`
-
-  const explanationBox = document.querySelector(selector)
-
-  const displayed = explanationBox?.querySelector('.id-explanation')
-
-  if (displayed) {
-    const text = cleanSpeechText(displayed.textContent || '')
-
-    if (
-      text &&
-      text !== cleanSpeechText(getLanguageText('translating'))
-    ) {
-      return text
-    }
-  }
-
-  return cleanSpeechText(item?.explanation || '')
-}
 
 /* =========================================================
-   TTS LABELS
+   TTS QUEUE
 ========================================================= */
-
-function getSpeechLabel (type) {
-  switch (type) {
-    case 'explanation-label':
-      return '簡単な説明。'
-
-    case 'example-label':
-      return '例文。'
-
-    default:
-      return ''
-  }
-}
-
-/* =========================================================
-   SPEECH LANGUAGE
-========================================================= */
-
-function getSpeechLanguage (chunk) {
-  if (!chunk) {
-    return 'ja-JP'
-  }
-
-  if (chunk.type === 'bunpou') {
-    return 'ja-JP'
-  }
-
-  if (chunk.type === 'example') {
-    return 'ja-JP'
-  }
-
-  if (chunk.type === 'explanation-label') {
-    return 'ja-JP'
-  }
-
-  if (chunk.type === 'explanation') {
-    return getApiLanguage(currentLanguage)
-  }
-
-  if (chunk.type === 'example-label') {
-    return 'ja-JP'
-  }
-
-  return 'ja-JP'
-}
-
-/* =========================================================
-   BUILD TTS QUEUE
-========================================================= */
-
-/*
-  URUTAN TTS BARU:
-
-  1. grammar-rule
-  2. 「簡単な説明」
-  3. penjelasan yang tampil di UI
-  4. 「例文」
-  5. contoh kalimat 1
-  6. contoh kalimat 2
-  7. contoh kalimat 3
-
-  Maksimal 3 contoh.
-*/
 
 function buildSpeechQueue (item) {
   const queue = []
 
   /*
-    ========================================================
-    1. GRAMMAR RULE
-    ========================================================
+    1. GRAMMAR
   */
 
-  const rule = cleanSpeechText(item?.rule || '')
+  const rule =
+    cleanSpeechText(
+      item?.rule || ''
+    )
 
   if (rule) {
     queue.push({
       type: 'bunpou',
-      text: rule,
-      language: 'ja-JP'
+      text: rule
     })
   }
 
   /*
-    ========================================================
-    2. KANTAN NA SETSUMEI
-    ========================================================
+    2. EXAMPLES ONLY
   */
 
-  const explanation = getDisplayedExplanationText(item)
+  if (
+    Array.isArray(
+      item?.examples
+    )
+  ) {
+    item.examples
+      .slice(0, 3)
+      .forEach(
+        (example, index) => {
+          const clean =
+            cleanSpeechText(
+              example
+            )
 
-  if (explanation) {
-    queue.push({
-      type: 'explanation-label',
-      text: getSpeechLabel('explanation-label'),
-      language: 'ja-JP'
-    })
+          if (!clean) {
+            return
+          }
 
-    queue.push({
-      type: 'explanation',
-      text: explanation,
-      language: getSpeechLanguage({
-        type: 'explanation'
-      })
-    })
-  }
+          queue.push({
+            type: 'example-label',
+            index:
+              index + 1,
+            text: '例文。'
+          })
 
-  /*
-    ========================================================
-    3. REIBUN
-    ========================================================
-  */
-
-  const examples = Array.isArray(item?.examples)
-    ? item.examples
-    : []
-
-  const validExamples = examples
-    .slice(0, 3)
-    .map(example => cleanSpeechText(example))
-    .filter(Boolean)
-
-  if (validExamples.length) {
-    queue.push({
-      type: 'example-label',
-      text: getSpeechLabel('example-label'),
-      language: 'ja-JP'
-    })
-
-    validExamples.forEach((example, index) => {
-      queue.push({
-        type: 'example',
-        index: index + 1,
-        text: example,
-        language: 'ja-JP'
-      })
-    })
+          queue.push({
+            type: 'example',
+            index:
+              index + 1,
+            text: clean
+          })
+        }
+      )
   }
 
   return queue
 }
+
+
+/* =========================================================
+   TTS STATE
+========================================================= */
+
+function getSpeechState () {
+  if (speechLoading) {
+    return 'loading'
+  }
+
+  if (speakingCardId !== null) {
+    if (speechPaused) {
+      return 'paused'
+    }
+
+    return 'speaking'
+  }
+
+  return 'idle'
+}
+
+
+/* =========================================================
+   CLEAR SPEECH STATE
+========================================================= */
+
+function clearSpeechState () {
+  speakingCardId = null
+  currentSpeakingItem = null
+
+  speechQueue = []
+  speechIndex = 0
+
+  speechPaused = false
+  speechLoading = false
+
+  updateSpeechButtons()
+}
+
 
 /* =========================================================
    STOP SPEECH
 ========================================================= */
 
 function stopSpeech () {
+  /*
+    Invalidate semua request lama.
+  */
+
   speechRequestId++
 
-  if ('speechSynthesis' in window) {
+  /*
+    Batalkan timer antar chunk.
+  */
+
+  if (speechStopTimer) {
+    clearTimeout(
+      speechStopTimer
+    )
+
+    speechStopTimer = null
+  }
+
+  /*
+    Cancel browser TTS.
+  */
+
+  if (
+    'speechSynthesis' in window
+  ) {
     try {
       window.speechSynthesis.cancel()
     } catch (error) {
-      console.warn('Speech cancel failed:', error)
+      console.warn(
+        'Speech cancel failed:',
+        error
+      )
     }
   }
 
-  speakingCardId = null
-  speechQueue = []
-  speechIndex = 0
-  speechPaused = false
-  currentSpeakingItem = null
+  /*
+    Reset semua state.
+  */
 
-  updateSpeechButtons()
+  clearSpeechState()
 }
 
 window.stopSpeech = stopSpeech
+
 
 /* =========================================================
    SPEECH RATE
@@ -1229,14 +1394,8 @@ function getSpeechRate (type) {
     case 'bunpou':
       return 0.82
 
-    case 'explanation-label':
-      return 0.86
-
-    case 'explanation':
-      return 0.9
-
     case 'example-label':
-      return 0.86
+      return 0.84
 
     case 'example':
       return 0.88
@@ -1245,6 +1404,7 @@ function getSpeechRate (type) {
       return 0.85
   }
 }
+
 
 /* =========================================================
    SPEECH PITCH
@@ -1255,12 +1415,6 @@ function getSpeechPitch (type) {
     case 'bunpou':
       return 1.0
 
-    case 'explanation-label':
-      return 1.0
-
-    case 'explanation':
-      return 1.0
-
     case 'example-label':
       return 1.0
 
@@ -1272,13 +1426,18 @@ function getSpeechPitch (type) {
   }
 }
 
+
 /* =========================================================
    START SPEECH
 ========================================================= */
 
 async function startSpeech (item) {
-  if (!('speechSynthesis' in window)) {
-    alert('Browser ini tidak mendukung Text to Speech.')
+  if (
+    !('speechSynthesis' in window)
+  ) {
+    alert(
+      'Browser ini tidak mendukung Text to Speech.'
+    )
 
     return
   }
@@ -1287,274 +1446,706 @@ async function startSpeech (item) {
     return
   }
 
+  /*
+    Stop playback lama.
+  */
+
   stopSpeech()
 
   /*
-    Ambil request ID setelah stopSpeech()
-    supaya request lama tidak bisa mengganggu
-    pembacaan baru.
+    Buat request ID baru.
   */
 
-  const requestId = speechRequestId
+  const requestId =
+    speechRequestId
 
-  currentSpeakingItem = item
+  /*
+    Simpan item.
+  */
 
-  speakingCardId = String(item.id)
+  currentSpeakingItem =
+    item
+
+  speakingCardId =
+    String(item.id)
+
+  speechLoading = true
+  speechPaused = false
+  speechIndex = 0
 
   updateSpeechButtons()
 
   /*
-    Queue:
-
-    grammar-rule
-    → 簡単な説明
-    → penjelasan
-    → 例文
-    → contoh 1
-    → contoh 2
-    → contoh 3
+    Build queue secara synchronous.
+    Tidak ada lagi translate arti.
   */
 
-  speechQueue = buildSpeechQueue(item)
+  try {
+    speechQueue =
+      buildSpeechQueue(item)
+  } catch (error) {
+    console.warn(
+      'Speech queue build failed:',
+      error
+    )
 
-  if (requestId !== speechRequestId || speakingCardId !== String(item.id)) {
+    if (
+      requestId ===
+      speechRequestId
+    ) {
+      stopSpeech()
+    }
+
     return
   }
+
+  /*
+    Pastikan request masih valid.
+  */
+
+  if (
+    requestId !==
+      speechRequestId ||
+    speakingCardId !==
+      String(item.id)
+  ) {
+    return
+  }
+
+  speechLoading = false
+
+  /*
+    Tidak ada isi.
+  */
 
   if (!speechQueue.length) {
     stopSpeech()
     return
   }
 
-  speechIndex = 0
-  speechPaused = false
+  updateSpeechButtons()
 
-  speakCurrentChunk(requestId)
+  /*
+    Mulai membaca.
+  */
+
+  speakCurrentChunk(
+    requestId
+  )
 }
+
 
 /* =========================================================
    SPEAK CURRENT CHUNK
 ========================================================= */
 
-function speakCurrentChunk (requestId) {
-  if (requestId !== speechRequestId || !speakingCardId) {
+function speakCurrentChunk (
+  requestId
+) {
+  if (
+    requestId !==
+    speechRequestId
+  ) {
     return
   }
 
-  if (!speechQueue.length || speechIndex >= speechQueue.length) {
-    stopSpeech()
+  if (
+    speakingCardId === null
+  ) {
     return
   }
 
-  const chunk = speechQueue[speechIndex]
-
-  const utterance = new SpeechSynthesisUtterance(chunk.text)
+  if (
+    !speechQueue.length ||
+    speechIndex >=
+      speechQueue.length
+  ) {
+    finishSpeech(requestId)
+    return
+  }
 
   /*
-    ========================================================
-    LANGUAGE
-    ========================================================
-
-    Bunpou:
-      Jepang
-
-    簡単な説明:
-      Jepang
-
-    Explanation:
-      mengikuti bahasa UI
-      ID / EN / ZH-CN
-
-    例文:
-      Jepang
+    Jangan membuat utterance baru
+    kalau sedang paused.
   */
 
-  utterance.lang = chunk.language || 'ja-JP'
+  if (speechPaused) {
+    return
+  }
 
-  utterance.rate = getSpeechRate(chunk.type)
+  const chunk =
+    speechQueue[speechIndex]
 
-  utterance.pitch = getSpeechPitch(chunk.type)
+  if (!chunk?.text) {
+    speechIndex++
+
+    speakCurrentChunk(
+      requestId
+    )
+
+    return
+  }
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      chunk.text
+    )
+
+  /*
+    SELALU JAPANESE
+  */
+
+  utterance.lang =
+    'ja-JP'
+
+  utterance.rate =
+    getSpeechRate(
+      chunk.type
+    )
+
+  utterance.pitch =
+    getSpeechPitch(
+      chunk.type
+    )
 
   utterance.volume = 1
 
-  const voice = findVoiceByLanguage(utterance.lang)
+  /*
+    Gunakan voice Jepang.
+  */
+
+  const voice =
+    findJapaneseVoice()
 
   if (voice) {
-    utterance.voice = voice
+    utterance.voice =
+      voice
   }
 
+
+  /* -------------------------------------------------------
+     START
+  ------------------------------------------------------- */
+
   utterance.onstart = () => {
-    if (requestId === speechRequestId) {
+    if (
+      requestId ===
+        speechRequestId &&
+      speakingCardId !== null
+    ) {
+      speechPaused = false
+
       updateSpeechButtons()
     }
   }
 
+
+  /* -------------------------------------------------------
+     END
+  ------------------------------------------------------- */
+
   utterance.onend = () => {
-    if (requestId !== speechRequestId || speakingCardId === null) {
-      return
-    }
-
-    /*
-      Delay kecil antar bagian agar:
-      bunpou
-      → 簡単な説明
-      → penjelasan
-      → 例文
-      → contoh
-
-      terasa jelas dan tidak menempel.
-    */
-
-    const nextIndex = speechIndex + 1
-
-    speechIndex = nextIndex
-
-    setTimeout(() => {
-      if (requestId !== speechRequestId) {
-        return
-      }
-
-      speakCurrentChunk(requestId)
-    }, 300)
-  }
-
-  utterance.onerror = event => {
-    if (requestId !== speechRequestId) {
-      return
-    }
-
-    /*
-      Browser kadang mengirim "canceled"
-      ketika stopSpeech() dipanggil.
-      Itu bukan error penting.
-    */
-
     if (
-      event?.error === 'canceled' ||
-      event?.error === 'interrupted'
+      requestId !==
+      speechRequestId
     ) {
       return
     }
 
-    console.warn('TTS error:', event?.error || 'unknown')
+    if (
+      speakingCardId === null
+    ) {
+      return
+    }
 
-    stopSpeech()
+    /*
+      Naik ke chunk berikutnya.
+    */
+
+    speechIndex++
+
+    /*
+      Delay kecil agar antar bagian
+      terdengar lebih natural.
+    */
+
+    speechStopTimer =
+      setTimeout(() => {
+        speechStopTimer =
+          null
+
+        if (
+          requestId !==
+          speechRequestId
+        ) {
+          return
+        }
+
+        if (
+          speakingCardId === null
+        ) {
+          return
+        }
+
+        if (speechPaused) {
+          return
+        }
+
+        speakCurrentChunk(
+          requestId
+        )
+      }, 220)
   }
 
-  try {
-    window.speechSynthesis.speak(utterance)
-  } catch (error) {
-    console.warn('TTS start failed:', error)
 
-    stopSpeech()
-  }
-}
+  /* -------------------------------------------------------
+     ERROR
+  ------------------------------------------------------- */
 
-/* =========================================================
-   PAUSE / RESUME
-========================================================= */
+  utterance.onerror =
+    event => {
+      if (
+        requestId !==
+        speechRequestId
+      ) {
+        return
+      }
 
-window.togglePauseSpeech = function () {
-  if (!('speechSynthesis' in window) || speakingCardId === null) {
+      /*
+        canceled / interrupted bisa muncul
+        secara normal ketika stop/replay.
+      */
+
+      if (
+        event?.error ===
+          'canceled' ||
+        event?.error ===
+          'interrupted'
+      ) {
+        return
+      }
+
+      console.warn(
+        'TTS error:',
+        event?.error ||
+          'unknown'
+      )
+
+      stopSpeech()
+    }
+
+
+  /*
+    Pastikan queue belum dibatalkan
+    sebelum speak.
+  */
+
+  if (
+    requestId !==
+      speechRequestId ||
+    speakingCardId === null
+  ) {
     return
   }
 
-  if (window.speechSynthesis.paused) {
-    window.speechSynthesis.resume()
+  try {
+    window.speechSynthesis.speak(
+      utterance
+    )
+  } catch (error) {
+    console.warn(
+      'TTS start failed:',
+      error
+    )
 
-    speechPaused = false
-  } else {
-    window.speechSynthesis.pause()
-
-    speechPaused = true
+    stopSpeech()
   }
+}
+
+
+/* =========================================================
+   FINISH SPEECH
+========================================================= */
+
+function finishSpeech (
+  requestId
+) {
+  if (
+    requestId !==
+    speechRequestId
+  ) {
+    return
+  }
+
+  /*
+    Jangan panggil stopSpeech()
+    sebelum request selesai bila ingin
+    replay tetap dapat memakai current item.
+  */
+
+  if (
+    'speechSynthesis' in window
+  ) {
+    try {
+      window.speechSynthesis.cancel()
+    } catch (error) {
+      console.warn(
+        'Speech finish cancel failed:',
+        error
+      )
+    }
+  }
+
+  speakingCardId = null
+  speechQueue = []
+  speechIndex = 0
+  speechPaused = false
+  speechLoading = false
+
+  /*
+    currentSpeakingItem sengaja
+    TETAP dipertahankan.
+    Jadi tombol Replay tetap bisa
+    digunakan setelah audio selesai.
+  */
 
   updateSpeechButtons()
 }
+
+
+/* =========================================================
+   PAUSE SPEECH
+========================================================= */
+
+function pauseSpeech () {
+  if (
+    !('speechSynthesis' in window)
+  ) {
+    return
+  }
+
+  if (
+    speakingCardId === null ||
+    speechLoading
+  ) {
+    return
+  }
+
+  try {
+    window.speechSynthesis.pause()
+
+    speechPaused = true
+
+    updateSpeechButtons()
+  } catch (error) {
+    console.warn(
+      'Speech pause failed:',
+      error
+    )
+  }
+}
+
+
+/* =========================================================
+   RESUME SPEECH
+========================================================= */
+
+function resumeSpeech () {
+  if (
+    !('speechSynthesis' in window)
+  ) {
+    return
+  }
+
+  if (
+    speakingCardId === null ||
+    speechLoading
+  ) {
+    return
+  }
+
+  try {
+    window.speechSynthesis.resume()
+
+    speechPaused = false
+
+    updateSpeechButtons()
+  } catch (error) {
+    console.warn(
+      'Speech resume failed:',
+      error
+    )
+  }
+}
+
+
+/* =========================================================
+   TOGGLE PAUSE / PLAY
+========================================================= */
+
+window.togglePauseSpeech =
+  function () {
+    if (
+      !('speechSynthesis' in
+        window)
+    ) {
+      return
+    }
+
+    if (
+      speakingCardId === null
+    ) {
+      /*
+        Tidak ada audio aktif.
+      */
+
+      if (
+        currentSpeakingItem
+      ) {
+        startSpeech(
+          currentSpeakingItem
+        )
+      }
+
+      return
+    }
+
+    if (
+      speechPaused ||
+      window.speechSynthesis.paused
+    ) {
+      resumeSpeech()
+    } else {
+      pauseSpeech()
+    }
+  }
+
 
 /* =========================================================
    REPLAY SPEECH
 ========================================================= */
 
-window.replaySpeech = function () {
-  if (currentSpeakingItem) {
-    startSpeech(currentSpeakingItem)
+window.replaySpeech =
+  function () {
+    if (
+      !currentSpeakingItem
+    ) {
+      return
+    }
+
+    /*
+      Simpan item sebelum stopSpeech,
+      karena stopSpeech membersihkan
+      currentSpeakingItem.
+    */
+
+    const item =
+      currentSpeakingItem
+
+    startSpeech(item)
   }
-}
+
+
+/* =========================================================
+   MAIN SPEECH HANDLER
+========================================================= */
+
+window.handleMainSpeech =
+  function (id) {
+    const item =
+      findItemById(id)
+
+    if (!item) {
+      return
+    }
+
+    const sameCard =
+      speakingCardId ===
+      String(id)
+
+    /*
+      Kalau card sedang aktif:
+      play button = stop.
+    */
+
+    if (sameCard) {
+      stopSpeech()
+
+      return
+    }
+
+    /*
+      Card berbeda:
+      mulai dari awal card baru.
+    */
+
+    startSpeech(item)
+  }
+
 
 /* =========================================================
    TTS BUTTON UI
 ========================================================= */
 
 function updateSpeechButtons () {
-  document.querySelectorAll('.grammar-card').forEach(card => {
-    const id = card.dataset.id
+  document
+    .querySelectorAll(
+      '.grammar-card'
+    )
+    .forEach(card => {
+      const id =
+        card.dataset.id
 
-    const status = card.querySelector('.tts-status')
+      const status =
+        card.querySelector(
+          '.tts-status'
+        )
 
-    const play = card.querySelector('.tts-play')
+      const play =
+        card.querySelector(
+          '.tts-play'
+        )
 
-    const pause = card.querySelector('.tts-pause')
+      const pause =
+        card.querySelector(
+          '.tts-pause'
+        )
 
-    if (!status) {
-      return
-    }
+      const replay =
+        card.querySelector(
+          '.tts-replay'
+        )
 
-    const active = id === speakingCardId
+      const stop =
+        card.querySelector(
+          '.tts-stop'
+        )
 
-    card.classList.toggle('speaking', active)
+      if (!status) {
+        return
+      }
 
-    status.textContent = active
-      ? speechPaused
-        ? 'Dijeda'
-        : 'Sedang membaca: bunpou → 簡単な説明 → penjelasan → 例文 3'
-      : '読み上げ機能'
+      const active =
+        id ===
+        String(speakingCardId)
 
-    if (play) {
-      play.innerHTML = active
-        ? '<i class="bi bi-stop-fill"></i>'
-        : '<i class="bi bi-play-fill"></i>'
-    }
+      const state =
+        getSpeechState()
 
-    if (pause) {
-      pause.innerHTML =
-        active && !speechPaused
-          ? '<i class="bi bi-pause-fill"></i>'
-          : '<i class="bi bi-play-fill"></i>'
-    }
-  })
+      card.classList.toggle(
+        'speaking',
+        active
+      )
+
+      /*
+        STATUS TEXT
+      */
+
+      if (!active) {
+        status.textContent =
+          '読み上げ機能'
+      } else if (
+        state === 'loading'
+      ) {
+        status.textContent =
+          '準備中...'
+      } else if (
+        state === 'paused'
+      ) {
+        status.textContent =
+          '一時停止中'
+      } else {
+        status.textContent =
+          '再生中: 文法 → 例文 1-3'
+      }
+
+
+      /*
+        MAIN PLAY / STOP
+      */
+
+      if (play) {
+        play.innerHTML =
+          active
+            ? '<i class="bi bi-stop-fill"></i>'
+            : '<i class="bi bi-play-fill"></i>'
+
+        play.title =
+          active
+            ? 'Stop'
+            : 'Play'
+      }
+
+
+      /*
+        PAUSE / RESUME
+      */
+
+      if (pause) {
+        pause.innerHTML =
+          active &&
+          !speechPaused
+            ? '<i class="bi bi-pause-fill"></i>'
+            : '<i class="bi bi-play-fill"></i>'
+
+        pause.title =
+          active &&
+          !speechPaused
+            ? 'Pause'
+            : 'Resume'
+      }
+
+
+      /*
+        REPLAY
+      */
+
+      if (replay) {
+        replay.disabled =
+          !currentSpeakingItem
+
+        replay.style.opacity =
+          currentSpeakingItem
+            ? '1'
+            : '.5'
+      }
+
+
+      /*
+        STOP / OFF SOUND
+      */
+
+      if (stop) {
+        stop.disabled =
+          !active
+
+        stop.style.opacity =
+          active
+            ? '1'
+            : '.5'
+      }
+    })
 }
 
-/* =========================================================
-   MAIN SPEECH HANDLER
-========================================================= */
-
-window.handleMainSpeech = function (id) {
-  const item = findItemById(id)
-
-  if (!item) {
-    return
-  }
-
-  if (speakingCardId === String(id)) {
-    stopSpeech()
-    return
-  }
-
-  startSpeech(item)
-}
 
 /* =========================================================
    EXAMPLE TRANSLATION STATE
 ========================================================= */
 
-function createExampleState (item, example, index) {
+function createExampleState (
+  item,
+  example,
+  index
+) {
   return {
-    exampleId: `${item.id}_${index}`,
+    exampleId:
+      `${item.id}_${index}`,
 
-    originalHTML: String(example ?? ''),
+    originalHTML:
+      String(example ?? ''),
 
-    originalText: stripHTML(example),
+    originalText:
+      stripHTML(example),
 
     translated: false,
 
@@ -1570,34 +2161,55 @@ function createExampleState (item, example, index) {
   }
 }
 
-function getExampleOriginalHTML (state) {
+function getExampleOriginalHTML (
+  state
+) {
   if (!state) {
     return ''
   }
 
-  return state.originalHTML || escapeHTML(state.originalText || '')
+  return (
+    state.originalHTML ||
+    escapeHTML(
+      state.originalText ||
+        ''
+    )
+  )
 }
+
 
 /* =========================================================
    EXAMPLE RESET
 ========================================================= */
 
-function resetExampleDisplay (exampleBox, state) {
+function resetExampleDisplay (
+  exampleBox,
+  state
+) {
   if (!exampleBox || !state) {
     return
   }
 
   if (state.key) {
-    const timer = exampleTranslationTimers.get(state.key)
+    const timer =
+      exampleTranslationTimers.get(
+        state.key
+      )
 
     if (timer) {
       clearTimeout(timer)
     }
 
-    exampleTranslationTimers.delete(state.key)
+    exampleTranslationTimers.delete(
+      state.key
+    )
   }
 
-  exampleBox.classList.remove('translating', 'translated', 'copied')
+  exampleBox.classList.remove(
+    'translating',
+    'translated',
+    'copied'
+  )
 
   exampleBox.innerHTML = `
     <i class="bi bi-caret-right-fill"></i>
@@ -1614,30 +2226,46 @@ function resetExampleDisplay (exampleBox, state) {
   state.busy = false
 }
 
+
 /* =========================================================
    SHOW EXAMPLE TRANSLATION
 ========================================================= */
 
-async function showExampleTranslation (exampleBox) {
-  const state = exampleBox?._translationState
+async function showExampleTranslation (
+  exampleBox
+) {
+  const state =
+    exampleBox?._translationState
 
   if (!state) {
     return
   }
 
   if (state.translated) {
-    resetExampleDisplay(exampleBox, state)
+    resetExampleDisplay(
+      exampleBox,
+      state
+    )
 
     return
   }
 
-  if (state.busy || !state.originalText) {
+  if (
+    state.busy ||
+    !state.originalText
+  ) {
     return
   }
 
-  const sourceLanguage = detectLanguage(state.originalText)
+  const sourceLanguage =
+    detectLanguage(
+      state.originalText
+    )
 
-  const targetLanguage = getTargetLanguage(sourceLanguage)
+  const targetLanguage =
+    getTargetLanguage(
+      sourceLanguage
+    )
 
   const requestKey = [
     state.exampleId,
@@ -1646,103 +2274,170 @@ async function showExampleTranslation (exampleBox) {
     state.originalText
   ].join('::')
 
-  state.sourceLanguage = sourceLanguage
+  state.sourceLanguage =
+    sourceLanguage
 
-  state.targetLanguage = targetLanguage
+  state.targetLanguage =
+    targetLanguage
 
   state.key = requestKey
-
   state.busy = true
 
-  exampleBox.classList.add('translating')
+  exampleBox.classList.add(
+    'translating'
+  )
 
-  exampleBox.classList.remove('translated', 'copied')
+  exampleBox.classList.remove(
+    'translated',
+    'copied'
+  )
 
   exampleBox.innerHTML = `
     <i class="bi bi-translate"></i>
     <span>
-      ${escapeHTML(getLanguageText('translating'))}
+      ${escapeHTML(
+        getLanguageText(
+          'translating'
+        )
+      )}
     </span>
   `
 
   try {
-    const translated = await translateText(
-      state.originalText,
-      sourceLanguage,
-      targetLanguage
-    )
+    const translated =
+      await translateText(
+        state.originalText,
+        sourceLanguage,
+        targetLanguage
+      )
 
-    if (!document.body.contains(exampleBox)) {
+    if (
+      !document.body.contains(
+        exampleBox
+      )
+    ) {
       return
     }
 
-    const latestState = exampleBox._translationState
+    const latestState =
+      exampleBox._translationState
 
-    if (!latestState || latestState.key !== requestKey) {
+    if (
+      !latestState ||
+      latestState.key !==
+        requestKey
+    ) {
       return
     }
 
     if (!translated) {
-      exampleBox.classList.remove('translating')
+      exampleBox.classList.remove(
+        'translating'
+      )
 
       exampleBox.innerHTML = `
         <i class="bi bi-info-circle"></i>
         <span>
-          ${escapeHTML(getLanguageText('translationFailed'))}
+          ${escapeHTML(
+            getLanguageText(
+              'translationFailed'
+            )
+          )}
         </span>
       `
 
-      const errorTimer = setTimeout(() => {
-        if (
-          document.body.contains(exampleBox) &&
-          exampleBox._translationState === latestState
-        ) {
-          resetExampleDisplay(exampleBox, latestState)
-        }
-      }, 1800)
+      const errorTimer =
+        setTimeout(() => {
+          if (
+            document.body.contains(
+              exampleBox
+            ) &&
+            exampleBox._translationState ===
+              latestState
+          ) {
+            resetExampleDisplay(
+              exampleBox,
+              latestState
+            )
+          }
+        }, 1800)
 
-      exampleTranslationTimers.set(requestKey, errorTimer)
+      exampleTranslationTimers.set(
+        requestKey,
+        errorTimer
+      )
 
       return
     }
 
-    latestState.translation = translated
+    latestState.translation =
+      translated
 
-    latestState.translated = true
+    latestState.translated =
+      true
 
     latestState.busy = false
 
-    exampleBox.classList.remove('translating')
+    exampleBox.classList.remove(
+      'translating'
+    )
 
-    exampleBox.classList.add('translated')
+    exampleBox.classList.add(
+      'translated'
+    )
 
     exampleBox.innerHTML = `
       <i class="bi bi-translate"></i>
       <span>
-        ${escapeHTML(translated)}
+        ${escapeHTML(
+          translated
+        )}
       </span>
     `
 
-    const timer = setTimeout(() => {
-      if (
-        document.body.contains(exampleBox) &&
-        exampleBox._translationState?.translated
-      ) {
-        resetExampleDisplay(exampleBox, exampleBox._translationState)
-      }
-    }, 5000)
+    const timer =
+      setTimeout(() => {
+        if (
+          document.body.contains(
+            exampleBox
+          ) &&
+          exampleBox
+            ._translationState
+            ?.translated
+        ) {
+          resetExampleDisplay(
+            exampleBox,
+            exampleBox
+              ._translationState
+          )
+        }
+      }, 5000)
 
-    exampleTranslationTimers.set(requestKey, timer)
+    exampleTranslationTimers.set(
+      requestKey,
+      timer
+    )
   } catch (error) {
-    console.warn('Example translation failed:', error)
+    console.warn(
+      'Example translation failed:',
+      error
+    )
 
-    if (document.body.contains(exampleBox)) {
-      resetExampleDisplay(exampleBox, state)
+    if (
+      document.body.contains(
+        exampleBox
+      )
+    ) {
+      resetExampleDisplay(
+        exampleBox,
+        state
+      )
     }
   } finally {
     state.busy = false
   }
 }
+
 
 /* =========================================================
    COPY
@@ -1756,29 +2451,45 @@ async function copyText (text) {
   try {
     if (
       navigator.clipboard &&
-      typeof navigator.clipboard.writeText === 'function'
+      typeof navigator.clipboard
+        .writeText ===
+        'function'
     ) {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(
+        text
+      )
 
       return true
     }
   } catch (error) {
-    console.warn('Clipboard API failed:', error)
+    console.warn(
+      'Clipboard API failed:',
+      error
+    )
   }
 
-  const textarea = document.createElement('textarea')
+  const textarea =
+    document.createElement(
+      'textarea'
+    )
 
   textarea.value = text
 
-  textarea.style.position = 'fixed'
+  textarea.style.position =
+    'fixed'
 
-  textarea.style.left = '-9999px'
+  textarea.style.left =
+    '-9999px'
 
-  textarea.style.top = '0'
+  textarea.style.top =
+    '0'
 
-  textarea.style.opacity = '0'
+  textarea.style.opacity =
+    '0'
 
-  document.body.appendChild(textarea)
+  document.body.appendChild(
+    textarea
+  )
 
   textarea.focus()
   textarea.select()
@@ -1786,9 +2497,15 @@ async function copyText (text) {
   let copied = false
 
   try {
-    copied = document.execCommand('copy')
+    copied =
+      document.execCommand(
+        'copy'
+      )
   } catch (error) {
-    console.warn('Fallback copy failed:', error)
+    console.warn(
+      'Fallback copy failed:',
+      error
+    )
   }
 
   textarea.remove()
@@ -1796,15 +2513,19 @@ async function copyText (text) {
   return copied
 }
 
-async function copyExampleText (exampleBox) {
-  const state = exampleBox?._translationState
+async function copyExampleText (
+  exampleBox
+) {
+  const state =
+    exampleBox?._translationState
 
   if (!state) {
     return
   }
 
   const text =
-    state.translated && state.translation
+    state.translated &&
+    state.translation
       ? state.translation
       : state.originalText
 
@@ -1812,26 +2533,41 @@ async function copyExampleText (exampleBox) {
     return
   }
 
-  const success = await copyText(text)
+  const success =
+    await copyText(text)
 
   if (success) {
     showCopyFeedback(
       exampleBox,
       state.translated
-        ? getLanguageText('copiedTranslation')
-        : getLanguageText('copiedOriginal')
+        ? getLanguageText(
+            'copiedTranslation'
+          )
+        : getLanguageText(
+            'copiedOriginal'
+          )
     )
   }
 }
 
-function showCopyFeedback (exampleBox, message) {
-  if (!document.body.contains(exampleBox)) {
+function showCopyFeedback (
+  exampleBox,
+  message
+) {
+  if (
+    !document.body.contains(
+      exampleBox
+    )
+  ) {
     return
   }
 
-  const previousHTML = exampleBox.innerHTML
+  const previousHTML =
+    exampleBox.innerHTML
 
-  exampleBox.classList.add('copied')
+  exampleBox.classList.add(
+    'copied'
+  )
 
   exampleBox.innerHTML = `
     <i class="bi bi-check-circle-fill"></i>
@@ -1841,26 +2577,37 @@ function showCopyFeedback (exampleBox, message) {
   `
 
   setTimeout(() => {
-    if (!document.body.contains(exampleBox)) {
+    if (
+      !document.body.contains(
+        exampleBox
+      )
+    ) {
       return
     }
 
-    const state = exampleBox._translationState
+    const state =
+      exampleBox._translationState
 
     if (state?.translated) {
       exampleBox.innerHTML = `
         <i class="bi bi-translate"></i>
         <span>
-          ${escapeHTML(state.translation)}
+          ${escapeHTML(
+            state.translation
+          )}
         </span>
       `
     } else {
-      exampleBox.innerHTML = previousHTML
+      exampleBox.innerHTML =
+        previousHTML
     }
 
-    exampleBox.classList.remove('copied')
+    exampleBox.classList.remove(
+      'copied'
+    )
   }, 900)
 }
+
 
 /* =========================================================
    EXAMPLE INTERACTION
@@ -1868,87 +2615,159 @@ function showCopyFeedback (exampleBox, message) {
 
 let exampleClickTimer = null
 
-document.addEventListener('click', event => {
-  const exampleBox = event.target.closest('.example-box')
+document.addEventListener(
+  'click',
+  event => {
+    const exampleBox =
+      event.target.closest(
+        '.example-box'
+      )
 
-  if (!exampleBox?._translationState) {
-    return
+    if (
+      !exampleBox?._translationState
+    ) {
+      return
+    }
+
+    if (exampleClickTimer) {
+      clearTimeout(
+        exampleClickTimer
+      )
+    }
+
+    exampleClickTimer =
+      setTimeout(() => {
+        exampleClickTimer =
+          null
+
+        copyExampleText(
+          exampleBox
+        )
+      }, 220)
   }
+)
 
-  if (exampleClickTimer) {
-    clearTimeout(exampleClickTimer)
-  }
+document.addEventListener(
+  'dblclick',
+  event => {
+    const exampleBox =
+      event.target.closest(
+        '.example-box'
+      )
 
-  exampleClickTimer = setTimeout(() => {
-    exampleClickTimer = null
+    if (
+      !exampleBox?._translationState
+    ) {
+      return
+    }
 
-    copyExampleText(exampleBox)
-  }, 220)
-})
-
-document.addEventListener('dblclick', event => {
-  const exampleBox = event.target.closest('.example-box')
-
-  if (!exampleBox?._translationState) {
-    return
-  }
-
-  event.preventDefault()
-
-  if (exampleClickTimer) {
-    clearTimeout(exampleClickTimer)
-
-    exampleClickTimer = null
-  }
-
-  showExampleTranslation(exampleBox)
-})
-
-document.addEventListener('keydown', event => {
-  const target = event.target?.closest?.('.example-box')
-
-  if (!target?._translationState) {
-    return
-  }
-
-  if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault()
 
-    copyExampleText(target)
+    if (exampleClickTimer) {
+      clearTimeout(
+        exampleClickTimer
+      )
+
+      exampleClickTimer =
+        null
+    }
+
+    showExampleTranslation(
+      exampleBox
+    )
   }
-})
+)
+
+document.addEventListener(
+  'keydown',
+  event => {
+    const target =
+      event.target?.closest?.(
+        '.example-box'
+      )
+
+    if (
+      !target?._translationState
+    ) {
+      return
+    }
+
+    if (
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+      event.preventDefault()
+
+      copyExampleText(target)
+    }
+  }
+)
+
 
 /* =========================================================
    CARD HTML
 ========================================================= */
 
-function createCardHTML (item, index) {
-  const savedStatus = getStatus(item)
+function createCardHTML (
+  item,
+  index
+) {
+  const savedStatus =
+    getStatus(item)
 
-  const examples = Array.isArray(item?.examples) ? item.examples : []
+  const examples =
+    Array.isArray(
+      item?.examples
+    )
+      ? item.examples
+      : []
 
-  const lang = normalizeLanguage(currentLanguage)
+  const lang =
+    normalizeLanguage(
+      currentLanguage
+    )
 
-  const reading = item?.reading || item?.yomi || ''
+  const reading =
+    item?.reading ||
+    item?.yomi ||
+    ''
 
   const moduleText =
     item?.module ||
     item?.lesson ||
-    `M${String(item?._week || '').replace('week', '')} - H${String(
+    `M${String(
+      item?._week || ''
+    ).replace('week', '')} - H${String(
       item?._day || ''
     ).replace('day', '')}`
 
-  const examplesHTML = examples
-    .map((example, exampleIndex) => {
-      const state = createExampleState(item, example, exampleIndex)
+  const examplesHTML =
+    examples
+      .map(
+        (
+          example,
+          exampleIndex
+        ) => {
+          const state =
+            createExampleState(
+              item,
+              example,
+              exampleIndex
+            )
 
-      return `
+          return `
             <div
               class="example-box"
               role="button"
               tabindex="0"
-              title="${escapeHTML(getLanguageText('translateTitle'))}"
-              data-example-id="${escapeHTML(state.exampleId)}"
+              title="${escapeHTML(
+                getLanguageText(
+                  'translateTitle'
+                )
+              )}"
+              data-example-id="${escapeHTML(
+                state.exampleId
+              )}"
             >
               <i class="bi bi-caret-right-fill"></i>
 
@@ -1957,17 +2776,23 @@ function createCardHTML (item, index) {
               </span>
             </div>
           `
-    })
-    .join('')
+        }
+      )
+      .join('')
 
   const meaning =
     lang === 'en'
       ? item?.meaning?.en || '-'
       : lang === 'cn'
-      ? item?.meaning?.cn || item?.meaning?.zh || '-'
+      ? item?.meaning?.cn ||
+        item?.meaning?.zh ||
+        '-'
       : item?.meaning?.id || '-'
 
-  const explanation = stripHTML(item?.explanation || '') || '—'
+  const explanation =
+    stripHTML(
+      item?.explanation || ''
+    ) || '—'
 
   const exampleLabel =
     lang === 'id'
@@ -1979,7 +2804,9 @@ function createCardHTML (item, index) {
   return `
     <article
       class="grammar-card"
-      data-id="${escapeHTML(item?.id)}"
+      data-id="${escapeHTML(
+        item?.id
+      )}"
       style="animation-delay:${index * 0.02}s"
     >
 
@@ -1987,13 +2814,23 @@ function createCardHTML (item, index) {
 
         <span class="day-badge">
           <i class="bi bi-bookmark-star-fill"></i>
-          ${escapeHTML(moduleText)}
+          ${escapeHTML(
+            moduleText
+          )}
         </span>
 
         <span class="module-badge">
-          <i class="bi ${item?.formal ? 'bi-building' : 'bi-stars'}"></i>
+          <i class="bi ${
+            item?.formal
+              ? 'bi-building'
+              : 'bi-stars'
+          }"></i>
 
-          ${item?.formal ? 'Formal' : 'N1'}
+          ${
+            item?.formal
+              ? 'Formal'
+              : 'N1'
+          }
         </span>
 
       </div>
@@ -2001,7 +2838,9 @@ function createCardHTML (item, index) {
       <div class="rule-area">
 
         <div class="rule-reading">
-          ${escapeHTML(reading)}
+          ${escapeHTML(
+            reading
+          )}
         </div>
 
         <div class="grammar-rule">
@@ -2011,9 +2850,11 @@ function createCardHTML (item, index) {
         <button
           class="speaker-main-btn"
           type="button"
-          onclick="handleMainSpeech('${escapeForJS(item?.id)}')"
-          title="Bacakan: bunpou → 簡単な説明 → penjelasan → 例文"
-          aria-label="Bacakan bunpou, penjelasan, dan tiga contoh"
+          onclick="handleMainSpeech('${escapeForJS(
+            item?.id
+          )}')"
+          title="Bacakan bunpou dan contoh kalimat"
+          aria-label="Bacakan bunpou dan contoh kalimat"
         >
           <i class="bi bi-volume-up-fill"></i>
         </button>
@@ -2026,7 +2867,12 @@ function createCardHTML (item, index) {
 
           <div class="info-label">
             <i class="bi bi-info-circle-fill"></i>
-            ${escapeHTML(getLanguageText('meaning'))}
+
+            ${escapeHTML(
+              getLanguageText(
+                'meaning'
+              )
+            )}
           </div>
 
           <div class="info-text">
@@ -2041,22 +2887,34 @@ function createCardHTML (item, index) {
 
           <div
             class="translation-box"
-            data-explanation-id="${escapeHTML(item?.id)}"
+            data-explanation-id="${escapeHTML(
+              item?.id
+            )}"
           >
 
             <div class="translation-label">
               <i class="bi bi-globe2"></i>
 
               <span>
-                ${escapeHTML(getLanguageText('explanation'))}
+                ${escapeHTML(
+                  getLanguageText(
+                    'explanation'
+                  )
+                )}
               </span>
             </div>
 
             <span class="id-explanation">
               ${
                 lang === 'id'
-                  ? escapeHTML(explanation)
-                  : escapeHTML(getLanguageText('translating'))
+                  ? escapeHTML(
+                      explanation
+                    )
+                  : escapeHTML(
+                      getLanguageText(
+                        'translating'
+                      )
+                    )
               }
             </span>
 
@@ -2083,7 +2941,11 @@ function createCardHTML (item, index) {
                 <i class="bi bi-dash-circle"></i>
 
                 <span>
-                  ${escapeHTML(getLanguageText('noExample'))}
+                  ${escapeHTML(
+                    getLanguageText(
+                      'noExample'
+                    )
+                  )}
                 </span>
               </div>
             `
@@ -2102,7 +2964,9 @@ function createCardHTML (item, index) {
         <button
           class="tts-btn tts-play"
           type="button"
-          onclick="handleMainSpeech('${escapeForJS(item?.id)}')"
+          onclick="handleMainSpeech('${escapeForJS(
+            item?.id
+          )}')"
           title="Play / Stop"
         >
           <i class="bi bi-play-fill"></i>
@@ -2118,19 +2982,19 @@ function createCardHTML (item, index) {
         </button>
 
         <button
-          class="tts-btn"
+          class="tts-btn tts-replay"
           type="button"
           onclick="replaySpeech()"
-          title="Ulangi"
+          title="Replay"
         >
           <i class="bi bi-arrow-repeat"></i>
         </button>
 
         <button
-          class="tts-btn stop"
+          class="tts-btn stop tts-stop"
           type="button"
           onclick="stopSpeech()"
-          title="Stop"
+          title="Off Sound / Stop"
         >
           <i class="bi bi-stop-fill"></i>
         </button>
@@ -2140,10 +3004,16 @@ function createCardHTML (item, index) {
       <div class="card-footer">
 
         <button
-          class="status-btn btn-0 ${savedStatus === '0' ? 'active' : ''}"
+          class="status-btn btn-0 ${
+            savedStatus === '0'
+              ? 'active'
+              : ''
+          }"
           type="button"
           onclick="updateStatus(
-            '${escapeForJS(item?.id)}',
+            '${escapeForJS(
+              item?.id
+            )}',
             '0',
             this
           )"
@@ -2153,10 +3023,16 @@ function createCardHTML (item, index) {
         </button>
 
         <button
-          class="status-btn btn-1 ${savedStatus === '1' ? 'active' : ''}"
+          class="status-btn btn-1 ${
+            savedStatus === '1'
+              ? 'active'
+              : ''
+          }"
           type="button"
           onclick="updateStatus(
-            '${escapeForJS(item?.id)}',
+            '${escapeForJS(
+              item?.id
+            )}',
             '1',
             this
           )"
@@ -2166,10 +3042,16 @@ function createCardHTML (item, index) {
         </button>
 
         <button
-          class="status-btn btn-2 ${savedStatus === '2' ? 'active' : ''}"
+          class="status-btn btn-2 ${
+            savedStatus === '2'
+              ? 'active'
+              : ''
+          }"
           type="button"
           onclick="updateStatus(
-            '${escapeForJS(item?.id)}',
+            '${escapeForJS(
+              item?.id
+            )}',
             '2',
             this
           )"
@@ -2184,59 +3066,120 @@ function createCardHTML (item, index) {
   `
 }
 
+
 /* =========================================================
    INITIALIZE EXAMPLE STATES
 ========================================================= */
 
-function initializeExampleStates (items) {
+function initializeExampleStates (
+  items
+) {
   if (!grammarCards) {
     return
   }
 
   const cards = new Map()
 
-  grammarCards.querySelectorAll('.grammar-card[data-id]').forEach(card => {
-    cards.set(String(card.dataset.id), card)
-  })
+  grammarCards
+    .querySelectorAll(
+      '.grammar-card[data-id]'
+    )
+    .forEach(card => {
+      cards.set(
+        String(card.dataset.id),
+        card
+      )
+    })
 
   items.forEach(item => {
-    const card = cards.get(String(item.id))
+    const card =
+      cards.get(
+        String(item.id)
+      )
 
     if (!card) {
       return
     }
 
-    const examples = Array.isArray(item.examples) ? item.examples : []
+    const examples =
+      Array.isArray(
+        item.examples
+      )
+        ? item.examples
+        : []
 
-    const boxes = card.querySelectorAll('.example-box[data-example-id]')
+    const boxes =
+      card.querySelectorAll(
+        '.example-box[data-example-id]'
+      )
 
-    boxes.forEach((box, index) => {
-      if (examples[index] !== undefined) {
-        box._translationState = createExampleState(item, examples[index], index)
+    boxes.forEach(
+      (
+        box,
+        index
+      ) => {
+        if (
+          examples[index] !==
+          undefined
+        ) {
+          box._translationState =
+            createExampleState(
+              item,
+              examples[index],
+              index
+            )
+        }
       }
-    })
+    )
   })
+
+  /*
+    Pastikan TTS button mengikuti state terbaru
+    setelah render.
+  */
+
+  updateSpeechButtons()
 }
+
 
 /* =========================================================
    CARD EXPLANATION LOAD
 ========================================================= */
 
-async function loadCardTranslations (items, version) {
-  const selectedLanguage = normalizeLanguage(currentLanguage)
+async function loadCardTranslations (
+  items,
+  version
+) {
+  const selectedLanguage =
+    normalizeLanguage(
+      currentLanguage
+    )
 
-  if (selectedLanguage === 'id') {
+  if (
+    selectedLanguage === 'id'
+  ) {
     items.forEach(item => {
-      const selector = `.translation-box[data-explanation-id="${CSS.escape(
-        String(item.id)
-      )}"]`
+      const selector =
+        `.translation-box[data-explanation-id="${CSS.escape(
+          String(item.id)
+        )}"]`
 
-      const box = document.querySelector(selector)
+      const box =
+        document.querySelector(
+          selector
+        )
 
-      const target = box?.querySelector('.id-explanation')
+      const target =
+        box?.querySelector(
+          '.id-explanation'
+        )
 
       if (target) {
-        target.textContent = stripHTML(item?.explanation || '') || '—'
+        target.textContent =
+          stripHTML(
+            item?.explanation ||
+              ''
+          ) || '—'
       }
     })
 
@@ -2245,70 +3188,117 @@ async function loadCardTranslations (items, version) {
 
   let cursor = 0
 
-  const worker = async () => {
-    while (cursor < items.length) {
-      if (version !== explanationLoadVersion) {
-        return
-      }
-
-      const index = cursor++
-
-      const item = items[index]
-
-      const selector = `.translation-box[data-explanation-id="${CSS.escape(
-        String(item.id)
-      )}"]`
-
-      const box = document.querySelector(selector)
-
-      const target = box?.querySelector('.id-explanation')
-
-      if (!target) {
-        continue
-      }
-
-      target.textContent = getLanguageText('translating')
-
-      try {
-        const translated = await getExplanationForLanguage(item)
-
+  const worker =
+    async () => {
+      while (
+        cursor <
+        items.length
+      ) {
         if (
-          version !== explanationLoadVersion ||
-          !document.body.contains(target)
+          version !==
+          explanationLoadVersion
         ) {
           return
         }
 
-        target.textContent = translated || '—'
-      } catch (error) {
-        console.warn('Explanation translation failed:', error)
+        const index =
+          cursor++
 
-        if (
-          version === explanationLoadVersion &&
-          document.body.contains(target)
-        ) {
-          target.textContent = stripHTML(item?.explanation || '') || '—'
+        const item =
+          items[index]
+
+        const selector =
+          `.translation-box[data-explanation-id="${CSS.escape(
+            String(item.id)
+          )}"]`
+
+        const box =
+          document.querySelector(
+            selector
+          )
+
+        const target =
+          box?.querySelector(
+            '.id-explanation'
+          )
+
+        if (!target) {
+          continue
+        }
+
+        target.textContent =
+          getLanguageText(
+            'translating'
+          )
+
+        try {
+          const translated =
+            await getExplanationForLanguage(
+              item
+            )
+
+          if (
+            version !==
+              explanationLoadVersion ||
+            !document.body.contains(
+              target
+            )
+          ) {
+            return
+          }
+
+          target.textContent =
+            translated || '—'
+        } catch (error) {
+          console.warn(
+            'Explanation translation failed:',
+            error
+          )
+
+          if (
+            version ===
+              explanationLoadVersion &&
+            document.body.contains(
+              target
+            )
+          ) {
+            target.textContent =
+              stripHTML(
+                item?.explanation ||
+                  ''
+              ) || '—'
+          }
         }
       }
     }
-  }
 
-  const workers = Array.from(
-    {
-      length: Math.min(TRANSLATION_CONFIG.explanationConcurrency, items.length)
-    },
-    () => worker()
+  const workers =
+    Array.from(
+      {
+        length: Math.min(
+          TRANSLATION_CONFIG
+            .explanationConcurrency,
+          items.length
+        )
+      },
+      () => worker()
+    )
+
+  await Promise.allSettled(
+    workers
   )
-
-  await Promise.allSettled(workers)
 }
+
 
 /* =========================================================
    PROGRESS LABEL
 ========================================================= */
 
 function isExamDay () {
-  return activeDay === 'day7' && !currentSearch
+  return (
+    activeDay === 'day7' &&
+    !currentSearch
+  )
 }
 
 function updateProgressLabel () {
@@ -2316,10 +3306,12 @@ function updateProgressLabel () {
     return
   }
 
-  progressLabel.textContent = isExamDay()
-    ? 'Progress ujian'
-    : 'Progress hafalan'
+  progressLabel.textContent =
+    isExamDay()
+      ? 'Progress ujian'
+      : 'Progress hafalan'
 }
+
 
 /* =========================================================
    EXAM STATE
@@ -2328,6 +3320,7 @@ function updateProgressLabel () {
 let examAnswers = {}
 
 window.currentObjectExam = null
+
 
 /* =========================================================
    EXAM PROGRESS → MAIN PROGRESS
@@ -2340,61 +3333,93 @@ function syncExamToMainProgress () {
     return
   }
 
-  const questionBlocks = examContent?.querySelectorAll('.exam-q') || []
+  const questionBlocks =
+    examContent?.querySelectorAll(
+      '.exam-q'
+    ) || []
 
-  const total = questionBlocks.length
+  const total =
+    questionBlocks.length
 
-  if (window.currentObjectExam && total > 0) {
-    const answered = Object.keys(examAnswers).length
+  if (
+    window.currentObjectExam &&
+    total > 0
+  ) {
+    const answered =
+      Object.keys(
+        examAnswers
+      ).length
 
-    const percentage = Math.round((answered / total) * 100)
+    const percentage =
+      Math.round(
+        (answered / total) *
+          100
+      )
 
     if (progressPercent) {
-      progressPercent.textContent = `${percentage}%`
+      progressPercent.textContent =
+        `${percentage}%`
     }
 
     if (progressBarFill) {
-      progressBarFill.style.width = `${percentage}%`
+      progressBarFill.style.width =
+        `${percentage}%`
     }
 
     return
   }
 
   if (progressPercent) {
-    progressPercent.textContent = '0%'
+    progressPercent.textContent =
+      '0%'
   }
 
   if (progressBarFill) {
-    progressBarFill.style.width = '0%'
+    progressBarFill.style.width =
+      '0%'
   }
 }
+
 
 /* =========================================================
    RENDER CARDS
 ========================================================= */
 
 function renderCards () {
-  const version = ++renderVersion
+  const version =
+    ++renderVersion
 
   explanationLoadVersion++
+
+  /*
+    Hentikan TTS ketika materi berubah.
+  */
 
   stopSpeech()
 
   updateProgressLabel()
 
-  if (activeDay === 'day7' && !currentSearch) {
+  if (
+    activeDay === 'day7' &&
+    !currentSearch
+  ) {
     if (grammarCards) {
       grammarCards.replaceChildren()
 
-      grammarCards.classList.add('hidden')
+      grammarCards.classList.add(
+        'hidden'
+      )
     }
 
     if (emptyState) {
-      emptyState.classList.add('hidden')
+      emptyState.classList.add(
+        'hidden'
+      )
     }
 
     if (resultCounter) {
-      resultCounter.textContent = 'Full Exam'
+      resultCounter.textContent =
+        'Full Exam'
     }
 
     updateProgress([])
@@ -2403,28 +3428,45 @@ function renderCards () {
   }
 
   if (grammarCards) {
-    grammarCards.classList.remove('hidden')
+    grammarCards.classList.remove(
+      'hidden'
+    )
   }
 
-  const items = getFilteredItems()
+  const items =
+    getFilteredItems()
 
   if (grammarCards) {
-    const html = items
-      .map((item, index) => createCardHTML(item, index))
-      .join('')
+    const html =
+      items
+        .map(
+          (item, index) =>
+            createCardHTML(
+              item,
+              index
+            )
+        )
+        .join('')
 
-    grammarCards.innerHTML = html
+    grammarCards.innerHTML =
+      html
   }
 
   if (emptyState) {
-    emptyState.classList.toggle('hidden', items.length !== 0)
+    emptyState.classList.toggle(
+      'hidden',
+      items.length !== 0
+    )
   }
 
   if (resultCounter) {
-    resultCounter.textContent = `${items.length} materi`
+    resultCounter.textContent =
+      `${items.length} materi`
   }
 
-  initializeExampleStates(items)
+  initializeExampleStates(
+    items
+  )
 
   updateProgress(items)
 
@@ -2433,25 +3475,38 @@ function renderCards () {
   }
 
   setTimeout(() => {
-    if (version !== renderVersion) {
+    if (
+      version !==
+      renderVersion
+    ) {
       return
     }
 
-    loadCardTranslations(items, explanationLoadVersion).catch(error => {
-      console.warn('Card translation load failed:', error)
+    loadCardTranslations(
+      items,
+      explanationLoadVersion
+    ).catch(error => {
+      console.warn(
+        'Card translation load failed:',
+        error
+      )
     })
   }, 0)
 }
+
 
 /* =========================================================
    PROGRESS
 ========================================================= */
 
-function updateProgress (items) {
+function updateProgress (
+  items
+) {
   updateProgressLabel()
 
   if (isExamDay()) {
     syncExamToMainProgress()
+
     return
   }
 
@@ -2460,25 +3515,40 @@ function updateProgress (items) {
   }
 
   if (!items.length) {
-    progressPercent.textContent = '0%'
+    progressPercent.textContent =
+      '0%'
 
     if (progressBarFill) {
-      progressBarFill.style.width = '0%'
+      progressBarFill.style.width =
+        '0%'
     }
 
     return
   }
 
-  const mastered = items.filter(item => getStatus(item) === '2').length
+  const mastered =
+    items.filter(
+      item =>
+        getStatus(item) ===
+        '2'
+    ).length
 
-  const percentage = Math.round((mastered / items.length) * 100)
+  const percentage =
+    Math.round(
+      (mastered /
+        items.length) *
+        100
+    )
 
-  progressPercent.textContent = `${percentage}%`
+  progressPercent.textContent =
+    `${percentage}%`
 
   if (progressBarFill) {
-    progressBarFill.style.width = `${percentage}%`
+    progressBarFill.style.width =
+      `${percentage}%`
   }
 }
+
 
 /* =========================================================
    HEADER
@@ -2490,22 +3560,31 @@ function updateContentHeader () {
   }
 
   if (currentSearch) {
-    weekTitle.textContent = 'Hasil Pencarian'
+    weekTitle.textContent =
+      'Hasil Pencarian'
 
-    dayTitle.textContent = `Menemukan materi untuk "${currentSearch}"`
+    dayTitle.textContent =
+      `Menemukan materi untuk "${currentSearch}"`
 
     return
   }
 
-  const week = courseData[activeWeek]
+  const week =
+    courseData[activeWeek]
 
-  const day = week?.days?.[activeDay]
+  const day =
+    week?.days?.[activeDay]
 
   weekTitle.textContent =
-    activeDay === 'day7' ? week?.title || '' : week?.title || 'Materi JLPT N1'
+    activeDay === 'day7'
+      ? week?.title || ''
+      : week?.title ||
+        'Materi JLPT N1'
 
-  dayTitle.textContent = day?.title || ''
+  dayTitle.textContent =
+    day?.title || ''
 }
+
 
 /* =========================================================
    FILTER LABEL
@@ -2517,14 +3596,23 @@ function updateFilterLabel () {
   }
 
   if (currentSearch) {
-    activeFilterLabel.textContent = `Pencarian: "${currentSearch}"`
+    activeFilterLabel.textContent =
+      `Pencarian: "${currentSearch}"`
 
     return
   }
 
-  const weekNumber = activeWeek.replace('week', '')
+  const weekNumber =
+    activeWeek.replace(
+      'week',
+      ''
+    )
 
-  const dayNumber = activeDay.replace('day', '')
+  const dayNumber =
+    activeDay.replace(
+      'day',
+      ''
+    )
 
   activeFilterLabel.textContent =
     activeDay === 'day7'
@@ -2532,23 +3620,33 @@ function updateFilterLabel () {
       : `Minggu ${weekNumber} • Hari ${dayNumber}`
 }
 
+
 /* =========================================================
    RENDER EXAM
 ========================================================= */
 
-function renderExam (examData) {
+function renderExam (
+  examData
+) {
   if (!miniExam) {
     return
   }
 
-  if (currentSearch || !examData) {
-    miniExam.classList.add('hidden')
+  if (
+    currentSearch ||
+    !examData
+  ) {
+    miniExam.classList.add(
+      'hidden'
+    )
 
     if (examContent) {
-      examContent.innerHTML = ''
+      examContent.innerHTML =
+        ''
     }
 
-    window.currentObjectExam = null
+    window.currentObjectExam =
+      null
 
     examAnswers = {}
 
@@ -2558,30 +3656,45 @@ function renderExam (examData) {
     return
   }
 
-  miniExam.classList.remove('hidden')
+  miniExam.classList.remove(
+    'hidden'
+  )
 
   if (!examContent) {
     return
   }
 
-  if (typeof examData === 'string') {
-    examContent.innerHTML = examData
+  if (
+    typeof examData ===
+    'string'
+  ) {
+    examContent.innerHTML =
+      examData
 
     initializeHTMLExam()
 
     return
   }
 
-  if (examData.type === 'html') {
-    examContent.innerHTML = examData.content || ''
+  if (
+    examData.type === 'html'
+  ) {
+    examContent.innerHTML =
+      examData.content || ''
 
     initializeHTMLExam()
 
     return
   }
 
-  if (Array.isArray(examData.questions)) {
-    renderObjectExam(examData)
+  if (
+    Array.isArray(
+      examData.questions
+    )
+  ) {
+    renderObjectExam(
+      examData
+    )
 
     return
   }
@@ -2593,13 +3706,15 @@ function renderExam (examData) {
     </div>
   `
 
-  window.currentObjectExam = null
+  window.currentObjectExam =
+    null
 
   examAnswers = {}
 
   updateExamProgress()
   syncExamToMainProgress()
 }
+
 
 /* =========================================================
    HTML EXAM
@@ -2610,17 +3725,39 @@ function initializeHTMLExam () {
     return
   }
 
-  examContent.querySelectorAll('.exam-btn').forEach((button, index) => {
-    button.dataset.examOption = String(index + 1)
+  examContent
+    .querySelectorAll(
+      '.exam-btn'
+    )
+    .forEach(
+      (
+        button,
+        index
+      ) => {
+        button.dataset.examOption =
+          String(index + 1)
 
-    button.style.animationDelay = `${index * 0.015}s`
-  })
+        button.style.animationDelay =
+          `${index * 0.015}s`
+      }
+    )
 
-  examContent.querySelectorAll('.exam-q').forEach((question, index) => {
-    question.style.animationDelay = `${index * 0.035}s`
-  })
+  examContent
+    .querySelectorAll(
+      '.exam-q'
+    )
+    .forEach(
+      (
+        question,
+        index
+      ) => {
+        question.style.animationDelay =
+          `${index * 0.035}s`
+      }
+    )
 
-  window.currentObjectExam = null
+  window.currentObjectExam =
+    null
 
   examAnswers = {}
 
@@ -2628,24 +3765,47 @@ function initializeHTMLExam () {
   syncExamToMainProgress()
 }
 
+
 /* =========================================================
    OBJECT EXAM
 ========================================================= */
 
-function renderObjectExam (examData) {
+function renderObjectExam (
+  examData
+) {
   examAnswers = {}
 
-  window.currentObjectExam = examData
+  window.currentObjectExam =
+    examData
 
-  const questions = Array.isArray(examData.questions) ? examData.questions : []
+  const questions =
+    Array.isArray(
+      examData.questions
+    )
+      ? examData.questions
+      : []
 
-  const questionsHTML = questions
-    .map((question, index) => {
-      const options = Array.isArray(question?.options) ? question.options : []
+  const questionsHTML =
+    questions
+      .map(
+        (
+          question,
+          index
+        ) => {
+          const options =
+            Array.isArray(
+              question?.options
+            )
+              ? question.options
+              : []
 
-      const optionsHTML = options
-        .map(
-          (option, optionIndex) => `
+          const optionsHTML =
+            options
+              .map(
+                (
+                  option,
+                  optionIndex
+                ) => `
                   <button
                     class="exam-opt-btn"
                     type="button"
@@ -2659,10 +3819,10 @@ function renderObjectExam (examData) {
                     ${option}
                   </button>
                 `
-        )
-        .join('')
+              )
+              .join('')
 
-      return `
+          return `
             <div
               class="exam-q"
               data-question-index="${index}"
@@ -2687,8 +3847,9 @@ function renderObjectExam (examData) {
 
             </div>
           `
-    })
-    .join('')
+        }
+      )
+      .join('')
 
   examContent.innerHTML = `
     <div class="exam-container">
@@ -2730,6 +3891,7 @@ function renderObjectExam (examData) {
           class="bi bi-send-check"
           style="font-size:17px;"
         ></i>
+
         Selesai & Lihat Skor
       </button>
 
@@ -2745,56 +3907,96 @@ function renderObjectExam (examData) {
   syncExamToMainProgress()
 }
 
+
 /* =========================================================
    EXAM ANSWER
 ========================================================= */
 
-window.chooseExamAnswer = function (questionIndex, optionIndex, button) {
-  if (examAnswers[questionIndex] !== undefined) {
-    return
-  }
-
-  const exam = window.currentObjectExam
-
-  const question = exam?.questions?.[questionIndex]
-
-  if (!question || !button) {
-    return
-  }
-
-  examAnswers[questionIndex] = optionIndex
-
-  const parent = button.parentElement
-
-  const buttons = parent?.querySelectorAll('button') || []
-
-  buttons.forEach(btn => {
-    btn.disabled = true
-  })
-
-  const isCorrect = optionIndex === question.correct
-
-  if (isCorrect) {
-    button.style.background = 'var(--success)'
-
-    button.style.color = 'white'
-  } else {
-    button.style.background = 'var(--danger)'
-
-    button.style.color = 'white'
-
-    if (buttons[question.correct]) {
-      buttons[question.correct].style.background = 'var(--success)'
-
-      buttons[question.correct].style.color = 'white'
+window.chooseExamAnswer =
+  function (
+    questionIndex,
+    optionIndex,
+    button
+  ) {
+    if (
+      examAnswers[
+        questionIndex
+      ] !== undefined
+    ) {
+      return
     }
-  }
 
-  const feedback = document.getElementById(`exam-feedback-${questionIndex}`)
+    const exam =
+      window.currentObjectExam
 
-  if (feedback) {
-    feedback.innerHTML = isCorrect
-      ? `
+    const question =
+      exam?.questions?.[
+        questionIndex
+      ]
+
+    if (!question || !button) {
+      return
+    }
+
+    examAnswers[
+      questionIndex
+    ] = optionIndex
+
+    const parent =
+      button.parentElement
+
+    const buttons =
+      parent?.querySelectorAll(
+        'button'
+      ) || []
+
+    buttons.forEach(btn => {
+      btn.disabled = true
+    })
+
+    const isCorrect =
+      optionIndex ===
+      question.correct
+
+    if (isCorrect) {
+      button.style.background =
+        'var(--success)'
+
+      button.style.color =
+        'white'
+    } else {
+      button.style.background =
+        'var(--danger)'
+
+      button.style.color =
+        'white'
+
+      if (
+        buttons[
+          question.correct
+        ]
+      ) {
+        buttons[
+          question.correct
+        ].style.background =
+          'var(--success)'
+
+        buttons[
+          question.correct
+        ].style.color =
+          'white'
+      }
+    }
+
+    const feedback =
+      document.getElementById(
+        `exam-feedback-${questionIndex}`
+      )
+
+    if (feedback) {
+      feedback.innerHTML =
+        isCorrect
+          ? `
             <span
               style="color:var(--success)"
             >
@@ -2802,7 +4004,7 @@ window.chooseExamAnswer = function (questionIndex, optionIndex, button) {
               Benar!
             </span>
           `
-      : `
+          : `
             <span
               style="color:var(--danger)"
             >
@@ -2810,52 +4012,87 @@ window.chooseExamAnswer = function (questionIndex, optionIndex, button) {
               Kurang tepat.
             </span>
           `
+    }
+
+    updateExamProgress()
+    syncExamToMainProgress()
   }
 
-  updateExamProgress()
-  syncExamToMainProgress()
-}
 
 /* =========================================================
    FINISH EXAM
 ========================================================= */
 
-window.finishObjectExam = function () {
-  const exam = window.currentObjectExam
+window.finishObjectExam =
+  function () {
+    const exam =
+      window.currentObjectExam
 
-  if (!exam) {
-    return
-  }
-
-  const questions = Array.isArray(exam.questions) ? exam.questions : []
-
-  if (Object.keys(examAnswers).length < questions.length) {
-    alert('Jawab semua pertanyaan terlebih dahulu.')
-
-    return
-  }
-
-  let score = 0
-
-  questions.forEach((question, index) => {
-    if (examAnswers[index] === question.correct) {
-      score++
+    if (!exam) {
+      return
     }
-  })
 
-  const total = questions.length
+    const questions =
+      Array.isArray(
+        exam.questions
+      )
+        ? exam.questions
+        : []
 
-  const percentage = total > 0 ? Math.round((score / total) * 100) : 0
+    if (
+      Object.keys(
+        examAnswers
+      ).length <
+      questions.length
+    ) {
+      alert(
+        'Jawab semua pertanyaan terlebih dahulu.'
+      )
 
-  const result = document.getElementById('objectExamResult')
+      return
+    }
 
-  if (!result) {
-    return
-  }
+    let score = 0
 
-  result.classList.remove('hidden')
+    questions.forEach(
+      (
+        question,
+        index
+      ) => {
+        if (
+          examAnswers[index] ===
+          question.correct
+        ) {
+          score++
+        }
+      }
+    )
 
-  result.innerHTML = `
+    const total =
+      questions.length
+
+    const percentage =
+      total > 0
+        ? Math.round(
+            (score / total) *
+              100
+          )
+        : 0
+
+    const result =
+      document.getElementById(
+        'objectExamResult'
+      )
+
+    if (!result) {
+      return
+    }
+
+    result.classList.remove(
+      'hidden'
+    )
+
+    result.innerHTML = `
       <i class="bi bi-trophy-fill"></i>
 
       Skor:
@@ -2865,11 +4102,16 @@ window.finishObjectExam = function () {
 
       <br>
 
-      ${percentage >= 70 ? 'よくできました！' : 'もう一度復習しましょう。'}
+      ${
+        percentage >= 70
+          ? 'よくできました！'
+          : 'もう一度復習しましょう。'
+      }
     `
 
-  syncExamToMainProgress()
-}
+    syncExamToMainProgress()
+  }
+
 
 /* =========================================================
    EXAM PROGRESS
@@ -2880,21 +4122,39 @@ function updateExamProgress () {
     return
   }
 
-  const questionBlocks = examContent.querySelectorAll('.exam-q')
+  const questionBlocks =
+    examContent.querySelectorAll(
+      '.exam-q'
+    )
 
-  if (window.currentObjectExam && questionBlocks.length) {
-    const total = questionBlocks.length
+  if (
+    window.currentObjectExam &&
+    questionBlocks.length
+  ) {
+    const total =
+      questionBlocks.length
 
-    const answered = Object.keys(examAnswers).length
+    const answered =
+      Object.keys(
+        examAnswers
+      ).length
 
-    const percentage = total > 0 ? Math.round((answered / total) * 100) : 0
+    const percentage =
+      total > 0
+        ? Math.round(
+            (answered / total) *
+              100
+          )
+        : 0
 
     if (examAnswered) {
-      examAnswered.textContent = `${percentage}%`
+      examAnswered.textContent =
+        `${percentage}%`
     }
 
     if (examProgressFill) {
-      examProgressFill.style.width = `${percentage}%`
+      examProgressFill.style.width =
+        `${percentage}%`
     }
 
     syncExamToMainProgress()
@@ -2903,142 +4163,229 @@ function updateExamProgress () {
   }
 
   if (examAnswered) {
-    examAnswered.textContent = '25 Soal'
+    examAnswered.textContent =
+      '25 Soal'
   }
 
   if (examProgressFill) {
-    examProgressFill.style.width = '0%'
+    examProgressFill.style.width =
+      '0%'
   }
 
   syncExamToMainProgress()
 }
 
+
 /* =========================================================
    STATUS UPDATE
 ========================================================= */
 
-window.updateStatus = function (id, status, button) {
-  localStorage.setItem(`status_${id}`, String(status))
+window.updateStatus =
+  function (
+    id,
+    status,
+    button
+  ) {
+    localStorage.setItem(
+      `status_${id}`,
+      String(status)
+    )
 
-  if (button?.parentElement) {
-    button.parentElement.querySelectorAll('.status-btn').forEach(btn => {
-      btn.classList.remove('active')
-    })
+    if (button?.parentElement) {
+      button.parentElement
+        .querySelectorAll(
+          '.status-btn'
+        )
+        .forEach(btn => {
+          btn.classList.remove(
+            'active'
+          )
+        })
 
-    button.classList.add('active')
+      button.classList.add(
+        'active'
+      )
+    }
+
+    updateProgress(
+      getFilteredItems()
+    )
   }
 
-  updateProgress(getFilteredItems())
-}
 
 /* =========================================================
    SEARCH EVENT
 ========================================================= */
 
 if (searchInput) {
-  searchInput.addEventListener('input', event => {
-    const value = event.target.value.trim().toLowerCase()
+  searchInput.addEventListener(
+    'input',
+    event => {
+      const value =
+        event.target.value
+          .trim()
+          .toLowerCase()
 
-    clearTimeout(searchDebounceTimer)
+      clearTimeout(
+        searchDebounceTimer
+      )
 
-    searchDebounceTimer = setTimeout(() => {
-      currentSearch = value
+      searchDebounceTimer =
+        setTimeout(() => {
+          currentSearch =
+            value
 
-      updateContentHeader()
-      updateFilterLabel()
-      renderCards()
+          updateContentHeader()
+          updateFilterLabel()
+          renderCards()
 
-      renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
+          renderExam(
+            courseData[
+              activeWeek
+            ]?.days?.[
+              activeDay
+            ]?.exam
+          )
 
-      updateProgressLabel()
-    }, 220)
-  })
+          updateProgressLabel()
+        }, 220)
+    }
+  )
 }
+
 
 /* =========================================================
    WEEK CHANGE
 ========================================================= */
 
 if (weekSelect) {
-  weekSelect.addEventListener('change', event => {
-    activeWeek = event.target.value
+  weekSelect.addEventListener(
+    'change',
+    event => {
+      activeWeek =
+        event.target.value
 
-    activeDay = 'day1'
+      activeDay =
+        'day1'
 
-    currentSearch = ''
+      currentSearch =
+        ''
 
-    clearTimeout(searchDebounceTimer)
+      clearTimeout(
+        searchDebounceTimer
+      )
 
-    savePageState()
+      stopSpeech()
 
-    if (searchInput) {
-      searchInput.value = ''
+      savePageState()
+
+      if (searchInput) {
+        searchInput.value =
+          ''
+      }
+
+      if (daySelect) {
+        daySelect.value =
+          activeDay
+      }
+
+      updateContentHeader()
+      updateFilterLabel()
+      renderCards()
+
+      renderExam(
+        courseData[
+          activeWeek
+        ]?.days?.[
+          activeDay
+        ]?.exam
+      )
+
+      updateProgressLabel()
     }
-
-    if (daySelect) {
-      daySelect.value = activeDay
-    }
-
-    updateContentHeader()
-    updateFilterLabel()
-    renderCards()
-
-    renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
-
-    updateProgressLabel()
-  })
+  )
 }
+
 
 /* =========================================================
    DAY CHANGE
 ========================================================= */
 
 if (daySelect) {
-  daySelect.addEventListener('change', event => {
-    activeDay = event.target.value
+  daySelect.addEventListener(
+    'change',
+    event => {
+      activeDay =
+        event.target.value
 
-    currentSearch = ''
+      currentSearch =
+        ''
 
-    clearTimeout(searchDebounceTimer)
+      clearTimeout(
+        searchDebounceTimer
+      )
 
-    savePageState()
+      stopSpeech()
 
-    if (searchInput) {
-      searchInput.value = ''
+      savePageState()
+
+      if (searchInput) {
+        searchInput.value =
+          ''
+      }
+
+      updateContentHeader()
+      updateFilterLabel()
+      renderCards()
+
+      renderExam(
+        courseData[
+          activeWeek
+        ]?.days?.[
+          activeDay
+        ]?.exam
+      )
+
+      updateProgressLabel()
     }
-
-    updateContentHeader()
-    updateFilterLabel()
-    renderCards()
-
-    renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
-
-    updateProgressLabel()
-  })
+  )
 }
+
 
 /* =========================================================
    STATUS FILTER
 ========================================================= */
 
 if (statusSelect) {
-  statusSelect.addEventListener('change', event => {
-    currentStatus = event.target.value
+  statusSelect.addEventListener(
+    'change',
+    event => {
+      currentStatus =
+        event.target.value
 
-    if (activeDay === 'day7' && !currentSearch) {
-      return
+      if (
+        activeDay === 'day7' &&
+        !currentSearch
+      ) {
+        return
+      }
+
+      renderCards()
     }
-
-    renderCards()
-  })
+  )
 }
+
 
 /* =========================================================
    RESET FILTER
 ========================================================= */
 
 function resetFilters () {
-  clearTimeout(searchDebounceTimer)
+  clearTimeout(
+    searchDebounceTimer
+  )
+
+  stopSpeech()
 
   currentSearch = ''
   currentStatus = 'all'
@@ -3057,224 +4404,374 @@ function resetFilters () {
   }
 
   if (weekSelect) {
-    weekSelect.value = 'week1'
+    weekSelect.value =
+      'week1'
   }
 
   if (daySelect) {
-    daySelect.value = 'day1'
+    daySelect.value =
+      'day1'
   }
 
   updateContentHeader()
   updateFilterLabel()
   renderCards()
 
-  renderExam(courseData.week1?.days?.day1?.exam)
+  renderExam(
+    courseData.week1
+      ?.days?.day1?.exam
+  )
 
   updateProgressLabel()
 }
 
 if (resetFiltersBtn) {
-  resetFiltersBtn.addEventListener('click', resetFilters)
+  resetFiltersBtn.addEventListener(
+    'click',
+    resetFilters
+  )
 }
 
 if (emptyResetBtn) {
-  emptyResetBtn.addEventListener('click', resetFilters)
+  emptyResetBtn.addEventListener(
+    'click',
+    resetFilters
+  )
 }
+
 
 /* =========================================================
    CTRL + K
 ========================================================= */
 
-document.addEventListener('keydown', event => {
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-    event.preventDefault()
+document.addEventListener(
+  'keydown',
+  event => {
+    if (
+      (event.ctrlKey ||
+        event.metaKey) &&
+      event.key.toLowerCase() ===
+        'k'
+    ) {
+      event.preventDefault()
 
-    if (searchInput) {
-      searchInput.focus()
+      if (searchInput) {
+        searchInput.focus()
+      }
     }
   }
-})
+)
+
 
 /* =========================================================
-   SPACE = PAUSE TTS
+   SPACE = PAUSE / RESUME TTS
 ========================================================= */
 
-document.addEventListener('keydown', event => {
-  if (event.code !== 'Space') {
-    return
+document.addEventListener(
+  'keydown',
+  event => {
+    if (
+      event.code !== 'Space'
+    ) {
+      return
+    }
+
+    const target =
+      event.target
+
+    if (
+      target?.tagName ===
+        'INPUT' ||
+      target?.tagName ===
+        'TEXTAREA' ||
+      target?.tagName ===
+        'SELECT' ||
+      target?.isContentEditable
+    ) {
+      return
+    }
+
+    if (
+      speakingCardId !== null
+    ) {
+      event.preventDefault()
+
+      window.togglePauseSpeech()
+    }
   }
+)
 
-  const target = event.target
-
-  if (
-    target?.tagName === 'INPUT' ||
-    target?.tagName === 'TEXTAREA' ||
-    target?.tagName === 'SELECT' ||
-    target?.isContentEditable
-  ) {
-    return
-  }
-
-  if (speakingCardId !== null) {
-    event.preventDefault()
-
-    window.togglePauseSpeech()
-  }
-})
 
 /* =========================================================
    MEMO MODE
 ========================================================= */
 
 if (memoToggle) {
-  memoToggle.addEventListener('click', () => {
-    memoMode = !memoMode
+  memoToggle.addEventListener(
+    'click',
+    () => {
+      memoMode =
+        !memoMode
 
-    document.body.classList.toggle('memo-mode', memoMode)
+      document.body.classList.toggle(
+        'memo-mode',
+        memoMode
+      )
 
-    memoToggle.classList.toggle('active', memoMode)
+      memoToggle.classList.toggle(
+        'active',
+        memoMode
+      )
 
-    memoToggle.innerHTML = memoMode
-      ? '<i class="bi bi-eye-slash-fill"></i>'
-      : '<i class="bi bi-eye"></i>'
-  })
+      memoToggle.innerHTML =
+        memoMode
+          ? '<i class="bi bi-eye-slash-fill"></i>'
+          : '<i class="bi bi-eye"></i>'
+    }
+  )
 }
+
 
 /* =========================================================
    DARK MODE
 ========================================================= */
 
-function applyDarkModeButton (dark) {
+function applyDarkModeButton (
+  dark
+) {
   if (!themeToggle) {
     return
   }
 
-  themeToggle.innerHTML = dark
-    ? '<i class="bi bi-sun-fill"></i>'
-    : '<i class="bi bi-moon-stars-fill"></i>'
+  themeToggle.innerHTML =
+    dark
+      ? '<i class="bi bi-sun-fill"></i>'
+      : '<i class="bi bi-moon-stars-fill"></i>'
 }
 
-const savedDarkMode = localStorage.getItem('n1_dark_mode') === '1'
+const savedDarkMode =
+  localStorage.getItem(
+    'n1_dark_mode'
+  ) === '1'
 
 if (savedDarkMode) {
-  document.body.classList.add('dark-mode')
+  document.body.classList.add(
+    'dark-mode'
+  )
 }
 
-applyDarkModeButton(savedDarkMode)
+applyDarkModeButton(
+  savedDarkMode
+)
 
 if (themeToggle) {
-  themeToggle.addEventListener('click', () => {
-    const dark = document.body.classList.toggle('dark-mode')
+  themeToggle.addEventListener(
+    'click',
+    () => {
+      const dark =
+        document.body.classList.toggle(
+          'dark-mode'
+        )
 
-    applyDarkModeButton(dark)
+      applyDarkModeButton(
+        dark
+      )
 
-    localStorage.setItem('n1_dark_mode', dark ? '1' : '0')
-  })
+      localStorage.setItem(
+        'n1_dark_mode',
+        dark ? '1' : '0'
+      )
+    }
+  )
 }
+
 
 /* =========================================================
    LANGUAGE APPLY
 ========================================================= */
 
-function applyLanguage (lang) {
-  currentLanguage = normalizeLanguage(lang)
+function applyLanguage (
+  lang
+) {
+  currentLanguage =
+    normalizeLanguage(lang)
 
-  localStorage.setItem('n1_language', currentLanguage)
+  localStorage.setItem(
+    'n1_language',
+    currentLanguage
+  )
 
-  document.body.classList.remove('lang-show-id', 'lang-show-en', 'lang-show-cn')
+  document.body.classList.remove(
+    'lang-show-id',
+    'lang-show-en',
+    'lang-show-cn'
+  )
 
-  document.body.classList.add(`lang-show-${currentLanguage}`)
+  document.body.classList.add(
+    `lang-show-${currentLanguage}`
+  )
 
   renderCards()
 }
+
 
 /* =========================================================
    LANGUAGE UI
 ========================================================= */
 
 function initializeLanguageUI () {
-  currentLanguage = normalizeLanguage(currentLanguage)
-
-  document.body.classList.remove('lang-show-id', 'lang-show-en', 'lang-show-cn')
-
-  document.body.classList.add(`lang-show-${currentLanguage}`)
-
-  document.querySelectorAll('#languageMenu button').forEach(button => {
-    button.classList.toggle(
-      'active',
-      normalizeLanguage(button.dataset.lang) === currentLanguage
+  currentLanguage =
+    normalizeLanguage(
+      currentLanguage
     )
-  })
+
+  document.body.classList.remove(
+    'lang-show-id',
+    'lang-show-en',
+    'lang-show-cn'
+  )
+
+  document.body.classList.add(
+    `lang-show-${currentLanguage}`
+  )
+
+  document
+    .querySelectorAll(
+      '#languageMenu button'
+    )
+    .forEach(button => {
+      button.classList.toggle(
+        'active',
+        normalizeLanguage(
+          button.dataset.lang
+        ) ===
+          currentLanguage
+      )
+    })
 }
 
 if (langToggleBtn) {
-  langToggleBtn.addEventListener('click', event => {
-    event.stopPropagation()
+  langToggleBtn.addEventListener(
+    'click',
+    event => {
+      event.stopPropagation()
 
-    languageMenu?.classList.toggle('hidden')
-  })
+      languageMenu?.classList.toggle(
+        'hidden'
+      )
+    }
+  )
 }
 
-document.querySelectorAll('#languageMenu button').forEach(button => {
-  button.addEventListener('click', event => {
-    event.stopPropagation()
+document
+  .querySelectorAll(
+    '#languageMenu button'
+  )
+  .forEach(button => {
+    button.addEventListener(
+      'click',
+      event => {
+        event.stopPropagation()
 
-    applyLanguage(button.dataset.lang)
+        applyLanguage(
+          button.dataset.lang
+        )
 
-    document
-      .querySelectorAll('#languageMenu button')
-      .forEach(btn => btn.classList.remove('active'))
+        document
+          .querySelectorAll(
+            '#languageMenu button'
+          )
+          .forEach(btn =>
+            btn.classList.remove(
+              'active'
+            )
+          )
 
-    button.classList.add('active')
+        button.classList.add(
+          'active'
+        )
 
-    languageMenu?.classList.add('hidden')
+        languageMenu?.classList.add(
+          'hidden'
+        )
 
-    updateContentHeader()
-    updateFilterLabel()
+        updateContentHeader()
+        updateFilterLabel()
+      }
+    )
   })
-})
 
-document.addEventListener('click', event => {
-  if (
-    languageMenu &&
-    !languageMenu.contains(event.target) &&
-    event.target !== langToggleBtn
-  ) {
-    languageMenu.classList.add('hidden')
+document.addEventListener(
+  'click',
+  event => {
+    if (
+      languageMenu &&
+      !languageMenu.contains(
+        event.target
+      ) &&
+      event.target !==
+        langToggleBtn
+    ) {
+      languageMenu.classList.add(
+        'hidden'
+      )
+    }
   }
-})
+)
+
 
 /* =========================================================
    TIME
 ========================================================= */
 
-function getTimePeriod (hour) {
-  if (hour >= 0 && hour < 3) {
+function getTimePeriod (
+  hour
+) {
+  if (
+    hour >= 0 &&
+    hour < 3
+  ) {
     return 'larut-malam'
   }
 
-  if (hour >= 3 && hour < 5) {
+  if (
+    hour >= 3 &&
+    hour < 5
+  ) {
     return 'subuh'
   }
 
-  if (hour >= 5 && hour < 10) {
+  if (
+    hour >= 5 &&
+    hour < 10
+  ) {
     return 'pagi'
   }
 
-  if (hour >= 10 && hour < 15) {
+  if (
+    hour >= 10 &&
+    hour < 15
+  ) {
     return 'siang'
   }
 
-  if (hour >= 15 && hour < 18) {
+  if (
+    hour >= 15 &&
+    hour < 18
+  ) {
     return 'sore'
   }
 
-  if (hour >= 18 && hour < 23) {
+  if (
+    hour >= 18 &&
+    hour < 23
+  ) {
     return 'malam'
   }
 
   return 'tengah-malam'
 }
+
 
 /* =========================================================
    GREETING DATA
@@ -3345,20 +4842,26 @@ const greetingData = {
   }
 }
 
+
 /* =========================================================
    TIME + GREETING UPDATE
 ========================================================= */
 
 function updateTimeAndGreeting () {
-  const now = new Date()
+  const now =
+    new Date()
 
-  const hour = now.getHours()
+  const hour =
+    now.getHours()
 
-  const minute = now.getMinutes()
+  const minute =
+    now.getMinutes()
 
-  const second = now.getSeconds()
+  const second =
+    now.getSeconds()
 
-  const period = getTimePeriod(hour)
+  const period =
+    getTimePeriod(hour)
 
   document.body.classList.remove(
     'theme-subuh',
@@ -3370,62 +4873,98 @@ function updateTimeAndGreeting () {
     'theme-larut-malam'
   )
 
-  document.body.classList.add(`theme-${period}`)
+  document.body.classList.add(
+    `theme-${period}`
+  )
 
   if (liveClock) {
-    liveClock.textContent = [hour, minute, second]
-      .map(value => String(value).padStart(2, '0'))
-      .join(':')
+    liveClock.textContent =
+      [hour, minute, second]
+        .map(value =>
+          String(value)
+            .padStart(
+              2,
+              '0'
+            )
+        )
+        .join(':')
   }
 
-  const greeting = greetingData[period]
+  const greeting =
+    greetingData[period]
 
   if (!greeting) {
     return
   }
 
   if (greetingLabel) {
-    greetingLabel.textContent = greeting.label
+    greetingLabel.textContent =
+      greeting.label
   }
 
   if (greetingJapanese) {
-    greetingJapanese.textContent = greeting.japanese
+    greetingJapanese.textContent =
+      greeting.japanese
   }
 
   if (greetingMessage) {
-    greetingMessage.textContent = greeting.message
+    greetingMessage.textContent =
+      greeting.message
   }
 
   if (greetingIcon) {
-    greetingIcon.className = `bi ${greeting.icon}`
+    greetingIcon.className =
+      `bi ${greeting.icon}`
   }
 
   if (timePeriodText) {
-    timePeriodText.textContent = greeting.period
+    timePeriodText.textContent =
+      greeting.period
   }
 
-  const primary = getComputedStyle(document.body)
-    .getPropertyValue('--primary')
-    .trim()
+  const primary =
+    getComputedStyle(
+      document.body
+    )
+      .getPropertyValue(
+        '--primary'
+      )
+      .trim()
 
   document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', primary)
+    .querySelector(
+      'meta[name="theme-color"]'
+    )
+    ?.setAttribute(
+      'content',
+      primary
+    )
 }
+
 
 /* =========================================================
    PAGE LIFECYCLE
 ========================================================= */
 
-window.addEventListener('beforeunload', stopSpeech)
+window.addEventListener(
+  'beforeunload',
+  stopSpeech
+)
 
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState !== 'visible') {
-    return
+document.addEventListener(
+  'visibilitychange',
+  () => {
+    if (
+      document.visibilityState !==
+      'visible'
+    ) {
+      return
+    }
+
+    loadVoices()
   }
+)
 
-  loadVoices()
-})
 
 /* =========================================================
    INIT
@@ -3441,11 +4980,13 @@ function init () {
   initializeLanguageUI()
 
   if (weekSelect) {
-    weekSelect.value = activeWeek
+    weekSelect.value =
+      activeWeek
   }
 
   if (daySelect) {
-    daySelect.value = activeDay
+    daySelect.value =
+      activeDay
   }
 
   updateContentHeader()
@@ -3456,14 +4997,31 @@ function init () {
 
   renderCards()
 
-  renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam)
+  renderExam(
+    courseData[
+      activeWeek
+    ]?.days?.[
+      activeDay
+    ]?.exam
+  )
 
   updateProgressLabel()
 
   updateTimeAndGreeting()
 
-  setInterval(updateTimeAndGreeting, 1000)
+  /*
+    Pastikan state tombol TTS
+    sudah sinkron setelah init.
+  */
+
+  updateSpeechButtons()
+
+  setInterval(
+    updateTimeAndGreeting,
+    1000
+  )
 }
+
 
 /* =========================================================
    START APP
