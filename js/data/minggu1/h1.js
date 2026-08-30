@@ -7,10 +7,10 @@ window.W1H1 = {
       formal: false,
       conjunction: 'V-て + こそ',
       explanation:
-        '【日本語】「〜して初めて、本当の価値や効果がわかる／実現する」という意味。実際の過去の出来事には使えず、一般的な truths（真理）や条件・決意を表すときに使う。\n【ID】Digunakan untuk menekankan bahwa hanya setelah melakukan kondisi/tindakan X, maka hasil atau pemahaman Y yang sebenarnya baru bisa terwujud. Tidak bisa digunakan untuk peristiwa masa lalu yang sudah terjadi (kejadian spesifik yang lampau).\n【EN】Used to emphasize that "only after" or "only by" doing X does Y become possible or understood. Cannot be used for factual individual events in the past.',
+        '【ID】Hanya setelah melakukan X, barulah Y terwujud/dipahami. Tidak untuk masa lalu.\n【EN】Only after doing X does Y become possible.\n【JP】〜して初めて、本当の価値や効果がわかる。',
       meaning: {
-        id: 'Hanya setelah (melakukan sesuatu), barulah bisa... / Barulah sempurna jika...',
-        en: 'Only after doing... / Only by doing... can one...',
+        id: 'Hanya setelah (melakukan sesuatu), barulah bisa...',
+        en: 'Only after doing...',
         cn: '只有...才能...'
       },
       examples: [
@@ -25,10 +25,10 @@ window.W1H1 = {
       formal: true,
       conjunction: 'N + こそあれ / Na-で + こそあれ',
       explanation:
-        '【日本語】「〜はあるけれど、後ろの主文（本質・評価）に影響はない」という意味。前文でマイナスや例外的な事実を認めつつ、後文で「それでも〜だ」とポジティブな評価や本質を強調する硬い表現。\n【ID】Digunakan untuk mengakui bahwa "memang ada sedikit unsur/kekurangan X, tapi tidak merubah penilaian atau kenyataan utama Y". Merupakan bentuk formal/kaku dari 〜はあるけれど.\n【EN】A formal expression meaning "although there is X, it does not change the main reality/evaluation Y". Recognizes a minor negative or condition before stating a primary positive point.',
+        '【ID】Meskipun ada kekurangan X, tidak mengubah kenyataan/penilaian utama Y.\n【EN】Although there is X, main point Y remains unchanged.\n【JP】〜はあるけれど、本質や評価には影響がない。',
       meaning: {
-        id: 'Meskipun ada (kekurangan/hal kecil) X, tetapi (hal utamanya tetap Y)...',
-        en: 'Although there is... / While there may be...',
+        id: 'Meskipun ada X, tetapi (hal utamanya tetap Y)...',
+        en: 'Although there is...',
         cn: '虽然有...但是...'
       },
       examples: [
@@ -43,10 +43,10 @@ window.W1H1 = {
       formal: true,
       conjunction: 'V-ます(buang masu) + こそすれ / N + こそすれ',
       explanation:
-        '【日本語】「〜することはあっても、絶対に逆のこと（後文）はあり得ない」という強力な否定・強調を表す。「前文の動作はするが、後文の動作は絶対にしない」という対比。\n【ID】Menegaskan bahwa pembicara "mungkin/pasti melakukan tindakan A, tetapi SAMA SEKALI TIDAK MUNGKIN melakukan tindakan B (yang berlawanan)". Bagian belakang selalu diikuti bentuk negatif mutlak.\n【EN】Strongly emphasizes that while X might happen, the opposite Y will "definitely never happen". The second clause always expresses absolute negation.',
+        '【ID】Mungkin/pasti melakukan X, tetapi SAMA SEKALI TIDAK MUNGKIN Y (lawan katanya).\n【EN】May do X, but definitely not Y.\n【JP】〜することはあっても、絶対に逆のことはない。',
       meaning: {
-        id: 'Bisa jadi / Yang ada justru melakukan X, dan SAMA SEKALI TIDAK MUNGKIN Y...',
-        en: 'May do / Will certainly do X, but definitely not Y...',
+        id: 'Yang ada justru X, dan sama sekali tidak Y...',
+        en: 'May do X, but definitely not Y...',
         cn: '只有...绝不...'
       },
       examples: [
@@ -61,9 +61,9 @@ window.W1H1 = {
       formal: false,
       conjunction: 'N + こそ + [ 悪いが… / 〜が… / 〜けれど… ]',
       explanation:
-        '【日本語】「〜という特定の側面は悪い／劣っているが、他の重要な側面（味、品質、環境など）は素晴らしい」と対比して評価する表現。\n【ID】Mengakui secara jujur bahwa suatu aspek/fitur spesifik memang buruk (seperti penampilan, lokasi, atau nama), tetapi aspek utama lainnya sangat bagus/berkualitas.\n【EN】Used to admit that a specific aspect X is bad or lacking, while highlighting that other crucial aspects are actually very good.',
+        '【ID】Memang buruk di aspek X, tetapi aspek utama lainnya sangat bagus.\n【EN】May be bad in terms of X, but other aspects are good.\n【JP】〜という側面は悪いが、他の重要な側面は素晴らしい。',
       meaning: {
-        id: 'Memang buruk/kurang di aspek X, tetapi (aspek lainnya bagus)...',
+        id: 'Memang buruk di aspek X, tetapi...',
         en: 'It may be bad in terms of X, but...',
         cn: '虽然...不好，但是...'
       },
