@@ -429,7 +429,7 @@ function populateDaySelect () {
 
     option.textContent =
       day === 7
-        ? 'Hari 7 — Full Exam'
+        ? 'Hari 7 - Full Exam'
         : `Hari ${day}`
 
     daySelect.appendChild(option)

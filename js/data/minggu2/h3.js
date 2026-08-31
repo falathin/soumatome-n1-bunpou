@@ -1,4 +1,3 @@
-
 window.W2H3 = {
   title: '3日目 行こうか行くまいか迷っている',
   grammar: [
@@ -6,7 +5,9 @@ window.W2H3 = {
       id: 'w2_d3_1',
       rule: '〜というか〜というか',
       formal: false,
-      explanation: '(= 〜とも言えるし、また〜とも言える。とにかく) Aい/na/N ＋ というか',
+      conjunction: '普通形（Na/N語幹） + というか',
+      explanation:
+        '【接続】動詞・い形容詞・な形容詞・名詞の普通形 ＋ というか（※な形容詞・名詞は「だ」を省くことが多い）\n【意味・解説】「〜という表現もできるし、こちらの〜という表現も当てはまる」と、適切な評価や表現を模索・言い直しする際に使う。',
       meaning: {
         id: 'Bisa dibilang... bisa juga dibilang...',
         en: 'I mean... or rather... / You could say... or...',
@@ -21,7 +22,9 @@ window.W2H3 = {
       id: 'w2_d3_2',
       rule: '〜うと〜まいと',
       formal: true,
-      explanation: '(= 〜しても〜しなくても、どの場合でも) VようとVるまいと / VようがVるまいが (くる→こまい/くるまい、する→しまい/すまい/するまい)',
+      conjunction: 'V-意向形 + と(が) + V-まい + と(が)',
+      explanation:
+        '【接続】動詞意向形 ＋ と(が) ＋ 動詞辞書形・ます形語幹＋まい ＋ と(が)\n【意味・解説】「〜しても〜しなくても、どちらの場合でも結果や影響に変化はない」ということを強調する硬い表現。',
       meaning: {
         id: 'Mau... ataupun tidak... / Terlepas dari apakah... atau tidak...',
         en: 'Whether... or not...',
@@ -36,7 +39,9 @@ window.W2H3 = {
       id: 'w2_d3_3',
       rule: '〜うか〜まいか',
       formal: false,
-      explanation: '(= 〜するか、しないか、どちらにしようか) VようかVるまいか',
+      conjunction: 'V-意向形 + か + V-まい + か',
+      explanation:
+        '【接続】動詞意向形 ＋ か ＋ 動詞辞書形・ます形語幹＋まい ＋ か\n【意味・解説】「〜しようか、それともやめようか」と、二つの選択肢の間で決めかねて心の中で悩んでいる状態を表す。',
       meaning: {
         id: 'Apakah mau... atau tidak (sedang ragu-ragu)...',
         en: 'Whether to... or not (indecision)',
@@ -51,7 +56,9 @@ window.W2H3 = {
       id: 'w2_d3_4',
       rule: '〜にせよ〜にせよ',
       formal: true,
-      explanation: '(= 〜する場合も〜しない場合も / どういう場合でも) 【〜にせよ(〜にせよ) / 〜にしろ(〜にしろ)】 V/A/na/N(普) ＋ にせよ / 何にせよ/だれにせよ/いつにせよ',
+      conjunction: '普通形 + にせよ / にしろ',
+      explanation:
+        '【接続】動詞・い形容詞・な形容詞・名詞の普通形 ＋ にせよ（／にしろ）\n【意味・解説】「〜の場合でも〜の場合でも、どちらにしても…だ」という意味。事実や条件のいかんにかかわらず後件が成り立つことを述べる。',
       meaning: {
         id: 'Baik... maupun... / Apapun situasinya...',
         en: 'Regardless of whether... or... / In any case...',
@@ -69,38 +76,40 @@ window.W2H3 = {
     questions: [
       {
         question: 'あなたが反対（ ）私は一人で行くつもりです。',
-        options: ['しようとしまいと', 'しようがするまいか'],
+        options: ['1 しようとしまいと', '2 しようがするまいか'],
         correct: 0
       },
       {
         question: '大学院へ（ ）悩んだ末、いい仕事が見つかったので就職することにした。',
-        options: ['行こうと行くまいと', '行こうか行くまいか'],
+        options: ['1 行こうと行くまいと', '2 行こうか行くまいか'],
         correct: 1
       },
       {
         question: '来週の会合に（ ）、必ず資料に目を通してください。',
-        options: ['来るにしろ来ないにしろ', '来るというか来ないというか'],
+        options: ['1 来るにしろ来ないにしろ', '2 来るというか来ないというか'],
         correct: 0
       },
       {
         question: '欠席（ ）連絡はしてください。',
-        options: ['するにせよ', 'しようしろ'],
+        options: ['1 するにせよ', '2 しようしろ'],
         correct: 0
       },
       {
         question: 'それは、（ ）、とにかく変わったものだ。',
-        options: ['面白かろうと、珍しかろうと', '面白いというか、珍しいというか'],
+        options: ['1 面白かろうと、珍しかろうと', '2 面白いというか、珍しいというか'],
         correct: 1
       },
       {
-        question: 'その新聞記者は、記事を掲載 ___ ___ ___ ___ 、掲載をやめた。',
+        question: 'その新聞記者は、記事を掲載 ___ ___ ★ ___ 、掲載をやめた。',
         options: ['1 しようか', '2 悩んだ', '3 あげく', '4 すまいか'],
-        correct: '1-4-2-3'
+        correct: '1-4-2-3',
+        fullSentence: 'その新聞記者は、記事を掲載【 1 しようか 】【 4 すまいか 】【 2★ 悩んだ 】【 3 あげく 】、掲載をやめた。'
       },
       {
-        question: 'もう社会人 ___ ___ ___ ___ に責任を持たなければいけない。',
+        question: 'もう社会人 ___ ___ ★ ___ に責任を持たなければいけない。',
         options: ['1 だから', '2 にせよ', '3 自分の行動', '4 何をする'],
-        correct: '1-4-2-3'
+        correct: '1-4-2-3',
+        fullSentence: 'もう社会人【 1 だから 】【 4 何をする 】【 2★ にせよ 】【 3 自分の行動 】に責任を持たなければいけない。'
       }
     ]
   }

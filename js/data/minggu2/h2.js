@@ -1,4 +1,3 @@
-
 window.W2H2 = {
   title: '2日目 どんなに高かろうが',
   grammar: [
@@ -6,7 +5,9 @@ window.W2H2 = {
       id: 'w2_d2_1',
       rule: '〜であれ〜であれ',
       formal: true,
-      explanation: '(= 〜でも〜でもだれでも) N/naであれ【〜であれ〜であれ】 / だれであれ・どこであれ・何であれ',
+      conjunction: 'N / Na + であれ',
+      explanation:
+        '【接続】名詞・な形容詞語幹 ＋ であれ（＋ 名詞・な形容詞語幹 ＋ であれ）\n【意味・解説】「〜であっても〜であっても、例外なくすべて同じである」という意味。書き言葉で、強い主張や義務を述べる場面で使われる。',
       meaning: {
         id: 'Entah... entah... / Siapapun / Apapun...',
         en: 'Whether it be... or... / Whoever / Whatever',
@@ -21,7 +22,9 @@ window.W2H2 = {
       id: 'w2_d2_2',
       rule: '〜うと〜うと',
       formal: true,
-      explanation: '(= 〜が〜っても〜が〜っても) 【〜うと〜うと / 〜うが〜うが】 Vよう / Aかろう / na/Nだろう / 〜だろうとなかろうと',
+      conjunction: 'V-意向形 / A-かろう / Na-だろう / N-だろう + と/が',
+      explanation:
+        '【接続】動詞意向形 ＋ と(が) ／ い形容詞かろう ＋ と(が) ／ な形容詞・名詞だろう ＋ と(が)\n【意味・解説】「〜の場合でも〜の場合でも、どのような条件であっても結果は変わらない」という意味を表す硬い表現。',
       meaning: {
         id: 'Walaupun... atau... / Terlepas dari apakah... atau...',
         en: 'Whether... or... / Come... or...',
@@ -38,7 +41,9 @@ window.W2H2 = {
       id: 'w2_d2_3',
       rule: 'どんなに〜うが',
       formal: true,
-      explanation: '(= どんなに〜ても) 疑問詞 ＋ Vよう/Aかろう/na/Nだろう ＋ が/とも',
+      conjunction: '疑問詞 + V-意向形 / A-かろう / Na-だろう / N-だろう + が/とも',
+      explanation:
+        '【接続】疑問詞 ＋ 動詞意向形／い形容詞かろう／な形容詞・名詞だろう ＋ が／とも\n【意味・解説】「どんなに〜であっても、結果や意志には一切影響しない」という強い覚悟や事実を強調する表現。',
       meaning: {
         id: 'Betapapun... / Bagaimanapun juga...',
         en: 'No matter how / what / who...',
@@ -57,38 +62,40 @@ window.W2H2 = {
     questions: [
       {
         question: '彼は、（ ）かまわず電話をかけてくる。',
-        options: ['朝だろうが夜中だろうが', '朝だろう夜中だろう'],
+        options: ['1 朝だろうが夜中だろうが', '2 朝だろう夜中だろう'],
         correct: 0
       },
       {
         question: 'この部屋でどんなに（ ）、外からは何も聞こえません。',
-        options: ['騒ごうとも', '騒ぐであれ'],
+        options: ['1 騒ごうとも', '2 騒ぐであれ'],
         correct: 0
       },
       {
         question: 'たとえ（ ）、明日の試合は予定どおり行います。',
-        options: ['雨であろうと雪であろうと', '雨が降るが雪が降るが'],
+        options: ['1 雨であろうと雪であろうと', '2 雨が降るが雪が降るが'],
         correct: 0
       },
       {
         question: 'どの大学（ ）、進学先が決まってほっとした。',
-        options: ['であると', 'であれ'],
+        options: ['1 であると', '2 であれ'],
         correct: 1
       },
       {
         question: '（ ）君の自由だが、他人に迷惑をかけることは許されない。',
-        options: ['何だろうが', '何をしようと'],
+        options: ['1 何だろうが', '2 何をしようと'],
         correct: 1
       },
       {
-        question: 'あの夫婦が ___ ___ ___ ___ 、子どもはかわいそうだと思う。',
+        question: 'あの夫婦が ___ ___ ★ ___ 、子どもはかわいそうだと思う。',
         options: ['1 知った', '2 なろうが', '3 どう', '4 ことではないが'],
-        correct: '3-2-1-4'
+        correct: '3-2-1-4',
+        fullSentence: 'あの夫婦が【 3 どう 】【 2 なろうが 】【 1★ 知った 】【 4 ことではないが 】、子どもはかわいそうだと思う。'
       },
       {
-        question: '___ ___ ___ ___ には変わりはない。',
+        question: '___ ___ ★ ___ には変わりはない。',
         options: ['1 なかろうと', '2 人を傷つけたこと', '3 故意', '4 であろうと'],
-        correct: '3-4-1-2'
+        correct: '3-4-1-2',
+        fullSentence: '【 3 故意 】【 4 であろうと 】【 1★ なかろうと 】【 2 人を傷つけたこと 】には変わりはない。'
       }
     ]
   }

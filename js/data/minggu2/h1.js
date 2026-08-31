@@ -5,7 +5,9 @@ window.W2H1 = {
       id: 'w2_d1_1',
       rule: '〜なり〜なり',
       formal: false,
-      explanation: '(= 〜でも〜でもどの方法でも) N1なりN2なり / V1るなり(V2るなり)する / なんなりと(=なんでも) / 〜なりなんなり',
+      conjunction: 'N1なりN2なり / V1-るなり(V2-るなり)する',
+      explanation:
+        '【接続】名詞1 ＋ なり ＋ 名詞2 ＋ なり ／ 動詞辞書形 ＋ なり（＋ 動詞辞書形 ＋ なり）＋ する\n【意味・解説】「〜でも〜でも、どちらの方法／手段でもよい」という意味。いくつかの選択肢や例を挙げ、相手にどれかを選ぶよう提案したり、自分で選択したりする際に使う。',
       meaning: {
         id: 'Baik... maupun... / atau... (pilihan mana saja boleh)',
         en: '...or... (or whatever)',
@@ -21,7 +23,9 @@ window.W2H1 = {
       id: 'w2_d1_2',
       rule: '〜なら〜なりに',
       formal: false,
-      explanation: '(= 〜ならできる範囲で / それにふさわしい) (Vるなら)Vるなりに / (Aいなら)Aいなりに / (naなら)naなりのN / (Nなら)Nなりに',
+      conjunction: 'V-るならV-るなりに / A-いならA-いなりに / Na-ならNa-なりのN / NならNなりに',
+      explanation:
+        '【接続】動詞辞書形＋なら＋動詞辞書形＋なりに ／ い形容詞＋なら＋い形容詞＋なりに ／ な形容詞＋なら＋な形容詞＋なりの＋名詞 ／ 名詞＋なら＋名詞＋なりに\n【意味・解説】「その立場・状況・能力の限界に応じた範囲で、それにふさわしいことをする／相応の状態である」という意味を表す。',
       meaning: {
         id: 'Jika (memang)... maka (lakukan) sesuai dengan kapasitas/situasinya',
         en: 'If you are (going to do)... do it in your own way / appropriately',
@@ -38,7 +42,9 @@ window.W2H1 = {
       id: 'w2_d1_3',
       rule: '〜なり',
       formal: true,
-      explanation: '(= 〜すると同時に／〜会ったとたんに) Vるなり',
+      conjunction: 'V-る + なり',
+      explanation:
+        '【接続】動詞辞書形 ＋ なり\n【意味・解説】「〜すると同時に／〜した直後に、予期せぬ行動をとる」という意味。主語は通常三人称で、前後の動作がほぼ同時に行われる様子を表す。',
       meaning: {
         id: 'Segera setelah...',
         en: 'As soon as...',
@@ -55,38 +61,40 @@ window.W2H1 = {
     questions: [
       {
         question: '疲れたら、家に（ ）なり、パソコンの前に座るんだから……。',
-        options: ['帰った', '帰る'],
+        options: ['1 帰った', '2 帰る'],
         correct: 1
       },
       {
         question: '私は素人だが、この詩を自分（ ）解釈してみた。',
-        options: ['なりに', 'なりして'],
+        options: ['1 なりに', '2 なりして'],
         correct: 0
       },
       {
         question: '顔色が悪いですよ。（ ）、楽にしてください。',
-        options: ['座るなり横になるなり', '座りつつ横になりつつ'],
+        options: ['1 座るなり横になるなり', '2 座りつつ横になりつつ'],
         correct: 0
       },
       {
         question: '窓を開けた（ ）、変な虫が入ってきた。',
-        options: ['なり', 'とたん'],
+        options: ['1 なり', '2 とたん'],
         correct: 1
       },
       {
         question: '最終電車に乗り遅れても、タクシーに（ ）して必ず家に帰ってきなさい。',
-        options: ['乗るなり歩くなり', '乗らないなら乗らないなり'],
+        options: ['1 乗るなり歩くなり', '2 乗らないなら乗らないなり'],
         correct: 0
       },
       {
-        question: '高得点を ___ ___ ___ ___ の準備が必要だ。',
+        question: '高得点を ___ ___ ★ ___ の準備が必要だ。',
         options: ['1 狙う', '2 なり', '3 それ', '4 なら'],
-        correct: '1-4-3-2'
+        correct: '1-4-3-2',
+        fullSentence: '高得点を【 1 狙う 】【 4 なら 】【 3 それ 】【 2★ なり 】の準備が必要だ。'
       },
       {
-        question: '___ ___ ___ ___ ならお申し付けください。',
+        question: '___ ___ ★ ___ ならお申し付けください。',
         options: ['1 なんなり', '2 御用', '3 必要な', '4 なり'],
-        correct: '3-2-4-1'
+        correct: '3-2-4-1',
+        fullSentence: '【 3 必要な 】【 2 御用 】【 4 なり 】【 1★ なんなり 】ならお申し付けください。'
       }
     ]
   }
