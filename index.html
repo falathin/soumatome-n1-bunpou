@@ -48,6 +48,19 @@
             <small>Master JLPT N1</small>
           </div>
 
+          <!-- Tombol Akun / Profil -->
+          <button
+            id="accountToggleBtn"
+            class="circle-btn"
+            type="button"
+            title="Ganti Profil"
+            aria-label="Ganti Profil"
+            style="width: auto; padding: 0 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px;"
+          >
+            <i class="bi bi-person-circle"></i>
+            <span id="accountNameDisplay" style="font-size: 12px; font-weight: bold; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Tamu</span>
+          </button>
+
           <button
             id="langToggleBtn"
             class="circle-btn"
@@ -99,7 +112,7 @@
 
     <main class="page-container">
       <!-- =================================================
-           HERO
+             HERO
       ================================================== -->
 
       <section id="greetingCard" class="greeting-card">
@@ -150,7 +163,7 @@
       </section>
 
       <!-- =================================================
-           FILTER
+             FILTER
       ================================================== -->
 
       <section class="filter-card">
@@ -256,7 +269,7 @@
       </section>
 
       <!-- =================================================
-           CONTENT HEADER
+             CONTENT HEADER
       ================================================== -->
 
       <section class="content-header">
@@ -290,13 +303,13 @@
       </section>
 
       <!-- =================================================
-           GRAMMAR
+             GRAMMAR
       ================================================== -->
 
       <section id="grammarCards" class="grammar-grid"></section>
 
       <!-- =================================================
-           EMPTY
+             EMPTY
       ================================================== -->
 
       <section id="emptyState" class="empty-state hidden">
@@ -315,7 +328,7 @@
       </section>
 
       <!-- =================================================
-           EXAM
+             EXAM
       ================================================== -->
 
       <section id="miniExam" class="exam-section hidden">
@@ -349,15 +362,31 @@
 
         <div id="examContent" class="exam-content"></div>
       </section>
+
+      <!-- =====================================================
+           ACCOUNT MODAL (NEW)
+      ====================================================== -->
+      <div id="accountModal" class="hidden">
+        <div class="account-modal-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+           <div class="account-modal-box" style="background: var(--bg-card, #fff); color: var(--text-main, #333); padding: 24px; border-radius: 16px; width: 90%; max-width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+              <h3 style="margin-top:0; margin-bottom: 16px; font-size: 18px; display:flex; align-items:center; gap: 8px;">
+                 <i class="bi bi-person-badge"></i> Profil Pengguna
+              </h3>
+              <p style="font-size: 14px; opacity: 0.8; margin-bottom: 16px; line-height: 1.5;">Masukkan ID Profil (email/nama) untuk memisahkan data progress. Biarkan kosong untuk menggunakan profil "Tamu".</p>
+              <input type="text" id="usernameInput" placeholder="Email / Nama Pengguna..." style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #d9d9d9); border-radius: 8px; margin-bottom: 16px; font-family: inherit; font-size: 14px; box-sizing: border-box; background: var(--bg-body, #fff); color: var(--text-main, #333);" />
+              <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                 <button type="button" id="closeAccountBtn" style="padding: 8px 16px; border: 1px solid var(--border-color, #d9d9d9); background: transparent; border-radius: 6px; cursor: pointer; color: var(--text-main, #333);">Batal</button>
+                 <button type="button" id="loginBtn" style="padding: 8px 16px; border: none; background: #BC002D; color: white; border-radius: 6px; font-weight: 600; cursor: pointer;">Masuk</button>
+              </div>
+           </div>
+        </div>
+     </div>
+
     </main>
 
     <!-- =====================================================
          FOOTER
     ====================================================== -->
-
-    <!-- =====================================================
-     FOOTER
-====================================================== -->
 
     <footer class="site-footer">
       <div class="footer-inner">
@@ -442,12 +471,12 @@
         <div class="footer-credit">参考教材：日本語総まとめ N1 文法</div>
       </div>
     </footer>
+
     <!-- =====================================================
          DATA
     ====================================================== -->
 
     <!-- Week 1 -->
-
     <script src="js/data/minggu1/h1.js"></script>
     <script src="js/data/minggu1/h2.js"></script>
     <script src="js/data/minggu1/h3.js"></script>
@@ -457,7 +486,6 @@
     <script src="js/data/minggu1/h7.js"></script>
 
     <!-- Week 2 -->
-
     <script src="js/data/minggu2/h1.js"></script>
     <script src="js/data/minggu2/h2.js"></script>
     <script src="js/data/minggu2/h3.js"></script>
@@ -467,7 +495,6 @@
     <script src="js/data/minggu2/h7.js"></script>
 
     <!-- Week 3 -->
-
     <script src="js/data/minggu3/h1.js"></script>
     <script src="js/data/minggu3/h2.js"></script>
     <script src="js/data/minggu3/h3.js"></script>
@@ -477,7 +504,6 @@
     <script src="js/data/minggu3/h7.js"></script>
 
     <!-- Week 4 -->
-
     <script src="js/data/minggu4/h1.js"></script>
     <script src="js/data/minggu4/h2.js"></script>
     <script src="js/data/minggu4/h3.js"></script>
@@ -487,7 +513,6 @@
     <script src="js/data/minggu4/h7.js"></script>
 
     <!-- Week 5 -->
-
     <script src="js/data/minggu5/h1.js"></script>
     <script src="js/data/minggu5/h2.js"></script>
     <script src="js/data/minggu5/h3.js"></script>
@@ -497,7 +522,6 @@
     <script src="js/data/minggu5/h7.js"></script>
 
     <!-- Week 6 -->
-
     <script src="js/data/minggu6/h1.js"></script>
     <script src="js/data/minggu6/h2.js"></script>
     <script src="js/data/minggu6/h3.js"></script>
@@ -507,7 +531,6 @@
     <script src="js/data/minggu6/h7.js"></script>
 
     <!-- Week 7 -->
-
     <script src="js/data/minggu7/h1.js"></script>
     <script src="js/data/minggu7/h2.js"></script>
     <script src="js/data/minggu7/h3.js"></script>
@@ -517,7 +540,6 @@
     <script src="js/data/minggu7/h7.js"></script>
 
     <!-- Week 8 -->
-
     <script src="js/data/minggu8/h1.js"></script>
     <script src="js/data/minggu8/h2.js"></script>
     <script src="js/data/minggu8/h3.js"></script>
@@ -527,7 +549,6 @@
     <script src="js/data/minggu8/h7.js"></script>
 
     <!-- Main App -->
-
     <script src="js/app.js"></script>
   </body>
 </html>

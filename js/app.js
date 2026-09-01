@@ -1,7 +1,67 @@
 /* =========================================================
    総まとめ — JLPT N1 GRAMMAR APP
-   CLEAN VERSION — NO FURIGANA
+   CLEAN VERSION — NO FURIGANA & MULTI-ACCOUNT
 ========================================================= */
+
+/* =========================================================
+   ACCOUNT SYSTEM (LOCAL)
+========================================================= */
+
+let currentUser = localStorage.getItem('n1_current_user') || 'default';
+
+// Fungsi helper agar data spesifik (progress, bahasa, state) dipisah per akun
+function storageGet(key) {
+  return localStorage.getItem(`user_${currentUser}_${key}`);
+}
+
+function storageSet(key, value) {
+  localStorage.setItem(`user_${currentUser}_${key}`, value);
+}
+
+function updateUserUI() {
+  const display = document.getElementById('accountNameDisplay');
+  if (display) {
+    display.textContent = currentUser === 'default' ? 'Tamu' : currentUser;
+  }
+}
+
+function switchUser(username) {
+  const cleaned = String(username).trim().toLowerCase() || 'default';
+  
+  if (cleaned === currentUser) {
+    document.getElementById('accountModal')?.classList.add('hidden');
+    return;
+  }
+  
+  currentUser = cleaned;
+  localStorage.setItem('n1_current_user', currentUser);
+  
+  // Reload Page State dan Language dari storage user baru
+  const saved = getSavedPageState();
+  activeWeek = saved?.week && courseData[saved.week] ? saved.week : 'week1';
+  activeDay = saved?.day && courseData[activeWeek]?.days?.[saved.day] ? saved.day : 'day1';
+  currentLanguage = normalizeLanguage(storageGet('n1_language') || 'id');
+  
+  if (weekSelect) weekSelect.value = activeWeek;
+  if (daySelect) daySelect.value = activeDay;
+  if (searchInput) searchInput.value = '';
+  
+  currentSearch = '';
+  currentStatus = 'all';
+  if (statusSelect) statusSelect.value = 'all';
+
+  document.getElementById('accountModal')?.classList.add('hidden');
+  
+  stopSpeech();
+  initializeLanguageUI();
+  updateUserUI();
+  updateContentHeader();
+  updateFilterLabel();
+  
+  renderCards();
+  renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam);
+  updateProgressLabel();
+}
 
 
 /* =========================================================
@@ -103,7 +163,7 @@ const PAGE_STATE_KEY = 'n1_page_state'
 
 function getSavedPageState () {
   try {
-    const parsed = JSON.parse(localStorage.getItem(PAGE_STATE_KEY) || '{}')
+    const parsed = JSON.parse(storageGet(PAGE_STATE_KEY) || '{}')
 
     if (!parsed || typeof parsed !== 'object') {
       return null
@@ -127,7 +187,7 @@ function getSavedPageState () {
 
 function savePageState () {
   try {
-    localStorage.setItem(
+    storageSet(
       PAGE_STATE_KEY,
       JSON.stringify({
         week: activeWeek,
@@ -207,7 +267,7 @@ const languageText = {
 }
 
 let currentLanguage = normalizeLanguage(
-  localStorage.getItem('n1_language') || 'id'
+  storageGet('n1_language') || 'id'
 )
 
 function normalizeLanguage (lang) {
@@ -293,6 +353,11 @@ const timePeriodText = document.getElementById('timePeriodText')
 const examAnswered = document.getElementById('examAnswered')
 const examProgressFill = document.getElementById('examProgressFill')
 
+const accountModal = document.getElementById('accountModal');
+const accountToggleBtn = document.getElementById('accountToggleBtn');
+const closeAccountBtn = document.getElementById('closeAccountBtn');
+const loginBtn = document.getElementById('loginBtn');
+const usernameInput = document.getElementById('usernameInput');
 
 /* =========================================================
    SAFE HELPERS
@@ -345,7 +410,7 @@ function getStatus (item) {
     return '0'
   }
 
-  return localStorage.getItem(`status_${item.id}`) || '0'
+  return storageGet(`status_${item.id}`) || '0'
 }
 
 
@@ -521,43 +586,17 @@ function detectLanguage (text) {
   }
 
   const idWords = [
-    'yang',
-    'dan',
-    'atau',
-    'dengan',
-    'untuk',
-    'dari',
-    'ini',
-    'itu',
-    'akan',
-    'adalah',
-    'tidak',
-    'sudah',
-    'belum',
-    'karena',
-    'agar',
-    'ketika',
-    'jika',
-    'bisa',
-    'harus',
-    'sangat',
-    'dalam',
-    'pada',
-    'sebuah',
-    'tersebut',
-    'dapat',
-    'menjadi',
-    'lebih',
-    'hanya'
+    'yang', 'dan', 'atau', 'dengan', 'untuk', 'dari', 'ini', 'itu', 'akan',
+    'adalah', 'tidak', 'sudah', 'belum', 'karena', 'agar', 'ketika', 'jika',
+    'bisa', 'harus', 'sangat', 'dalam', 'pada', 'sebuah', 'tersebut', 'dapat',
+    'menjadi', 'lebih', 'hanya'
   ]
 
   const lower = clean.toLowerCase()
-
   let score = 0
 
   idWords.forEach(word => {
     const pattern = new RegExp(`\\b${word}\\b`, 'i')
-
     if (pattern.test(lower)) {
       score++
     }
@@ -595,22 +634,18 @@ function normalizeApiLanguage (lang) {
 
 function getTargetLanguage (sourceLanguage) {
   const source = normalizeApiLanguage(sourceLanguage)
-
   const selected = getApiLanguage(currentLanguage)
 
   if (source === selected) {
     if (source === 'ja') {
       return 'id'
     }
-
     if (source === 'id') {
       return 'en'
     }
-
     if (source === 'en') {
       return 'id'
     }
-
     if (source === 'zh-CN') {
       return 'id'
     }
@@ -621,7 +656,7 @@ function getTargetLanguage (sourceLanguage) {
 
 
 /* =========================================================
-   TRANSLATION CACHE
+   TRANSLATION CACHE (Global - tidak pakai prefix akun)
 ========================================================= */
 
 const translationCacheKey = 'n1_translation_cache'
@@ -662,7 +697,6 @@ function getTranslationCache () {
       'Translation cache read failed:',
       error
     )
-
     translationMemoryCache = {}
   }
 
@@ -706,7 +740,6 @@ function getExplanationCache () {
       'Explanation cache read failed:',
       error
     )
-
     explanationMemoryCache = {}
   }
 
@@ -959,14 +992,11 @@ async function translateText (
 
         if (result) {
           cache[cacheKey] = result
-
           saveTranslationCache(cache)
-
           return result
         }
       } catch (error) {
         lastError = error
-
         if (
           attempt <
           TRANSLATION_CONFIG.retries - 1
@@ -993,9 +1023,7 @@ async function translateText (
       if (fallbackResult) {
         cache[cacheKey] =
           fallbackResult
-
         saveTranslationCache(cache)
-
         return fallbackResult
       }
     } catch (error) {
@@ -1096,33 +1124,7 @@ async function getExplanationForLanguage (
    TTS ENGINE
 ========================================================= */
 
-/*
-  PERBAIKAN UTAMA TTS
-
-  Queue:
-
-    1. 文法
-    2. 例文
-    3. 例文
-    4. 例文
-
-  TIDAK lagi membaca:
-    - 簡単な説明
-    - arti Indonesia
-    - hasil translate arti
-
-  State:
-
-    idle
-    loading
-    speaking
-    paused
-    stopping
-*/
-
-
 let availableVoices = []
-
 let speakingCardId = null
 let currentSpeakingItem = null
 
@@ -1237,10 +1239,6 @@ function cleanSpeechText (text) {
 function buildSpeechQueue (item) {
   const queue = []
 
-  /*
-    1. GRAMMAR
-  */
-
   const rule =
     cleanSpeechText(
       item?.rule || ''
@@ -1252,10 +1250,6 @@ function buildSpeechQueue (item) {
       text: rule
     })
   }
-
-  /*
-    2. EXAMPLES ONLY
-  */
 
   if (
     Array.isArray(
@@ -1340,27 +1334,14 @@ function clearSpeechState () {
 ========================================================= */
 
 function stopSpeech () {
-  /*
-    Invalidate semua request lama.
-  */
-
   speechRequestId++
-
-  /*
-    Batalkan timer antar chunk.
-  */
 
   if (speechStopTimer) {
     clearTimeout(
       speechStopTimer
     )
-
     speechStopTimer = null
   }
-
-  /*
-    Cancel browser TTS.
-  */
 
   if (
     'speechSynthesis' in window
@@ -1375,10 +1356,6 @@ function stopSpeech () {
     }
   }
 
-  /*
-    Reset semua state.
-  */
-
   clearSpeechState()
 }
 
@@ -1386,44 +1363,24 @@ window.stopSpeech = stopSpeech
 
 
 /* =========================================================
-   SPEECH RATE
+   SPEECH RATE & PITCH
 ========================================================= */
 
 function getSpeechRate (type) {
   switch (type) {
     case 'bunpou':
       return 0.82
-
     case 'example-label':
       return 0.84
-
     case 'example':
       return 0.88
-
     default:
       return 0.85
   }
 }
 
-
-/* =========================================================
-   SPEECH PITCH
-========================================================= */
-
 function getSpeechPitch (type) {
-  switch (type) {
-    case 'bunpou':
-      return 1.0
-
-    case 'example-label':
-      return 1.0
-
-    case 'example':
-      return 1.0
-
-    default:
-      return 1.0
-  }
+  return 1.0
 }
 
 
@@ -1438,7 +1395,6 @@ async function startSpeech (item) {
     alert(
       'Browser ini tidak mendukung Text to Speech.'
     )
-
     return
   }
 
@@ -1446,22 +1402,10 @@ async function startSpeech (item) {
     return
   }
 
-  /*
-    Stop playback lama.
-  */
-
   stopSpeech()
-
-  /*
-    Buat request ID baru.
-  */
 
   const requestId =
     speechRequestId
-
-  /*
-    Simpan item.
-  */
 
   currentSpeakingItem =
     item
@@ -1475,11 +1419,6 @@ async function startSpeech (item) {
 
   updateSpeechButtons()
 
-  /*
-    Build queue secara synchronous.
-    Tidak ada lagi translate arti.
-  */
-
   try {
     speechQueue =
       buildSpeechQueue(item)
@@ -1488,20 +1427,14 @@ async function startSpeech (item) {
       'Speech queue build failed:',
       error
     )
-
     if (
       requestId ===
       speechRequestId
     ) {
       stopSpeech()
     }
-
     return
   }
-
-  /*
-    Pastikan request masih valid.
-  */
 
   if (
     requestId !==
@@ -1514,20 +1447,12 @@ async function startSpeech (item) {
 
   speechLoading = false
 
-  /*
-    Tidak ada isi.
-  */
-
   if (!speechQueue.length) {
     stopSpeech()
     return
   }
 
   updateSpeechButtons()
-
-  /*
-    Mulai membaca.
-  */
 
   speakCurrentChunk(
     requestId
@@ -1564,11 +1489,6 @@ function speakCurrentChunk (
     return
   }
 
-  /*
-    Jangan membuat utterance baru
-    kalau sedang paused.
-  */
-
   if (speechPaused) {
     return
   }
@@ -1578,11 +1498,9 @@ function speakCurrentChunk (
 
   if (!chunk?.text) {
     speechIndex++
-
     speakCurrentChunk(
       requestId
     )
-
     return
   }
 
@@ -1590,10 +1508,6 @@ function speakCurrentChunk (
     new SpeechSynthesisUtterance(
       chunk.text
     )
-
-  /*
-    SELALU JAPANESE
-  */
 
   utterance.lang =
     'ja-JP'
@@ -1610,10 +1524,6 @@ function speakCurrentChunk (
 
   utterance.volume = 1
 
-  /*
-    Gunakan voice Jepang.
-  */
-
   const voice =
     findJapaneseVoice()
 
@@ -1622,11 +1532,6 @@ function speakCurrentChunk (
       voice
   }
 
-
-  /* -------------------------------------------------------
-     START
-  ------------------------------------------------------- */
-
   utterance.onstart = () => {
     if (
       requestId ===
@@ -1634,15 +1539,9 @@ function speakCurrentChunk (
       speakingCardId !== null
     ) {
       speechPaused = false
-
       updateSpeechButtons()
     }
   }
-
-
-  /* -------------------------------------------------------
-     END
-  ------------------------------------------------------- */
 
   utterance.onend = () => {
     if (
@@ -1658,16 +1557,7 @@ function speakCurrentChunk (
       return
     }
 
-    /*
-      Naik ke chunk berikutnya.
-    */
-
     speechIndex++
-
-    /*
-      Delay kecil agar antar bagian
-      terdengar lebih natural.
-    */
 
     speechStopTimer =
       setTimeout(() => {
@@ -1697,11 +1587,6 @@ function speakCurrentChunk (
       }, 220)
   }
 
-
-  /* -------------------------------------------------------
-     ERROR
-  ------------------------------------------------------- */
-
   utterance.onerror =
     event => {
       if (
@@ -1710,11 +1595,6 @@ function speakCurrentChunk (
       ) {
         return
       }
-
-      /*
-        canceled / interrupted bisa muncul
-        secara normal ketika stop/replay.
-      */
 
       if (
         event?.error ===
@@ -1734,12 +1614,6 @@ function speakCurrentChunk (
       stopSpeech()
     }
 
-
-  /*
-    Pastikan queue belum dibatalkan
-    sebelum speak.
-  */
-
   if (
     requestId !==
       speechRequestId ||
@@ -1757,7 +1631,6 @@ function speakCurrentChunk (
       'TTS start failed:',
       error
     )
-
     stopSpeech()
   }
 }
@@ -1777,12 +1650,6 @@ function finishSpeech (
     return
   }
 
-  /*
-    Jangan panggil stopSpeech()
-    sebelum request selesai bila ingin
-    replay tetap dapat memakai current item.
-  */
-
   if (
     'speechSynthesis' in window
   ) {
@@ -1801,13 +1668,6 @@ function finishSpeech (
   speechIndex = 0
   speechPaused = false
   speechLoading = false
-
-  /*
-    currentSpeakingItem sengaja
-    TETAP dipertahankan.
-    Jadi tombol Replay tetap bisa
-    digunakan setelah audio selesai.
-  */
 
   updateSpeechButtons()
 }
@@ -1833,9 +1693,7 @@ function pauseSpeech () {
 
   try {
     window.speechSynthesis.pause()
-
     speechPaused = true
-
     updateSpeechButtons()
   } catch (error) {
     console.warn(
@@ -1866,9 +1724,7 @@ function resumeSpeech () {
 
   try {
     window.speechSynthesis.resume()
-
     speechPaused = false
-
     updateSpeechButtons()
   } catch (error) {
     console.warn(
@@ -1895,10 +1751,6 @@ window.togglePauseSpeech =
     if (
       speakingCardId === null
     ) {
-      /*
-        Tidak ada audio aktif.
-      */
-
       if (
         currentSpeakingItem
       ) {
@@ -1906,7 +1758,6 @@ window.togglePauseSpeech =
           currentSpeakingItem
         )
       }
-
       return
     }
 
@@ -1933,12 +1784,6 @@ window.replaySpeech =
       return
     }
 
-    /*
-      Simpan item sebelum stopSpeech,
-      karena stopSpeech membersihkan
-      currentSpeakingItem.
-    */
-
     const item =
       currentSpeakingItem
 
@@ -1963,21 +1808,10 @@ window.handleMainSpeech =
       speakingCardId ===
       String(id)
 
-    /*
-      Kalau card sedang aktif:
-      play button = stop.
-    */
-
     if (sameCard) {
       stopSpeech()
-
       return
     }
-
-    /*
-      Card berbeda:
-      mulai dari awal card baru.
-    */
 
     startSpeech(item)
   }
@@ -2037,10 +1871,6 @@ function updateSpeechButtons () {
         active
       )
 
-      /*
-        STATUS TEXT
-      */
-
       if (!active) {
         status.textContent =
           '読み上げ機能'
@@ -2059,11 +1889,6 @@ function updateSpeechButtons () {
           '再生中: 文法 → 例文 1-3'
       }
 
-
-      /*
-        MAIN PLAY / STOP
-      */
-
       if (play) {
         play.innerHTML =
           active
@@ -2075,11 +1900,6 @@ function updateSpeechButtons () {
             ? 'Stop'
             : 'Play'
       }
-
-
-      /*
-        PAUSE / RESUME
-      */
 
       if (pause) {
         pause.innerHTML =
@@ -2095,11 +1915,6 @@ function updateSpeechButtons () {
             : 'Resume'
       }
 
-
-      /*
-        REPLAY
-      */
-
       if (replay) {
         replay.disabled =
           !currentSpeakingItem
@@ -2109,11 +1924,6 @@ function updateSpeechButtons () {
             ? '1'
             : '.5'
       }
-
-
-      /*
-        STOP / OFF SOUND
-      */
 
       if (stop) {
         stop.disabled =
@@ -2246,7 +2056,6 @@ async function showExampleTranslation (
       exampleBox,
       state
     )
-
     return
   }
 
@@ -2458,7 +2267,6 @@ async function copyText (text) {
       await navigator.clipboard.writeText(
         text
       )
-
       return true
     }
   } catch (error) {
@@ -2474,19 +2282,11 @@ async function copyText (text) {
     )
 
   textarea.value = text
-
-  textarea.style.position =
-    'fixed'
-
-  textarea.style.left =
-    '-9999px'
-
-  textarea.style.top =
-    '0'
-
-  textarea.style.opacity =
-    '0'
-
+  textarea.style.position = 'fixed'
+  textarea.style.left = '-9999px'
+  textarea.style.top = '0'
+  textarea.style.opacity = '0'
+  
   document.body.appendChild(
     textarea
   )
@@ -2509,7 +2309,6 @@ async function copyText (text) {
   }
 
   textarea.remove()
-
   return copied
 }
 
@@ -2639,7 +2438,6 @@ document.addEventListener(
       setTimeout(() => {
         exampleClickTimer =
           null
-
         copyExampleText(
           exampleBox
         )
@@ -2667,7 +2465,6 @@ document.addEventListener(
       clearTimeout(
         exampleClickTimer
       )
-
       exampleClickTimer =
         null
     }
@@ -2697,7 +2494,6 @@ document.addEventListener(
       event.key === ' '
     ) {
       event.preventDefault()
-
       copyExampleText(target)
     }
   }
@@ -2770,7 +2566,6 @@ function createCardHTML (
               )}"
             >
               <i class="bi bi-caret-right-fill"></i>
-
               <span class="example-content">
                 ${example}
               </span>
@@ -2811,7 +2606,6 @@ function createCardHTML (
     >
 
       <div class="card-top">
-
         <span class="day-badge">
           <i class="bi bi-bookmark-star-fill"></i>
           ${escapeHTML(
@@ -2825,18 +2619,15 @@ function createCardHTML (
               ? 'bi-building'
               : 'bi-stars'
           }"></i>
-
           ${
             item?.formal
               ? 'Formal'
               : 'N1'
           }
         </span>
-
       </div>
 
       <div class="rule-area">
-
         <div class="rule-reading">
           ${escapeHTML(
             reading
@@ -2858,43 +2649,34 @@ function createCardHTML (
         >
           <i class="bi bi-volume-up-fill"></i>
         </button>
-
       </div>
 
       <div class="card-body">
-
         <div class="info-block">
-
           <div class="info-label">
             <i class="bi bi-info-circle-fill"></i>
-
             ${escapeHTML(
               getLanguageText(
                 'meaning'
               )
             )}
           </div>
-
           <div class="info-text">
             <span>
               ${meaning}
             </span>
           </div>
-
         </div>
 
         <div class="info-block">
-
           <div
             class="translation-box"
             data-explanation-id="${escapeHTML(
               item?.id
             )}"
           >
-
             <div class="translation-label">
               <i class="bi bi-globe2"></i>
-
               <span>
                 ${escapeHTML(
                   getLanguageText(
@@ -2903,7 +2685,6 @@ function createCardHTML (
                 )}
               </span>
             </div>
-
             <span class="id-explanation">
               ${
                 lang === 'id'
@@ -2917,29 +2698,21 @@ function createCardHTML (
                     )
               }
             </span>
-
           </div>
-
         </div>
 
         <div class="info-block examples">
-
           <div class="info-label">
-
             <i class="bi bi-chat-square-text-fill"></i>
-
             <span class="example-label">
               ${exampleLabel}
             </span>
-
           </div>
-
           ${
             examplesHTML ||
             `
               <div class="example-box">
                 <i class="bi bi-dash-circle"></i>
-
                 <span>
                   ${escapeHTML(
                     getLanguageText(
@@ -2950,17 +2723,13 @@ function createCardHTML (
               </div>
             `
           }
-
         </div>
-
       </div>
 
       <div class="tts-toolbar">
-
         <div class="tts-status">
           読み上げ機能
         </div>
-
         <button
           class="tts-btn tts-play"
           type="button"
@@ -2998,11 +2767,9 @@ function createCardHTML (
         >
           <i class="bi bi-stop-fill"></i>
         </button>
-
       </div>
 
       <div class="card-footer">
-
         <button
           class="status-btn btn-0 ${
             savedStatus === '0'
@@ -3059,7 +2826,6 @@ function createCardHTML (
           <i class="bi bi-check-circle"></i>
           <span>Hafal</span>
         </button>
-
       </div>
 
     </article>
@@ -3132,11 +2898,6 @@ function initializeExampleStates (
       }
     )
   })
-
-  /*
-    Pastikan TTS button mengikuti state terbaru
-    setelah render.
-  */
 
   updateSpeechButtons()
 }
@@ -3391,10 +3152,6 @@ function renderCards () {
 
   explanationLoadVersion++
 
-  /*
-    Hentikan TTS ketika materi berubah.
-  */
-
   stopSpeech()
 
   updateProgressLabel()
@@ -3405,32 +3162,23 @@ function renderCards () {
   ) {
     if (grammarCards) {
       grammarCards.replaceChildren()
-
-      grammarCards.classList.add(
-        'hidden'
-      )
+      grammarCards.classList.add('hidden')
     }
 
     if (emptyState) {
-      emptyState.classList.add(
-        'hidden'
-      )
+      emptyState.classList.add('hidden')
     }
 
     if (resultCounter) {
-      resultCounter.textContent =
-        'Full Exam'
+      resultCounter.textContent = 'Full Exam'
     }
 
     updateProgress([])
-
     return
   }
 
   if (grammarCards) {
-    grammarCards.classList.remove(
-      'hidden'
-    )
+    grammarCards.classList.remove('hidden')
   }
 
   const items =
@@ -3448,8 +3196,7 @@ function renderCards () {
         )
         .join('')
 
-    grammarCards.innerHTML =
-      html
+    grammarCards.innerHTML = html
   }
 
   if (emptyState) {
@@ -3506,7 +3253,6 @@ function updateProgress (
 
   if (isExamDay()) {
     syncExamToMainProgress()
-
     return
   }
 
@@ -4186,7 +3932,7 @@ window.updateStatus =
     status,
     button
   ) {
-    localStorage.setItem(
+    storageSet(
       `status_${id}`,
       String(status)
     )
@@ -4596,7 +4342,7 @@ function applyLanguage (
   currentLanguage =
     normalizeLanguage(lang)
 
-  localStorage.setItem(
+  storageSet(
     'n1_language',
     currentLanguage
   )
@@ -4941,6 +4687,33 @@ function updateTimeAndGreeting () {
     )
 }
 
+/* =========================================================
+   ACCOUNT MODAL EVENT LISTENERS
+========================================================= */
+
+if (accountToggleBtn) {
+  accountToggleBtn.addEventListener('click', () => {
+    if (accountModal) accountModal.classList.remove('hidden');
+    if (usernameInput) {
+      usernameInput.value = currentUser === 'default' ? '' : currentUser;
+      usernameInput.focus();
+    }
+  });
+}
+
+if (closeAccountBtn) {
+  closeAccountBtn.addEventListener('click', () => {
+    if (accountModal) accountModal.classList.add('hidden');
+  });
+}
+
+if (loginBtn && usernameInput) {
+  loginBtn.addEventListener('click', () => switchUser(usernameInput.value));
+  usernameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') switchUser(usernameInput.value);
+  });
+}
+
 
 /* =========================================================
    PAGE LIFECYCLE
@@ -4974,10 +4747,10 @@ function init () {
   invalidateGrammarCache()
 
   populateWeekSelect()
-
   populateDaySelect()
 
   initializeLanguageUI()
+  updateUserUI()
 
   if (weekSelect) {
     weekSelect.value =
@@ -4990,9 +4763,7 @@ function init () {
   }
 
   updateContentHeader()
-
   updateFilterLabel()
-
   updateProgressLabel()
 
   renderCards()
@@ -5008,12 +4779,6 @@ function init () {
   updateProgressLabel()
 
   updateTimeAndGreeting()
-
-  /*
-    Pastikan state tombol TTS
-    sudah sinkron setelah init.
-  */
-
   updateSpeechButtons()
 
   setInterval(
