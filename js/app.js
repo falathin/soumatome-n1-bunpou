@@ -1,66 +1,138 @@
 /* =========================================================
    総まとめ — JLPT N1 GRAMMAR APP
+   FULL VERSION
    CLEAN VERSION — NO FURIGANA & MULTI-ACCOUNT
+   DAY 7 EXAM EXPLANATION SYSTEM
 ========================================================= */
+
 
 /* =========================================================
    ACCOUNT SYSTEM (LOCAL)
 ========================================================= */
 
-let currentUser = localStorage.getItem('n1_current_user') || 'default';
+let currentUser =
+  localStorage.getItem('n1_current_user') || 'default'
 
-// Fungsi helper agar data spesifik (progress, bahasa, state) dipisah per akun
+
 function storageGet(key) {
-  return localStorage.getItem(`user_${currentUser}_${key}`);
+  return localStorage.getItem(
+    `user_${currentUser}_${key}`
+  )
 }
+
 
 function storageSet(key, value) {
-  localStorage.setItem(`user_${currentUser}_${key}`, value);
+  localStorage.setItem(
+    `user_${currentUser}_${key}`,
+    value
+  )
 }
+
 
 function updateUserUI() {
-  const display = document.getElementById('accountNameDisplay');
+  const display =
+    document.getElementById(
+      'accountNameDisplay'
+    )
+
   if (display) {
-    display.textContent = currentUser === 'default' ? 'Tamu' : currentUser;
+    display.textContent =
+      currentUser === 'default'
+        ? 'Tamu'
+        : currentUser
   }
 }
 
-function switchUser(username) {
-  const cleaned = String(username).trim().toLowerCase() || 'default';
-  
-  if (cleaned === currentUser) {
-    document.getElementById('accountModal')?.classList.add('hidden');
-    return;
-  }
-  
-  currentUser = cleaned;
-  localStorage.setItem('n1_current_user', currentUser);
-  
-  // Reload Page State dan Language dari storage user baru
-  const saved = getSavedPageState();
-  activeWeek = saved?.week && courseData[saved.week] ? saved.week : 'week1';
-  activeDay = saved?.day && courseData[activeWeek]?.days?.[saved.day] ? saved.day : 'day1';
-  currentLanguage = normalizeLanguage(storageGet('n1_language') || 'id');
-  
-  if (weekSelect) weekSelect.value = activeWeek;
-  if (daySelect) daySelect.value = activeDay;
-  if (searchInput) searchInput.value = '';
-  
-  currentSearch = '';
-  currentStatus = 'all';
-  if (statusSelect) statusSelect.value = 'all';
 
-  document.getElementById('accountModal')?.classList.add('hidden');
-  
-  stopSpeech();
-  initializeLanguageUI();
-  updateUserUI();
-  updateContentHeader();
-  updateFilterLabel();
-  
-  renderCards();
-  renderExam(courseData[activeWeek]?.days?.[activeDay]?.exam);
-  updateProgressLabel();
+function switchUser(username) {
+  const cleaned =
+    String(username)
+      .trim()
+      .toLowerCase() || 'default'
+
+  if (cleaned === currentUser) {
+    document
+      .getElementById('accountModal')
+      ?.classList.add('hidden')
+
+    return
+  }
+
+  currentUser = cleaned
+
+  localStorage.setItem(
+    'n1_current_user',
+    currentUser
+  )
+
+  const saved =
+    getSavedPageState()
+
+  activeWeek =
+    saved?.week &&
+    courseData[saved.week]
+      ? saved.week
+      : 'week1'
+
+  activeDay =
+    saved?.day &&
+    courseData[activeWeek]?.days?.[
+      saved.day
+    ]
+      ? saved.day
+      : 'day1'
+
+  currentLanguage =
+    normalizeLanguage(
+      storageGet(
+        'n1_language'
+      ) || 'id'
+    )
+
+  if (weekSelect) {
+    weekSelect.value =
+      activeWeek
+  }
+
+  if (daySelect) {
+    daySelect.value =
+      activeDay
+  }
+
+  if (searchInput) {
+    searchInput.value = ''
+  }
+
+  currentSearch = ''
+  currentStatus = 'all'
+
+  if (statusSelect) {
+    statusSelect.value = 'all'
+  }
+
+  document
+    .getElementById('accountModal')
+    ?.classList.add('hidden')
+
+  stopSpeech()
+
+  initializeLanguageUI()
+
+  updateUserUI()
+  updateContentHeader()
+  updateFilterLabel()
+
+  renderCards()
+
+  renderExam(
+    courseData[
+      activeWeek
+    ]?.days?.[
+      activeDay
+    ]?.exam
+  )
+
+  updateProgressLabel()
 }
 
 
@@ -79,23 +151,42 @@ const courseTitles = {
   8: '第8週 結果はどうあれ、努力しよう'
 }
 
+
 const courseData = {}
 
+
 for (let week = 1; week <= 8; week++) {
-  const weekKey = `week${week}`
+
+  const weekKey =
+    `week${week}`
+
   const days = {}
 
-  for (let day = 1; day <= 7; day++) {
-    const variableName = `W${week}H${day}`
-    const data = window[variableName]
 
-    days[`day${day}`] = data
-      ? normalizeDayData(data)
-      : createEmptyDay(week, day)
+  for (let day = 1; day <= 7; day++) {
+
+    const variableName =
+      `W${week}H${day}`
+
+    const data =
+      window[variableName]
+
+
+    days[`day${day}`] =
+      data
+        ? normalizeDayData(data)
+        : createEmptyDay(
+            week,
+            day
+          )
   }
 
+
   courseData[weekKey] = {
-    title: courseTitles[week] || `第${week}週 JLPT N1`,
+    title:
+      courseTitles[week] ||
+      `第${week}週 JLPT N1`,
+
     days
   }
 }
@@ -105,20 +196,41 @@ for (let week = 1; week <= 8; week++) {
    NORMALIZE DAY DATA
 ========================================================= */
 
-function normalizeDayData (data) {
-  if (!data || typeof data !== 'object') {
+function normalizeDayData(data) {
+
+  if (
+    !data ||
+    typeof data !== 'object'
+  ) {
+
     return {
-      title: 'Materi belum tersedia',
+      title:
+        'Materi belum tersedia',
+
       grammar: [],
+
       exam: null
     }
   }
 
+
   return {
+
     ...data,
-    title: data.title || 'Materi belum tersedia',
-    grammar: Array.isArray(data.grammar) ? data.grammar : [],
-    exam: data.exam || null
+
+    title:
+      data.title ||
+      'Materi belum tersedia',
+
+    grammar:
+      Array.isArray(
+        data.grammar
+      )
+        ? data.grammar
+        : [],
+
+    exam:
+      data.exam || null
   }
 }
 
@@ -127,29 +239,37 @@ function normalizeDayData (data) {
    EMPTY DAY
 ========================================================= */
 
-function createEmptyDay (week, day) {
+function createEmptyDay(
+  week,
+  day
+) {
+
   if (day === 7) {
+
     return {
-      title: `７日目 実戦問題 (Ujian Minggu ${week})`,
+
+      title:
+        `７日目 実戦問題 (Ujian Minggu ${week})`,
+
       grammar: [],
-      exam: `
-        <div class="exam-container">
-          <div class="exam-empty">
-            <i class="bi bi-hourglass-split"></i>
-            <h3>Exam belum tersedia</h3>
-            <p>
-              Soal Hari 7 untuk Minggu ${week}
-              akan ditambahkan ke materi.
-            </p>
-          </div>
-        </div>
-      `
+
+      exam: {
+
+        type: 'quiz',
+
+        questions: []
+      }
     }
   }
 
+
   return {
-    title: `Hari ${day} — Materi Belum Tersedia`,
+
+    title:
+      `Hari ${day} — Materi Belum Tersedia`,
+
     grammar: [],
+
     exam: null
   }
 }
@@ -159,47 +279,94 @@ function createEmptyDay (week, day) {
    PERSISTENT PAGE STATE
 ========================================================= */
 
-const PAGE_STATE_KEY = 'n1_page_state'
+const PAGE_STATE_KEY =
+  'n1_page_state'
 
-function getSavedPageState () {
+
+function getSavedPageState() {
+
   try {
-    const parsed = JSON.parse(storageGet(PAGE_STATE_KEY) || '{}')
 
-    if (!parsed || typeof parsed !== 'object') {
+    const parsed =
+      JSON.parse(
+        storageGet(
+          PAGE_STATE_KEY
+        ) || '{}'
+      )
+
+
+    if (
+      !parsed ||
+      typeof parsed !== 'object'
+    ) {
+
       return null
     }
 
-    const week = String(parsed.week || '')
-    const day = String(parsed.day || '')
 
-    if (/^week[1-8]$/.test(week) && /^day[1-7]$/.test(day)) {
+    const week =
+      String(
+        parsed.week || ''
+      )
+
+    const day =
+      String(
+        parsed.day || ''
+      )
+
+
+    if (
+      /^week[1-8]$/.test(week) &&
+      /^day[1-7]$/.test(day)
+    ) {
+
       return {
         week,
         day
       }
     }
+
   } catch (error) {
-    console.warn('Page state read failed:', error)
+
+    console.warn(
+      'Page state read failed:',
+      error
+    )
   }
+
 
   return null
 }
 
-function savePageState () {
+
+function savePageState() {
+
   try {
+
     storageSet(
       PAGE_STATE_KEY,
+
       JSON.stringify({
-        week: activeWeek,
-        day: activeDay
+        week:
+          activeWeek,
+
+        day:
+          activeDay
       })
     )
+
   } catch (error) {
-    console.warn('Page state save failed:', error)
+
+    console.warn(
+      'Page state save failed:',
+      error
+    )
   }
 }
 
-const savedPageState = getSavedPageState()
+
+const savedPageState =
+  getSavedPageState()
 
 
 /* =========================================================
@@ -207,24 +374,51 @@ const savedPageState = getSavedPageState()
 ========================================================= */
 
 let activeWeek =
-  savedPageState?.week && courseData[savedPageState.week]
+  savedPageState?.week &&
+  courseData[
+    savedPageState.week
+  ]
     ? savedPageState.week
     : 'week1'
 
+
 let activeDay =
-  savedPageState?.day && courseData[activeWeek]?.days?.[savedPageState.day]
+  savedPageState?.day &&
+  courseData[
+    activeWeek
+  ]?.days?.[
+    savedPageState.day
+  ]
     ? savedPageState.day
     : 'day1'
 
-let currentSearch = ''
-let currentStatus = 'all'
-let memoMode = false
 
-let renderVersion = 0
-let explanationLoadVersion = 0
-let searchDebounceTimer = null
+let currentSearch =
+  ''
 
-let allGrammarCache = null
+
+let currentStatus =
+  'all'
+
+
+let memoMode =
+  false
+
+
+let renderVersion =
+  0
+
+
+let explanationLoadVersion =
+  0
+
+
+let searchDebounceTimer =
+  null
+
+
+let allGrammarCache =
+  null
 
 
 /* =========================================================
@@ -232,52 +426,118 @@ let allGrammarCache = null
 ========================================================= */
 
 const languageText = {
+
   id: {
-    meaning: 'Arti Indonesia',
-    explanation: 'Penjelasan',
-    noExample: 'Belum ada contoh.',
-    translating: 'Menerjemahkan...',
-    translationFailed: 'Terjemahan gagal.',
-    copiedOriginal: 'Kalimat asli disalin!',
-    copiedTranslation: 'Terjemahan disalin!',
-    translateTitle: 'Klik = salin • Double click = translate'
+
+    meaning:
+      'Arti Indonesia',
+
+    explanation:
+      'Penjelasan',
+
+    noExample:
+      'Belum ada contoh.',
+
+    translating:
+      'Menerjemahkan...',
+
+    translationFailed:
+      'Terjemahan gagal.',
+
+    copiedOriginal:
+      'Kalimat asli disalin!',
+
+    copiedTranslation:
+      'Terjemahan disalin!',
+
+    translateTitle:
+      'Klik = salin • Double click = translate'
   },
+
 
   en: {
-    meaning: 'English Meaning',
-    explanation: 'Explanation',
-    noExample: 'No example available.',
-    translating: 'Translating...',
-    translationFailed: 'Translation unavailable.',
-    copiedOriginal: 'Original sentence copied!',
-    copiedTranslation: 'Translation copied!',
-    translateTitle: 'Click = copy • Double click = translate'
+
+    meaning:
+      'English Meaning',
+
+    explanation:
+      'Explanation',
+
+    noExample:
+      'No example available.',
+
+    translating:
+      'Translating...',
+
+    translationFailed:
+      'Translation unavailable.',
+
+    copiedOriginal:
+      'Original sentence copied!',
+
+    copiedTranslation:
+      'Translation copied!',
+
+    translateTitle:
+      'Click = copy • Double click = translate'
   },
 
+
   cn: {
-    meaning: '中文意思',
-    explanation: '解释',
-    noExample: '暂无例句。',
-    translating: '正在翻译...',
-    translationFailed: '暂时无法翻译。',
-    copiedOriginal: '原句已复制！',
-    copiedTranslation: '译文已复制！',
-    translateTitle: '单击 = 复制 • 双击 = 翻译'
+
+    meaning:
+      '中文意思',
+
+    explanation:
+      '解释',
+
+    noExample:
+      '暂无例句。',
+
+    translating:
+      '正在翻译...',
+
+    translationFailed:
+      '暂时无法翻译。',
+
+    copiedOriginal:
+      '原句已复制！',
+
+    copiedTranslation:
+      '译文已复制！',
+
+    translateTitle:
+      '单击 = 复制 • 双击 = 翻译'
   }
 }
 
-let currentLanguage = normalizeLanguage(
-  storageGet('n1_language') || 'id'
-)
 
-function normalizeLanguage (lang) {
-  const value = String(lang || '')
-    .trim()
-    .toLowerCase()
+let currentLanguage =
+  normalizeLanguage(
+    storageGet(
+      'n1_language'
+    ) || 'id'
+  )
 
-  if (value === 'en' || value === 'en-us' || value === 'en-gb') {
+
+function normalizeLanguage(
+  lang
+) {
+
+  const value =
+    String(lang || '')
+      .trim()
+      .toLowerCase()
+
+
+  if (
+    value === 'en' ||
+    value === 'en-us' ||
+    value === 'en-gb'
+  ) {
     return 'en'
   }
+
 
   if (
     value === 'cn' ||
@@ -288,17 +548,43 @@ function normalizeLanguage (lang) {
     return 'cn'
   }
 
+
   return 'id'
 }
 
-function getLanguageText (key) {
-  const lang = normalizeLanguage(currentLanguage)
 
-  return languageText[lang]?.[key] || languageText.id[key] || ''
+function getLanguageText(
+  key
+) {
+
+  const lang =
+    normalizeLanguage(
+      currentLanguage
+    )
+
+
+  return (
+    languageText[
+      lang
+    ]?.[key] ||
+
+    languageText.id[
+      key
+    ] ||
+
+    ''
+  )
 }
 
-function getApiLanguage (lang) {
-  switch (normalizeLanguage(lang)) {
+
+function getApiLanguage(
+  lang
+) {
+
+  switch (
+    normalizeLanguage(lang)
+  ) {
+
     case 'en':
       return 'en'
 
@@ -315,56 +601,221 @@ function getApiLanguage (lang) {
    ELEMENTS
 ========================================================= */
 
-const grammarCards = document.getElementById('grammarCards')
-const miniExam = document.getElementById('miniExam')
-const examContent = document.getElementById('examContent')
-const emptyState = document.getElementById('emptyState')
+const grammarCards =
+  document.getElementById(
+    'grammarCards'
+  )
 
-const searchInput = document.getElementById('searchInput')
-const weekSelect = document.getElementById('weekSelect')
-const daySelect = document.getElementById('daySelect')
-const statusSelect = document.getElementById('statusSelect')
 
-const resultCounter = document.getElementById('resultCounter')
-const activeFilterLabel = document.getElementById('activeFilterLabel')
-const resetFiltersBtn = document.getElementById('resetFiltersBtn')
-const emptyResetBtn = document.getElementById('emptyResetBtn')
+const miniExam =
+  document.getElementById(
+    'miniExam'
+  )
 
-const weekTitle = document.getElementById('weekTitle')
-const dayTitle = document.getElementById('dayTitle')
 
-const progressLabel = document.getElementById('progressLabel')
-const progressPercent = document.getElementById('progressPercent')
-const progressBarFill = document.getElementById('progressBarFill')
+const examContent =
+  document.getElementById(
+    'examContent'
+  )
 
-const memoToggle = document.getElementById('memoToggle')
-const themeToggle = document.getElementById('themeToggle')
 
-const langToggleBtn = document.getElementById('langToggleBtn')
-const languageMenu = document.getElementById('languageMenu')
+const emptyState =
+  document.getElementById(
+    'emptyState'
+  )
 
-const liveClock = document.getElementById('liveClock')
-const greetingLabel = document.getElementById('greetingLabel')
-const greetingJapanese = document.getElementById('greetingJapanese')
-const greetingMessage = document.getElementById('greetingMessage')
-const greetingIcon = document.getElementById('greetingIcon')
-const timePeriodText = document.getElementById('timePeriodText')
 
-const examAnswered = document.getElementById('examAnswered')
-const examProgressFill = document.getElementById('examProgressFill')
+const searchInput =
+  document.getElementById(
+    'searchInput'
+  )
 
-const accountModal = document.getElementById('accountModal');
-const accountToggleBtn = document.getElementById('accountToggleBtn');
-const closeAccountBtn = document.getElementById('closeAccountBtn');
-const loginBtn = document.getElementById('loginBtn');
-const usernameInput = document.getElementById('usernameInput');
+
+const weekSelect =
+  document.getElementById(
+    'weekSelect'
+  )
+
+
+const daySelect =
+  document.getElementById(
+    'daySelect'
+  )
+
+
+const statusSelect =
+  document.getElementById(
+    'statusSelect'
+  )
+
+
+const resultCounter =
+  document.getElementById(
+    'resultCounter'
+  )
+
+
+const activeFilterLabel =
+  document.getElementById(
+    'activeFilterLabel'
+  )
+
+
+const resetFiltersBtn =
+  document.getElementById(
+    'resetFiltersBtn'
+  )
+
+
+const emptyResetBtn =
+  document.getElementById(
+    'emptyResetBtn'
+  )
+
+
+const weekTitle =
+  document.getElementById(
+    'weekTitle'
+  )
+
+
+const dayTitle =
+  document.getElementById(
+    'dayTitle'
+  )
+
+
+const progressLabel =
+  document.getElementById(
+    'progressLabel'
+  )
+
+
+const progressPercent =
+  document.getElementById(
+    'progressPercent'
+  )
+
+
+const progressBarFill =
+  document.getElementById(
+    'progressBarFill'
+  )
+
+
+const memoToggle =
+  document.getElementById(
+    'memoToggle'
+  )
+
+
+const themeToggle =
+  document.getElementById(
+    'themeToggle'
+  )
+
+
+const langToggleBtn =
+  document.getElementById(
+    'langToggleBtn'
+  )
+
+
+const languageMenu =
+  document.getElementById(
+    'languageMenu'
+  )
+
+
+const liveClock =
+  document.getElementById(
+    'liveClock'
+  )
+
+
+const greetingLabel =
+  document.getElementById(
+    'greetingLabel'
+  )
+
+
+const greetingJapanese =
+  document.getElementById(
+    'greetingJapanese'
+  )
+
+
+const greetingMessage =
+  document.getElementById(
+    'greetingMessage'
+  )
+
+
+const greetingIcon =
+  document.getElementById(
+    'greetingIcon'
+  )
+
+
+const timePeriodText =
+  document.getElementById(
+    'timePeriodText'
+  )
+
+
+const examAnswered =
+  document.getElementById(
+    'examAnswered'
+  )
+
+
+const examProgressFill =
+  document.getElementById(
+    'examProgressFill'
+  )
+
+
+const accountModal =
+  document.getElementById(
+    'accountModal'
+  )
+
+
+const accountToggleBtn =
+  document.getElementById(
+    'accountToggleBtn'
+  )
+
+
+const closeAccountBtn =
+  document.getElementById(
+    'closeAccountBtn'
+  )
+
+
+const loginBtn =
+  document.getElementById(
+    'loginBtn'
+  )
+
+
+const usernameInput =
+  document.getElementById(
+    'usernameInput'
+  )
+
 
 /* =========================================================
    SAFE HELPERS
 ========================================================= */
 
-function elementExists (element) {
-  return !!element && typeof element === 'object'
+function elementExists(
+  element
+) {
+  return (
+    !!element &&
+    typeof element === 'object'
+  )
 }
 
 
@@ -372,32 +823,90 @@ function elementExists (element) {
    HTML HELPERS
 ========================================================= */
 
-function stripHTML (html) {
-  const temp = document.createElement('div')
+function stripHTML(
+  html
+) {
 
-  temp.innerHTML = html || ''
+  const temp =
+    document.createElement(
+      'div'
+    )
 
-  return (temp.textContent || temp.innerText || '')
-    .replace(/\s+/g, ' ')
+
+  temp.innerHTML =
+    html || ''
+
+
+  return (
+    temp.textContent ||
+    temp.innerText ||
+    ''
+  )
+    .replace(
+      /\s+/g,
+      ' '
+    )
     .trim()
 }
 
-function escapeHTML (value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
+
+function escapeHTML(
+  value
+) {
+
+  return String(
+    value ?? ''
+  )
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
+    )
 }
 
-function escapeForJS (value) {
-  return String(value ?? '')
-    .replace(/\\/g, '\\\\')
-    .replace(/'/g, "\\'")
-    .replace(/"/g, '\\"')
-    .replace(/\r/g, '\\r')
-    .replace(/\n/g, '\\n')
+
+function escapeForJS(
+  value
+) {
+
+  return String(
+    value ?? ''
+  )
+    .replace(
+      /\\/g,
+      '\\\\'
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    )
+    .replace(
+      /"/g,
+      '\\"'
+    )
+    .replace(
+      /\r/g,
+      '\\r'
+    )
+    .replace(
+      /\n/g,
+      '\\n'
+    )
 }
 
 
@@ -405,12 +914,20 @@ function escapeForJS (value) {
    STATUS
 ========================================================= */
 
-function getStatus (item) {
+function getStatus(
+  item
+) {
+
   if (!item?.id) {
     return '0'
   }
 
-  return storageGet(`status_${item.id}`) || '0'
+
+  return (
+    storageGet(
+      `status_${item.id}`
+    ) || '0'
+  )
 }
 
 
@@ -418,41 +935,90 @@ function getStatus (item) {
    ALL GRAMMAR CACHE
 ========================================================= */
 
-function invalidateGrammarCache () {
+function invalidateGrammarCache() {
   allGrammarCache = null
 }
 
-function getAllGrammar () {
-  if (Array.isArray(allGrammarCache)) {
+
+function getAllGrammar() {
+
+  if (
+    Array.isArray(
+      allGrammarCache
+    )
+  ) {
+
     return allGrammarCache
   }
 
+
   const output = []
 
-  Object.entries(courseData).forEach(([weekKey, weekData]) => {
-    Object.entries(weekData?.days || {}).forEach(([dayKey, dayData]) => {
-      if (!Array.isArray(dayData?.grammar)) {
-        return
+
+  Object.entries(
+    courseData
+  )
+    .forEach(
+      ([
+        weekKey,
+        weekData
+      ]) => {
+
+        Object.entries(
+          weekData?.days || {}
+        )
+          .forEach(
+            ([
+              dayKey,
+              dayData
+            ]) => {
+
+              if (
+                !Array.isArray(
+                  dayData?.grammar
+                )
+              ) {
+                return
+              }
+
+
+              dayData.grammar.forEach(
+                item => {
+
+                  output.push({
+
+                    ...item,
+
+                    _week:
+                      weekKey,
+
+                    _day:
+                      dayKey
+                  })
+                }
+              )
+            }
+          )
       }
+    )
 
-      dayData.grammar.forEach(item => {
-        output.push({
-          ...item,
-          _week: weekKey,
-          _day: dayKey
-        })
-      })
-    })
-  })
 
-  allGrammarCache = output
+  allGrammarCache =
+    output
+
 
   return allGrammarCache
 }
 
-function findItemById (id) {
+
+function findItemById(
+  id
+) {
+
   return getAllGrammar().find(
-    item => String(item.id) === String(id)
+    item =>
+      String(item.id) ===
+      String(id)
   )
 }
 
@@ -461,46 +1027,87 @@ function findItemById (id) {
    SELECTS
 ========================================================= */
 
-function populateWeekSelect () {
+function populateWeekSelect() {
+
   if (!weekSelect) {
     return
   }
 
+
   weekSelect.replaceChildren()
 
-  for (let week = 1; week <= 8; week++) {
-    const option = document.createElement('option')
 
-    option.value = `week${week}`
-    option.textContent = `Minggu ${week}`
+  for (
+    let week = 1;
+    week <= 8;
+    week++
+  ) {
 
-    weekSelect.appendChild(option)
+    const option =
+      document.createElement(
+        'option'
+      )
+
+
+    option.value =
+      `week${week}`
+
+
+    option.textContent =
+      `Minggu ${week}`
+
+
+    weekSelect.appendChild(
+      option
+    )
   }
 
-  weekSelect.value = activeWeek
+
+  weekSelect.value =
+    activeWeek
 }
 
-function populateDaySelect () {
+
+function populateDaySelect() {
+
   if (!daySelect) {
     return
   }
 
+
   daySelect.replaceChildren()
 
-  for (let day = 1; day <= 7; day++) {
-    const option = document.createElement('option')
 
-    option.value = `day${day}`
+  for (
+    let day = 1;
+    day <= 7;
+    day++
+  ) {
+
+    const option =
+      document.createElement(
+        'option'
+      )
+
+
+    option.value =
+      `day${day}`
+
 
     option.textContent =
       day === 7
         ? 'Hari 7 - Full Exam'
         : `Hari ${day}`
 
-    daySelect.appendChild(option)
+
+    daySelect.appendChild(
+      option
+    )
   }
 
-  daySelect.value = activeDay
+
+  daySelect.value =
+    activeDay
 }
 
 
@@ -508,59 +1115,125 @@ function populateDaySelect () {
    SEARCH
 ========================================================= */
 
-function matchesSearch (item, query) {
+function matchesSearch(
+  item,
+  query
+) {
+
   if (!query) {
     return true
   }
 
+
   const searchText = [
+
     item?.rule,
+
     item?.reading,
+
     item?.yomi,
 
     item?.meaning?.id,
+
     item?.meaning?.en,
+
     item?.meaning?.cn,
+
     item?.meaning?.zh,
 
     item?.explanation,
+
     item?.explanationJP,
 
-    ...(Array.isArray(item?.examples) ? item.examples : [])
+    ...(Array.isArray(
+      item?.examples
+    )
+      ? item.examples
+      : [])
   ]
-    .map(value => stripHTML(value || ''))
+    .map(
+      value =>
+        stripHTML(
+          value || ''
+        )
+    )
     .join(' ')
     .toLowerCase()
 
+
   return searchText.includes(
-    String(query).toLowerCase()
+    String(
+      query
+    ).toLowerCase()
   )
 }
 
-function getFilteredItems () {
+
+function getFilteredItems() {
+
   let items = []
 
-  if (currentSearch) {
-    items = getAllGrammar().filter(item =>
-      matchesSearch(item, currentSearch)
-    )
-  } else {
-    const day = courseData[activeWeek]?.days?.[activeDay]
 
-    if (Array.isArray(day?.grammar)) {
-      items = day.grammar.map(item => ({
-        ...item,
-        _week: activeWeek,
-        _day: activeDay
-      }))
+  if (
+    currentSearch
+  ) {
+
+    items =
+      getAllGrammar()
+        .filter(
+          item =>
+            matchesSearch(
+              item,
+              currentSearch
+            )
+        )
+
+  } else {
+
+    const day =
+      courseData[
+        activeWeek
+      ]?.days?.[
+        activeDay
+      ]
+
+
+    if (
+      Array.isArray(
+        day?.grammar
+      )
+    ) {
+
+      items =
+        day.grammar.map(
+          item => ({
+
+            ...item,
+
+            _week:
+              activeWeek,
+
+            _day:
+              activeDay
+          })
+        )
     }
   }
 
-  if (currentStatus !== 'all') {
-    items = items.filter(
-      item => getStatus(item) === currentStatus
-    )
+
+  if (
+    currentStatus !==
+    'all'
+  ) {
+
+    items =
+      items.filter(
+        item =>
+          getStatus(item) ===
+          currentStatus
+      )
   }
+
 
   return items
 }
@@ -570,148 +1243,322 @@ function getFilteredItems () {
    LANGUAGE DETECTION
 ========================================================= */
 
-function detectLanguage (text) {
-  const clean = stripHTML(text)
+function detectLanguage(
+  text
+) {
+
+  const clean =
+    stripHTML(text)
+
 
   if (!clean) {
     return 'id'
   }
 
-  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(clean)) {
+
+  if (
+    /[\u3040-\u309f\u30a0-\u30ff]/.test(
+      clean
+    )
+  ) {
+
     return 'ja'
   }
 
-  if (/[\u4e00-\u9fff]/.test(clean)) {
+
+  if (
+    /[\u4e00-\u9fff]/.test(
+      clean
+    )
+  ) {
+
     return 'zh-CN'
   }
 
+
   const idWords = [
-    'yang', 'dan', 'atau', 'dengan', 'untuk', 'dari', 'ini', 'itu', 'akan',
-    'adalah', 'tidak', 'sudah', 'belum', 'karena', 'agar', 'ketika', 'jika',
-    'bisa', 'harus', 'sangat', 'dalam', 'pada', 'sebuah', 'tersebut', 'dapat',
-    'menjadi', 'lebih', 'hanya'
+
+    'yang',
+    'dan',
+    'atau',
+    'dengan',
+    'untuk',
+    'dari',
+    'ini',
+    'itu',
+    'akan',
+    'adalah',
+    'tidak',
+    'sudah',
+    'belum',
+    'karena',
+    'agar',
+    'ketika',
+    'jika',
+    'bisa',
+    'harus',
+    'sangat',
+    'dalam',
+    'pada',
+    'sebuah',
+    'tersebut',
+    'dapat',
+    'menjadi',
+    'lebih',
+    'hanya'
   ]
 
-  const lower = clean.toLowerCase()
+
+  const lower =
+    clean.toLowerCase()
+
+
   let score = 0
 
-  idWords.forEach(word => {
-    const pattern = new RegExp(`\\b${word}\\b`, 'i')
-    if (pattern.test(lower)) {
-      score++
+
+  idWords.forEach(
+    word => {
+
+      const pattern =
+        new RegExp(
+          `\\b${word}\\b`,
+          'i'
+        )
+
+
+      if (
+        pattern.test(
+          lower
+        )
+      ) {
+
+        score++
+      }
     }
-  })
+  )
+
 
   if (
-    /[a-z]/i.test(clean) &&
-    /(yang|dan|untuk|dengan|tidak|ini|itu|akan)\b/i.test(lower)
+    /[a-z]/i.test(
+      clean
+    ) &&
+    /(yang|dan|untuk|dengan|tidak|ini|itu|akan)\b/i.test(
+      lower
+    )
   ) {
+
     score += 2
   }
 
-  return score > 0 ? 'id' : 'en'
+
+  return score > 0
+    ? 'id'
+    : 'en'
 }
 
-function normalizeApiLanguage (lang) {
-  const value = String(lang || '')
-    .trim()
-    .toLowerCase()
+
+function normalizeApiLanguage(
+  lang
+) {
+
+  const value =
+    String(
+      lang || ''
+    )
+      .trim()
+      .toLowerCase()
+
 
   if (
     value === 'zh' ||
     value === 'zh-cn' ||
     value === 'cn'
   ) {
+
     return 'zh-CN'
   }
 
-  if (value === 'jp') {
+
+  if (
+    value === 'jp'
+  ) {
+
     return 'ja'
   }
+
 
   return value
 }
 
-function getTargetLanguage (sourceLanguage) {
-  const source = normalizeApiLanguage(sourceLanguage)
-  const selected = getApiLanguage(currentLanguage)
 
-  if (source === selected) {
-    if (source === 'ja') {
+function getTargetLanguage(
+  sourceLanguage
+) {
+
+  const source =
+    normalizeApiLanguage(
+      sourceLanguage
+    )
+
+
+  const selected =
+    getApiLanguage(
+      currentLanguage
+    )
+
+
+  if (
+    source === selected
+  ) {
+
+    if (
+      source === 'ja'
+    ) {
+
       return 'id'
     }
-    if (source === 'id') {
+
+
+    if (
+      source === 'id'
+    ) {
+
       return 'en'
     }
-    if (source === 'en') {
+
+
+    if (
+      source === 'en'
+    ) {
+
       return 'id'
     }
-    if (source === 'zh-CN') {
+
+
+    if (
+      source === 'zh-CN'
+    ) {
+
       return 'id'
     }
   }
+
 
   return selected
 }
 
 
 /* =========================================================
-   TRANSLATION CACHE (Global - tidak pakai prefix akun)
+   TRANSLATION CACHE
 ========================================================= */
 
-const translationCacheKey = 'n1_translation_cache'
-const explanationCacheKey = 'n1_explanation_translation_cache'
+const translationCacheKey =
+  'n1_translation_cache'
 
-const exampleTranslationTimers = new Map()
-const translationPending = new Map()
 
-let translationMemoryCache = null
-let explanationMemoryCache = null
+const explanationCacheKey =
+  'n1_explanation_translation_cache'
+
+
+const exampleTranslationTimers =
+  new Map()
+
+
+const translationPending =
+  new Map()
+
+
+let translationMemoryCache =
+  null
+
+
+let explanationMemoryCache =
+  null
+
 
 const TRANSLATION_CONFIG = {
-  timeout: 12000,
-  retries: 2,
-  myMemory: 'https://api.mymemory.translated.net/get',
-  google: 'https://translate.googleapis.com/translate_a/single',
-  explanationConcurrency: 2
+
+  timeout:
+    12000,
+
+  retries:
+    2,
+
+  myMemory:
+    'https://api.mymemory.translated.net/get',
+
+  google:
+    'https://translate.googleapis.com/translate_a/single',
+
+  explanationConcurrency:
+    2
 }
 
-function getTranslationCache () {
-  if (translationMemoryCache) {
+
+function getTranslationCache() {
+
+  if (
+    translationMemoryCache
+  ) {
+
     return translationMemoryCache
   }
 
+
   try {
-    const parsed = JSON.parse(
-      localStorage.getItem(translationCacheKey) || '{}'
-    )
+
+    const parsed =
+      JSON.parse(
+        localStorage.getItem(
+          translationCacheKey
+        ) || '{}'
+      )
+
 
     translationMemoryCache =
       parsed &&
-      typeof parsed === 'object' &&
+      typeof parsed ===
+        'object' &&
       !Array.isArray(parsed)
         ? parsed
         : {}
+
   } catch (error) {
+
     console.warn(
       'Translation cache read failed:',
       error
     )
-    translationMemoryCache = {}
+
+    translationMemoryCache =
+      {}
   }
+
 
   return translationMemoryCache
 }
 
-function saveTranslationCache (cache) {
-  translationMemoryCache = cache
+
+function saveTranslationCache(
+  cache
+) {
+
+  translationMemoryCache =
+    cache
+
 
   try {
+
     localStorage.setItem(
       translationCacheKey,
-      JSON.stringify(cache)
+
+      JSON.stringify(
+        cache
+      )
     )
+
   } catch (error) {
+
     console.warn(
       'Translation cache save skipped:',
       error
@@ -719,42 +1566,71 @@ function saveTranslationCache (cache) {
   }
 }
 
-function getExplanationCache () {
-  if (explanationMemoryCache) {
+
+function getExplanationCache() {
+
+  if (
+    explanationMemoryCache
+  ) {
+
     return explanationMemoryCache
   }
 
+
   try {
-    const parsed = JSON.parse(
-      localStorage.getItem(explanationCacheKey) || '{}'
-    )
+
+    const parsed =
+      JSON.parse(
+        localStorage.getItem(
+          explanationCacheKey
+        ) || '{}'
+      )
+
 
     explanationMemoryCache =
       parsed &&
-      typeof parsed === 'object' &&
+      typeof parsed ===
+        'object' &&
       !Array.isArray(parsed)
         ? parsed
         : {}
+
   } catch (error) {
+
     console.warn(
       'Explanation cache read failed:',
       error
     )
-    explanationMemoryCache = {}
+
+    explanationMemoryCache =
+      {}
   }
+
 
   return explanationMemoryCache
 }
 
-function saveExplanationCache (cache) {
-  explanationMemoryCache = cache
+
+function saveExplanationCache(
+  cache
+) {
+
+  explanationMemoryCache =
+    cache
+
 
   try {
+
     localStorage.setItem(
       explanationCacheKey,
-      JSON.stringify(cache)
+
+      JSON.stringify(
+        cache
+      )
     )
+
   } catch (error) {
+
     console.warn(
       'Explanation cache save skipped:',
       error
@@ -767,29 +1643,50 @@ function saveExplanationCache (cache) {
    FETCH TIMEOUT
 ========================================================= */
 
-async function fetchWithTimeout (
+async function fetchWithTimeout(
   url,
   options = {},
-  timeout = TRANSLATION_CONFIG.timeout
+  timeout =
+    TRANSLATION_CONFIG.timeout
 ) {
-  const controller = new AbortController()
 
-  const timeoutId = setTimeout(
-    () => controller.abort(),
-    timeout
-  )
+  const controller =
+    new AbortController()
+
+
+  const timeoutId =
+    setTimeout(
+      () =>
+        controller.abort(),
+      timeout
+    )
+
 
   try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal,
-      headers: {
-        Accept: 'application/json',
-        ...(options.headers || {})
+
+    return await fetch(
+      url,
+      {
+        ...options,
+
+        signal:
+          controller.signal,
+
+        headers: {
+
+          Accept:
+            'application/json',
+
+          ...(options.headers || {})
+        }
       }
-    })
+    )
+
   } finally {
-    clearTimeout(timeoutId)
+
+    clearTimeout(
+      timeoutId
+    )
   }
 }
 
@@ -798,60 +1695,95 @@ async function fetchWithTimeout (
    MYMEMORY
 ========================================================= */
 
-async function translateWithMyMemory (
+async function translateWithMyMemory(
   text,
   from,
   to
 ) {
-  const url = new URL(
-    TRANSLATION_CONFIG.myMemory
+
+  const url =
+    new URL(
+      TRANSLATION_CONFIG.myMemory
+    )
+
+
+  url.searchParams.set(
+    'q',
+    text
   )
 
-  url.searchParams.set('q', text)
 
   url.searchParams.set(
     'langpair',
-    `${normalizeApiLanguage(from)}|${normalizeApiLanguage(to)}`
+
+    `${normalizeApiLanguage(
+      from
+    )}|${normalizeApiLanguage(
+      to
+    )}`
   )
 
-  const response = await fetchWithTimeout(
-    url.toString()
-  )
+
+  const response =
+    await fetchWithTimeout(
+      url.toString()
+    )
+
 
   if (!response.ok) {
+
     throw new Error(
       `MyMemory HTTP ${response.status}`
     )
   }
 
-  const data = await response.json()
+
+  const data =
+    await response.json()
+
 
   if (
     data?.responseStatus &&
-    Number(data.responseStatus) !== 200
+    Number(
+      data.responseStatus
+    ) !== 200
   ) {
+
     throw new Error(
       `MyMemory API status ${data.responseStatus}`
     )
   }
 
-  if (data?.quotaFinished === true) {
+
+  if (
+    data?.quotaFinished === true
+  ) {
+
     throw new Error(
       'MyMemory quota finished'
     )
   }
 
-  const translated = String(
-    data?.responseData?.translatedText ||
-    data?.matches?.[0]?.translation ||
-    ''
-  ).trim()
+
+  const translated =
+    String(
+      data?.responseData
+        ?.translatedText ||
+
+      data?.matches?.[0]
+        ?.translation ||
+
+      ''
+    ).trim()
+
 
   if (!translated) {
+
     throw new Error(
       'MyMemory returned empty translation'
     )
   }
+
 
   return translated
 }
@@ -861,73 +1793,100 @@ async function translateWithMyMemory (
    GOOGLE FALLBACK
 ========================================================= */
 
-async function translateWithGoogleFallback (
+async function translateWithGoogleFallback(
   text,
   from,
   to
 ) {
-  const url = new URL(
-    TRANSLATION_CONFIG.google
-  )
+
+  const url =
+    new URL(
+      TRANSLATION_CONFIG.google
+    )
+
 
   url.searchParams.set(
     'client',
     'gtx'
   )
 
+
   url.searchParams.set(
     'sl',
-    normalizeApiLanguage(from)
+    normalizeApiLanguage(
+      from
+    )
   )
+
 
   url.searchParams.set(
     'tl',
-    normalizeApiLanguage(to)
+    normalizeApiLanguage(
+      to
+    )
   )
+
 
   url.searchParams.set(
     'dt',
     't'
   )
 
+
   url.searchParams.set(
     'q',
     text
   )
 
-  const response = await fetchWithTimeout(
-    url.toString()
-  )
+
+  const response =
+    await fetchWithTimeout(
+      url.toString()
+    )
+
 
   if (!response.ok) {
+
     throw new Error(
       `Google fallback HTTP ${response.status}`
     )
   }
 
-  const data = await response.json()
+
+  const data =
+    await response.json()
+
 
   const translated =
     Array.isArray(data) &&
     Array.isArray(data[0])
+
       ? data[0]
-          .map(part =>
-            Array.isArray(part)
-              ? part[0]
-              : ''
+          .map(
+            part =>
+              Array.isArray(part)
+                ? part[0]
+                : ''
           )
           .filter(Boolean)
           .join('')
+
       : ''
 
+
   const result =
-    String(translated || '').trim()
+    String(
+      translated || ''
+    ).trim()
+
 
   if (!result) {
+
     throw new Error(
       'Google fallback returned empty result'
     )
   }
+
 
   return result
 }
@@ -937,121 +1896,207 @@ async function translateWithGoogleFallback (
    TRANSLATE TEXT
 ========================================================= */
 
-async function translateText (
+async function translateText(
   text,
   from = 'ja',
   to = 'id'
 ) {
-  const clean = stripHTML(text)
+
+  const clean =
+    stripHTML(text)
+
 
   if (!clean) {
     return ''
   }
 
+
   const source =
-    normalizeApiLanguage(from)
+    normalizeApiLanguage(
+      from
+    )
+
 
   const target =
-    normalizeApiLanguage(to)
+    normalizeApiLanguage(
+      to
+    )
 
-  if (source === target) {
+
+  if (
+    source === target
+  ) {
+
     return clean
   }
 
-  const cache = getTranslationCache()
+
+  const cache =
+    getTranslationCache()
+
 
   const cacheKey =
     `${source}__${target}__${clean}`
 
+
   if (
-    typeof cache[cacheKey] === 'string' &&
-    cache[cacheKey]
+    typeof cache[
+      cacheKey
+    ] === 'string' &&
+    cache[
+      cacheKey
+    ]
   ) {
-    return cache[cacheKey]
+
+    return cache[
+      cacheKey
+    ]
   }
 
-  if (translationPending.has(cacheKey)) {
-    return translationPending.get(cacheKey)
+
+  if (
+    translationPending.has(
+      cacheKey
+    )
+  ) {
+
+    return translationPending.get(
+      cacheKey
+    )
   }
 
-  const requestPromise = (async () => {
-    let lastError = null
 
-    for (
-      let attempt = 0;
-      attempt < TRANSLATION_CONFIG.retries;
-      attempt++
-    ) {
+  const requestPromise =
+    (async () => {
+
+      let lastError =
+        null
+
+
+      for (
+        let attempt = 0;
+        attempt <
+          TRANSLATION_CONFIG.retries;
+        attempt++
+      ) {
+
+        try {
+
+          const result =
+            await translateWithMyMemory(
+              clean,
+              source,
+              target
+            )
+
+
+          if (result) {
+
+            cache[
+              cacheKey
+            ] = result
+
+
+            saveTranslationCache(
+              cache
+            )
+
+
+            return result
+          }
+
+        } catch (error) {
+
+          lastError =
+            error
+
+
+          if (
+            attempt <
+            TRANSLATION_CONFIG
+              .retries - 1
+          ) {
+
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  500 *
+                    (
+                      attempt +
+                      1
+                    )
+                )
+            )
+          }
+        }
+      }
+
+
       try {
-        const result =
-          await translateWithMyMemory(
+
+        const fallbackResult =
+          await translateWithGoogleFallback(
             clean,
             source,
             target
           )
 
-        if (result) {
-          cache[cacheKey] = result
-          saveTranslationCache(cache)
-          return result
-        }
-      } catch (error) {
-        lastError = error
+
         if (
-          attempt <
-          TRANSLATION_CONFIG.retries - 1
-        ) {
-          await new Promise(
-            resolve =>
-              setTimeout(
-                resolve,
-                500 * (attempt + 1)
-              )
-          )
-        }
-      }
-    }
-
-    try {
-      const fallbackResult =
-        await translateWithGoogleFallback(
-          clean,
-          source,
-          target
-        )
-
-      if (fallbackResult) {
-        cache[cacheKey] =
           fallbackResult
-        saveTranslationCache(cache)
-        return fallbackResult
-      }
-    } catch (error) {
-      lastError = error
-    }
+        ) {
 
-    console.warn(
-      'Translation unavailable:',
-      {
-        source,
-        target,
-        error:
-          lastError?.message ||
-          'Unknown translation error'
-      }
-    )
+          cache[
+            cacheKey
+          ] =
+            fallbackResult
 
-    return ''
-  })()
+
+          saveTranslationCache(
+            cache
+          )
+
+
+          return fallbackResult
+        }
+
+      } catch (error) {
+
+        lastError =
+          error
+      }
+
+
+      console.warn(
+        'Translation unavailable:',
+        {
+          source,
+          target,
+
+          error:
+            lastError?.message ||
+            'Unknown translation error'
+        }
+      )
+
+
+      return ''
+    })()
+
 
   translationPending.set(
     cacheKey,
     requestPromise
   )
 
+
   try {
+
     return await requestPromise
+
   } finally {
+
     translationPending.delete(
       cacheKey
     )
@@ -1063,42 +2108,63 @@ async function translateText (
    EXPLANATION TRANSLATION
 ========================================================= */
 
-async function getExplanationForLanguage (
+async function getExplanationForLanguage(
   item
 ) {
+
   const source =
     stripHTML(
       item?.explanation || ''
     )
 
+
   if (!source) {
     return ''
   }
+
 
   const lang =
     normalizeLanguage(
       currentLanguage
     )
 
-  if (lang === 'id') {
+
+  if (
+    lang === 'id'
+  ) {
+
     return source
   }
 
+
   const target =
-    getApiLanguage(lang)
+    getApiLanguage(
+      lang
+    )
+
 
   const cache =
     getExplanationCache()
 
+
   const cacheKey =
     `${lang}::${source}`
 
+
   if (
-    typeof cache[cacheKey] === 'string' &&
-    cache[cacheKey]
+    typeof cache[
+      cacheKey
+    ] === 'string' &&
+    cache[
+      cacheKey
+    ]
   ) {
-    return cache[cacheKey]
+
+    return cache[
+      cacheKey
+    ]
   }
+
 
   const translated =
     await translateText(
@@ -1107,14 +2173,22 @@ async function getExplanationForLanguage (
       target
     )
 
+
   if (!translated) {
     return source
   }
 
-  cache[cacheKey] =
+
+  cache[
+    cacheKey
+  ] =
     translated
 
-  saveExplanationCache(cache)
+
+  saveExplanationCache(
+    cache
+  )
+
 
   return translated
 }
@@ -1124,40 +2198,74 @@ async function getExplanationForLanguage (
    TTS ENGINE
 ========================================================= */
 
-let availableVoices = []
-let speakingCardId = null
-let currentSpeakingItem = null
+let availableVoices =
+  []
 
-let speechQueue = []
-let speechIndex = 0
 
-let speechPaused = false
-let speechLoading = false
+let speakingCardId =
+  null
 
-let speechRequestId = 0
-let speechStopTimer = null
+
+let currentSpeakingItem =
+  null
+
+
+let speechQueue =
+  []
+
+
+let speechIndex =
+  0
+
+
+let speechPaused =
+  false
+
+
+let speechLoading =
+  false
+
+
+let speechRequestId =
+  0
+
+
+let speechStopTimer =
+  null
 
 
 /* =========================================================
    LOAD VOICES
 ========================================================= */
 
-function loadVoices () {
-  if (!('speechSynthesis' in window)) {
+function loadVoices() {
+
+  if (
+    !('speechSynthesis' in window)
+  ) {
+
     return
   }
 
+
   availableVoices =
-    window.speechSynthesis.getVoices() || []
+    window.speechSynthesis
+      .getVoices() || []
 }
+
 
 loadVoices()
 
-if ('speechSynthesis' in window) {
-  window.speechSynthesis.addEventListener(
-    'voiceschanged',
-    loadVoices
-  )
+
+if (
+  'speechSynthesis' in window
+) {
+
+  window.speechSynthesis
+    .addEventListener(
+      'voiceschanged',
+      loadVoices
+    )
 }
 
 
@@ -1165,14 +2273,21 @@ if ('speechSynthesis' in window) {
    JAPANESE VOICE
 ========================================================= */
 
-function findJapaneseVoice () {
+function findJapaneseVoice() {
+
   loadVoices()
 
-  if (!availableVoices.length) {
+
+  if (
+    !availableVoices.length
+  ) {
+
     return null
   }
 
+
   const priorities = [
+
     voice =>
       /microsoft/i.test(
         voice.name
@@ -1203,14 +2318,22 @@ function findJapaneseVoice () {
       )
   ]
 
-  for (const test of priorities) {
+
+  for (
+    const test of priorities
+  ) {
+
     const found =
-      availableVoices.find(test)
+      availableVoices.find(
+        test
+      )
+
 
     if (found) {
       return found
     }
   }
+
 
   return null
 }
@@ -1220,14 +2343,27 @@ function findJapaneseVoice () {
    TTS TEXT CLEANER
 ========================================================= */
 
-function cleanSpeechText (text) {
+function cleanSpeechText(
+  text
+) {
+
   const clean =
     stripHTML(text)
 
+
   return clean
-    .replace(/\s+/g, ' ')
-    .replace(/→/g, '。')
-    .replace(/・/g, '、')
+    .replace(
+      /\s+/g,
+      ' '
+    )
+    .replace(
+      /→/g,
+      '。'
+    )
+    .replace(
+      /・/g,
+      '、'
+    )
     .trim()
 }
 
@@ -1236,55 +2372,84 @@ function cleanSpeechText (text) {
    TTS QUEUE
 ========================================================= */
 
-function buildSpeechQueue (item) {
+function buildSpeechQueue(
+  item
+) {
+
   const queue = []
+
 
   const rule =
     cleanSpeechText(
       item?.rule || ''
     )
 
+
   if (rule) {
+
     queue.push({
-      type: 'bunpou',
-      text: rule
+      type:
+        'bunpou',
+
+      text:
+        rule
     })
   }
+
 
   if (
     Array.isArray(
       item?.examples
     )
   ) {
+
     item.examples
       .slice(0, 3)
       .forEach(
-        (example, index) => {
+        (
+          example,
+          index
+        ) => {
+
           const clean =
             cleanSpeechText(
               example
             )
 
+
           if (!clean) {
             return
           }
 
-          queue.push({
-            type: 'example-label',
-            index:
-              index + 1,
-            text: '例文。'
-          })
 
           queue.push({
-            type: 'example',
+
+            type:
+              'example-label',
+
             index:
               index + 1,
-            text: clean
+
+            text:
+              '例文。'
+          })
+
+
+          queue.push({
+
+            type:
+              'example',
+
+            index:
+              index + 1,
+
+            text:
+              clean
           })
         }
       )
   }
+
 
   return queue
 }
@@ -1294,18 +2459,31 @@ function buildSpeechQueue (item) {
    TTS STATE
 ========================================================= */
 
-function getSpeechState () {
-  if (speechLoading) {
+function getSpeechState() {
+
+  if (
+    speechLoading
+  ) {
+
     return 'loading'
   }
 
-  if (speakingCardId !== null) {
-    if (speechPaused) {
+
+  if (
+    speakingCardId !== null
+  ) {
+
+    if (
+      speechPaused
+    ) {
+
       return 'paused'
     }
 
+
     return 'speaking'
   }
+
 
   return 'idle'
 }
@@ -1315,15 +2493,31 @@ function getSpeechState () {
    CLEAR SPEECH STATE
 ========================================================= */
 
-function clearSpeechState () {
-  speakingCardId = null
-  currentSpeakingItem = null
+function clearSpeechState() {
 
-  speechQueue = []
-  speechIndex = 0
+  speakingCardId =
+    null
 
-  speechPaused = false
-  speechLoading = false
+
+  currentSpeakingItem =
+    null
+
+
+  speechQueue =
+    []
+
+
+  speechIndex =
+    0
+
+
+  speechPaused =
+    false
+
+
+  speechLoading =
+    false
+
 
   updateSpeechButtons()
 }
@@ -1333,22 +2527,35 @@ function clearSpeechState () {
    STOP SPEECH
 ========================================================= */
 
-function stopSpeech () {
+function stopSpeech() {
+
   speechRequestId++
 
-  if (speechStopTimer) {
+
+  if (
+    speechStopTimer
+  ) {
+
     clearTimeout(
       speechStopTimer
     )
-    speechStopTimer = null
+
+
+    speechStopTimer =
+      null
   }
+
 
   if (
     'speechSynthesis' in window
   ) {
+
     try {
+
       window.speechSynthesis.cancel()
+
     } catch (error) {
+
       console.warn(
         'Speech cancel failed:',
         error
@@ -1356,30 +2563,44 @@ function stopSpeech () {
     }
   }
 
+
   clearSpeechState()
 }
 
-window.stopSpeech = stopSpeech
+
+window.stopSpeech =
+  stopSpeech
 
 
 /* =========================================================
    SPEECH RATE & PITCH
 ========================================================= */
 
-function getSpeechRate (type) {
+function getSpeechRate(
+  type
+) {
+
   switch (type) {
+
     case 'bunpou':
       return 0.82
+
     case 'example-label':
       return 0.84
+
     case 'example':
       return 0.88
+
     default:
       return 0.85
   }
 }
 
-function getSpeechPitch (type) {
+
+function getSpeechPitch(
+  type
+) {
+
   return 1.0
 }
 
@@ -1388,53 +2609,86 @@ function getSpeechPitch (type) {
    START SPEECH
 ========================================================= */
 
-async function startSpeech (item) {
+async function startSpeech(
+  item
+) {
+
   if (
     !('speechSynthesis' in window)
   ) {
+
     alert(
       'Browser ini tidak mendukung Text to Speech.'
     )
+
     return
   }
+
 
   if (!item) {
     return
   }
 
+
   stopSpeech()
+
 
   const requestId =
     speechRequestId
 
+
   currentSpeakingItem =
     item
 
-  speakingCardId =
-    String(item.id)
 
-  speechLoading = true
-  speechPaused = false
-  speechIndex = 0
+  speakingCardId =
+    String(
+      item.id
+    )
+
+
+  speechLoading =
+    true
+
+
+  speechPaused =
+    false
+
+
+  speechIndex =
+    0
+
 
   updateSpeechButtons()
 
+
   try {
+
     speechQueue =
-      buildSpeechQueue(item)
+      buildSpeechQueue(
+        item
+      )
+
   } catch (error) {
+
     console.warn(
       'Speech queue build failed:',
       error
     )
+
+
     if (
       requestId ===
       speechRequestId
     ) {
+
       stopSpeech()
     }
+
+
     return
   }
+
 
   if (
     requestId !==
@@ -1442,17 +2696,27 @@ async function startSpeech (item) {
     speakingCardId !==
       String(item.id)
   ) {
+
     return
   }
 
-  speechLoading = false
 
-  if (!speechQueue.length) {
+  speechLoading =
+    false
+
+
+  if (
+    !speechQueue.length
+  ) {
+
     stopSpeech()
+
     return
   }
+
 
   updateSpeechButtons()
+
 
   speakCurrentChunk(
     requestId
@@ -1464,137 +2728,205 @@ async function startSpeech (item) {
    SPEAK CURRENT CHUNK
 ========================================================= */
 
-function speakCurrentChunk (
+function speakCurrentChunk(
   requestId
 ) {
+
   if (
     requestId !==
     speechRequestId
   ) {
+
     return
   }
 
+
   if (
-    speakingCardId === null
+    speakingCardId ===
+    null
   ) {
+
     return
   }
+
 
   if (
     !speechQueue.length ||
     speechIndex >=
       speechQueue.length
   ) {
-    finishSpeech(requestId)
+
+    finishSpeech(
+      requestId
+    )
+
     return
   }
 
-  if (speechPaused) {
+
+  if (
+    speechPaused
+  ) {
+
     return
   }
+
 
   const chunk =
-    speechQueue[speechIndex]
+    speechQueue[
+      speechIndex
+    ]
+
 
   if (!chunk?.text) {
+
     speechIndex++
+
+
     speakCurrentChunk(
       requestId
     )
+
+
     return
   }
+
 
   const utterance =
     new SpeechSynthesisUtterance(
       chunk.text
     )
 
+
   utterance.lang =
     'ja-JP'
+
 
   utterance.rate =
     getSpeechRate(
       chunk.type
     )
 
+
   utterance.pitch =
     getSpeechPitch(
       chunk.type
     )
 
-  utterance.volume = 1
+
+  utterance.volume =
+    1
+
 
   const voice =
     findJapaneseVoice()
 
+
   if (voice) {
+
     utterance.voice =
       voice
   }
 
-  utterance.onstart = () => {
-    if (
-      requestId ===
-        speechRequestId &&
-      speakingCardId !== null
-    ) {
-      speechPaused = false
-      updateSpeechButtons()
-    }
-  }
 
-  utterance.onend = () => {
-    if (
-      requestId !==
-      speechRequestId
-    ) {
-      return
-    }
+  utterance.onstart =
+    () => {
 
-    if (
-      speakingCardId === null
-    ) {
-      return
-    }
-
-    speechIndex++
-
-    speechStopTimer =
-      setTimeout(() => {
-        speechStopTimer =
+      if (
+        requestId ===
+          speechRequestId &&
+        speakingCardId !==
           null
+      ) {
 
-        if (
-          requestId !==
-          speechRequestId
-        ) {
-          return
-        }
+        speechPaused =
+          false
 
-        if (
-          speakingCardId === null
-        ) {
-          return
-        }
 
-        if (speechPaused) {
-          return
-        }
+        updateSpeechButtons()
+      }
+    }
 
-        speakCurrentChunk(
-          requestId
-        )
-      }, 220)
-  }
 
-  utterance.onerror =
-    event => {
+  utterance.onend =
+    () => {
+
       if (
         requestId !==
         speechRequestId
       ) {
+
         return
       }
+
+
+      if (
+        speakingCardId ===
+        null
+      ) {
+
+        return
+      }
+
+
+      speechIndex++
+
+
+      speechStopTimer =
+        setTimeout(
+          () => {
+
+            speechStopTimer =
+              null
+
+
+            if (
+              requestId !==
+              speechRequestId
+            ) {
+
+              return
+            }
+
+
+            if (
+              speakingCardId ===
+              null
+            ) {
+
+              return
+            }
+
+
+            if (
+              speechPaused
+            ) {
+
+              return
+            }
+
+
+            speakCurrentChunk(
+              requestId
+            )
+
+          },
+          220
+        )
+    }
+
+
+  utterance.onerror =
+    event => {
+
+      if (
+        requestId !==
+        speechRequestId
+      ) {
+
+        return
+      }
+
 
       if (
         event?.error ===
@@ -1602,8 +2934,10 @@ function speakCurrentChunk (
         event?.error ===
           'interrupted'
       ) {
+
         return
       }
+
 
       console.warn(
         'TTS error:',
@@ -1611,26 +2945,37 @@ function speakCurrentChunk (
           'unknown'
       )
 
+
       stopSpeech()
     }
+
 
   if (
     requestId !==
       speechRequestId ||
-    speakingCardId === null
+    speakingCardId ===
+      null
   ) {
+
     return
   }
 
+
   try {
-    window.speechSynthesis.speak(
-      utterance
-    )
+
+    window.speechSynthesis
+      .speak(
+        utterance
+      )
+
   } catch (error) {
+
     console.warn(
       'TTS start failed:',
       error
     )
+
+
     stopSpeech()
   }
 }
@@ -1640,22 +2985,29 @@ function speakCurrentChunk (
    FINISH SPEECH
 ========================================================= */
 
-function finishSpeech (
+function finishSpeech(
   requestId
 ) {
+
   if (
     requestId !==
     speechRequestId
   ) {
+
     return
   }
+
 
   if (
     'speechSynthesis' in window
   ) {
+
     try {
+
       window.speechSynthesis.cancel()
+
     } catch (error) {
+
       console.warn(
         'Speech finish cancel failed:',
         error
@@ -1663,11 +3015,26 @@ function finishSpeech (
     }
   }
 
-  speakingCardId = null
-  speechQueue = []
-  speechIndex = 0
-  speechPaused = false
-  speechLoading = false
+
+  speakingCardId =
+    null
+
+
+  speechQueue =
+    []
+
+
+  speechIndex =
+    0
+
+
+  speechPaused =
+    false
+
+
+  speechLoading =
+    false
+
 
   updateSpeechButtons()
 }
@@ -1677,25 +3044,39 @@ function finishSpeech (
    PAUSE SPEECH
 ========================================================= */
 
-function pauseSpeech () {
+function pauseSpeech() {
+
   if (
     !('speechSynthesis' in window)
   ) {
+
     return
   }
+
 
   if (
-    speakingCardId === null ||
+    speakingCardId ===
+      null ||
     speechLoading
   ) {
+
     return
   }
 
+
   try {
+
     window.speechSynthesis.pause()
-    speechPaused = true
+
+
+    speechPaused =
+      true
+
+
     updateSpeechButtons()
+
   } catch (error) {
+
     console.warn(
       'Speech pause failed:',
       error
@@ -1708,25 +3089,39 @@ function pauseSpeech () {
    RESUME SPEECH
 ========================================================= */
 
-function resumeSpeech () {
+function resumeSpeech() {
+
   if (
     !('speechSynthesis' in window)
   ) {
+
     return
   }
+
 
   if (
-    speakingCardId === null ||
+    speakingCardId ===
+      null ||
     speechLoading
   ) {
+
     return
   }
 
+
   try {
+
     window.speechSynthesis.resume()
-    speechPaused = false
+
+
+    speechPaused =
+      false
+
+
     updateSpeechButtons()
+
   } catch (error) {
+
     console.warn(
       'Speech resume failed:',
       error
@@ -1741,32 +3136,43 @@ function resumeSpeech () {
 
 window.togglePauseSpeech =
   function () {
+
     if (
-      !('speechSynthesis' in
-        window)
+      !('speechSynthesis' in window)
     ) {
+
       return
     }
 
+
     if (
-      speakingCardId === null
+      speakingCardId ===
+      null
     ) {
+
       if (
         currentSpeakingItem
       ) {
+
         startSpeech(
           currentSpeakingItem
         )
       }
+
+
       return
     }
+
 
     if (
       speechPaused ||
       window.speechSynthesis.paused
     ) {
+
       resumeSpeech()
+
     } else {
+
       pauseSpeech()
     }
   }
@@ -1778,16 +3184,22 @@ window.togglePauseSpeech =
 
 window.replaySpeech =
   function () {
+
     if (
       !currentSpeakingItem
     ) {
+
       return
     }
+
 
     const item =
       currentSpeakingItem
 
-    startSpeech(item)
+
+    startSpeech(
+      item
+    )
   }
 
 
@@ -1796,24 +3208,37 @@ window.replaySpeech =
 ========================================================= */
 
 window.handleMainSpeech =
-  function (id) {
+  function (
+    id
+  ) {
+
     const item =
-      findItemById(id)
+      findItemById(
+        id
+      )
+
 
     if (!item) {
       return
     }
 
+
     const sameCard =
       speakingCardId ===
       String(id)
 
+
     if (sameCard) {
+
       stopSpeech()
+
       return
     }
 
-    startSpeech(item)
+
+    startSpeech(
+      item
+    )
   }
 
 
@@ -1821,120 +3246,157 @@ window.handleMainSpeech =
    TTS BUTTON UI
 ========================================================= */
 
-function updateSpeechButtons () {
+function updateSpeechButtons() {
+
   document
     .querySelectorAll(
       '.grammar-card'
     )
-    .forEach(card => {
-      const id =
-        card.dataset.id
+    .forEach(
+      card => {
 
-      const status =
-        card.querySelector(
-          '.tts-status'
-        )
+        const id =
+          card.dataset.id
 
-      const play =
-        card.querySelector(
-          '.tts-play'
-        )
 
-      const pause =
-        card.querySelector(
-          '.tts-pause'
-        )
+        const status =
+          card.querySelector(
+            '.tts-status'
+          )
 
-      const replay =
-        card.querySelector(
-          '.tts-replay'
-        )
 
-      const stop =
-        card.querySelector(
-          '.tts-stop'
-        )
+        const play =
+          card.querySelector(
+            '.tts-play'
+          )
 
-      if (!status) {
-        return
-      }
 
-      const active =
-        id ===
-        String(speakingCardId)
+        const pause =
+          card.querySelector(
+            '.tts-pause'
+          )
 
-      const state =
-        getSpeechState()
 
-      card.classList.toggle(
-        'speaking',
-        active
-      )
+        const replay =
+          card.querySelector(
+            '.tts-replay'
+          )
 
-      if (!active) {
-        status.textContent =
-          '読み上げ機能'
-      } else if (
-        state === 'loading'
-      ) {
-        status.textContent =
-          '準備中...'
-      } else if (
-        state === 'paused'
-      ) {
-        status.textContent =
-          '一時停止中'
-      } else {
-        status.textContent =
-          '再生中: 文法 → 例文 1-3'
-      }
 
-      if (play) {
-        play.innerHTML =
+        const stop =
+          card.querySelector(
+            '.tts-stop'
+          )
+
+
+        if (!status) {
+          return
+        }
+
+
+        const active =
+          id ===
+          String(
+            speakingCardId
+          )
+
+
+        const state =
+          getSpeechState()
+
+
+        card.classList.toggle(
+          'speaking',
           active
-            ? '<i class="bi bi-stop-fill"></i>'
-            : '<i class="bi bi-play-fill"></i>'
+        )
 
-        play.title =
-          active
-            ? 'Stop'
-            : 'Play'
+
+        if (!active) {
+
+          status.textContent =
+            '読み上げ機能'
+
+        } else if (
+          state === 'loading'
+        ) {
+
+          status.textContent =
+            '準備中...'
+
+        } else if (
+          state === 'paused'
+        ) {
+
+          status.textContent =
+            '一時停止中'
+
+        } else {
+
+          status.textContent =
+            '再生中: 文法 → 例文 1-3'
+        }
+
+
+        if (play) {
+
+          play.innerHTML =
+            active
+              ? '<i class="bi bi-stop-fill"></i>'
+              : '<i class="bi bi-play-fill"></i>'
+
+
+          play.title =
+            active
+              ? 'Stop'
+              : 'Play'
+        }
+
+
+        if (pause) {
+
+          pause.innerHTML =
+            active &&
+            !speechPaused
+
+              ? '<i class="bi bi-pause-fill"></i>'
+
+              : '<i class="bi bi-play-fill"></i>'
+
+
+          pause.title =
+            active &&
+            !speechPaused
+              ? 'Pause'
+              : 'Resume'
+        }
+
+
+        if (replay) {
+
+          replay.disabled =
+            !currentSpeakingItem
+
+
+          replay.style.opacity =
+            currentSpeakingItem
+              ? '1'
+              : '.5'
+        }
+
+
+        if (stop) {
+
+          stop.disabled =
+            !active
+
+
+          stop.style.opacity =
+            active
+              ? '1'
+              : '.5'
+        }
       }
-
-      if (pause) {
-        pause.innerHTML =
-          active &&
-          !speechPaused
-            ? '<i class="bi bi-pause-fill"></i>'
-            : '<i class="bi bi-play-fill"></i>'
-
-        pause.title =
-          active &&
-          !speechPaused
-            ? 'Pause'
-            : 'Resume'
-      }
-
-      if (replay) {
-        replay.disabled =
-          !currentSpeakingItem
-
-        replay.style.opacity =
-          currentSpeakingItem
-            ? '1'
-            : '.5'
-      }
-
-      if (stop) {
-        stop.disabled =
-          !active
-
-        stop.style.opacity =
-          active
-            ? '1'
-            : '.5'
-      }
-    })
+    )
 }
 
 
@@ -1942,44 +3404,60 @@ function updateSpeechButtons () {
    EXAMPLE TRANSLATION STATE
 ========================================================= */
 
-function createExampleState (
+function createExampleState(
   item,
   example,
   index
 ) {
+
   return {
+
     exampleId:
       `${item.id}_${index}`,
 
     originalHTML:
-      String(example ?? ''),
+      String(
+        example ?? ''
+      ),
 
     originalText:
-      stripHTML(example),
+      stripHTML(
+        example
+      ),
 
-    translated: false,
+    translated:
+      false,
 
-    translation: '',
+    translation:
+      '',
 
-    sourceLanguage: null,
+    sourceLanguage:
+      null,
 
-    targetLanguage: null,
+    targetLanguage:
+      null,
 
-    key: null,
+    key:
+      null,
 
-    busy: false
+    busy:
+      false
   }
 }
 
-function getExampleOriginalHTML (
+
+function getExampleOriginalHTML(
   state
 ) {
+
   if (!state) {
     return ''
   }
 
+
   return (
     state.originalHTML ||
+
     escapeHTML(
       state.originalText ||
         ''
@@ -1992,34 +3470,48 @@ function getExampleOriginalHTML (
    EXAMPLE RESET
 ========================================================= */
 
-function resetExampleDisplay (
+function resetExampleDisplay(
   exampleBox,
   state
 ) {
-  if (!exampleBox || !state) {
+
+  if (
+    !exampleBox ||
+    !state
+  ) {
+
     return
   }
 
+
   if (state.key) {
+
     const timer =
       exampleTranslationTimers.get(
         state.key
       )
 
+
     if (timer) {
-      clearTimeout(timer)
+
+      clearTimeout(
+        timer
+      )
     }
+
 
     exampleTranslationTimers.delete(
       state.key
     )
   }
 
+
   exampleBox.classList.remove(
     'translating',
     'translated',
     'copied'
   )
+
 
   exampleBox.innerHTML = `
     <i class="bi bi-caret-right-fill"></i>
@@ -2028,12 +3520,29 @@ function resetExampleDisplay (
     </span>
   `
 
-  state.translated = false
-  state.translation = ''
-  state.sourceLanguage = null
-  state.targetLanguage = null
-  state.key = null
-  state.busy = false
+
+  state.translated =
+    false
+
+
+  state.translation =
+    ''
+
+
+  state.sourceLanguage =
+    null
+
+
+  state.targetLanguage =
+    null
+
+
+  state.key =
+    null
+
+
+  state.busy =
+    false
 }
 
 
@@ -2041,65 +3550,94 @@ function resetExampleDisplay (
    SHOW EXAMPLE TRANSLATION
 ========================================================= */
 
-async function showExampleTranslation (
+async function showExampleTranslation(
   exampleBox
 ) {
+
   const state =
-    exampleBox?._translationState
+    exampleBox
+      ?._translationState
+
 
   if (!state) {
     return
   }
 
-  if (state.translated) {
+
+  if (
+    state.translated
+  ) {
+
     resetExampleDisplay(
       exampleBox,
       state
     )
+
+
     return
   }
+
 
   if (
     state.busy ||
     !state.originalText
   ) {
+
     return
   }
+
 
   const sourceLanguage =
     detectLanguage(
       state.originalText
     )
 
+
   const targetLanguage =
     getTargetLanguage(
       sourceLanguage
     )
 
+
   const requestKey = [
+
     state.exampleId,
+
     sourceLanguage,
+
     targetLanguage,
+
     state.originalText
+
   ].join('::')
+
 
   state.sourceLanguage =
     sourceLanguage
 
+
   state.targetLanguage =
     targetLanguage
 
-  state.key = requestKey
-  state.busy = true
+
+  state.key =
+    requestKey
+
+
+  state.busy =
+    true
+
 
   exampleBox.classList.add(
     'translating'
   )
 
+
   exampleBox.classList.remove(
     'translated',
     'copied'
   )
+
 
   exampleBox.innerHTML = `
     <i class="bi bi-translate"></i>
@@ -2112,7 +3650,9 @@ async function showExampleTranslation (
     </span>
   `
 
+
   try {
+
     const translated =
       await translateText(
         state.originalText,
@@ -2120,29 +3660,38 @@ async function showExampleTranslation (
         targetLanguage
       )
 
+
     if (
       !document.body.contains(
         exampleBox
       )
     ) {
+
       return
     }
 
+
     const latestState =
-      exampleBox._translationState
+      exampleBox
+        ._translationState
+
 
     if (
       !latestState ||
       latestState.key !==
-        requestKey
+      requestKey
     ) {
+
       return
     }
 
+
     if (!translated) {
+
       exampleBox.classList.remove(
         'translating'
       )
+
 
       exampleBox.innerHTML = `
         <i class="bi bi-info-circle"></i>
@@ -2155,45 +3704,62 @@ async function showExampleTranslation (
         </span>
       `
 
+
       const errorTimer =
-        setTimeout(() => {
-          if (
-            document.body.contains(
+        setTimeout(
+          () => {
+
+            if (
+              document.body.contains(
+                exampleBox
+              ) &&
               exampleBox
-            ) &&
-            exampleBox._translationState ===
-              latestState
-          ) {
-            resetExampleDisplay(
-              exampleBox,
-              latestState
-            )
-          }
-        }, 1800)
+                ._translationState ===
+                latestState
+            ) {
+
+              resetExampleDisplay(
+                exampleBox,
+                latestState
+              )
+            }
+
+          },
+          1800
+        )
+
 
       exampleTranslationTimers.set(
         requestKey,
         errorTimer
       )
 
+
       return
     }
+
 
     latestState.translation =
       translated
 
+
     latestState.translated =
       true
 
-    latestState.busy = false
+
+    latestState.busy =
+      false
+
 
     exampleBox.classList.remove(
       'translating'
     )
 
+
     exampleBox.classList.add(
       'translated'
     )
+
 
     exampleBox.innerHTML = `
       <i class="bi bi-translate"></i>
@@ -2204,46 +3770,61 @@ async function showExampleTranslation (
       </span>
     `
 
+
     const timer =
-      setTimeout(() => {
-        if (
-          document.body.contains(
-            exampleBox
-          ) &&
-          exampleBox
-            ._translationState
-            ?.translated
-        ) {
-          resetExampleDisplay(
-            exampleBox,
+      setTimeout(
+        () => {
+
+          if (
+            document.body.contains(
+              exampleBox
+            ) &&
             exampleBox
               ._translationState
-          )
-        }
-      }, 5000)
+              ?.translated
+          ) {
+
+            resetExampleDisplay(
+              exampleBox,
+              exampleBox
+                ._translationState
+            )
+          }
+
+        },
+        5000
+      )
+
 
     exampleTranslationTimers.set(
       requestKey,
       timer
     )
+
   } catch (error) {
+
     console.warn(
       'Example translation failed:',
       error
     )
+
 
     if (
       document.body.contains(
         exampleBox
       )
     ) {
+
       resetExampleDisplay(
         exampleBox,
         state
       )
     }
+
   } finally {
-    state.busy = false
+
+    state.busy =
+      false
   }
 }
 
@@ -2252,96 +3833,150 @@ async function showExampleTranslation (
    COPY
 ========================================================= */
 
-async function copyText (text) {
+async function copyText(
+  text
+) {
+
   if (!text) {
     return false
   }
 
+
   try {
+
     if (
       navigator.clipboard &&
       typeof navigator.clipboard
         .writeText ===
         'function'
     ) {
-      await navigator.clipboard.writeText(
-        text
-      )
+
+      await navigator.clipboard
+        .writeText(
+          text
+        )
+
+
       return true
     }
+
   } catch (error) {
+
     console.warn(
       'Clipboard API failed:',
       error
     )
   }
 
+
   const textarea =
     document.createElement(
       'textarea'
     )
 
-  textarea.value = text
-  textarea.style.position = 'fixed'
-  textarea.style.left = '-9999px'
-  textarea.style.top = '0'
-  textarea.style.opacity = '0'
-  
+
+  textarea.value =
+    text
+
+
+  textarea.style.position =
+    'fixed'
+
+
+  textarea.style.left =
+    '-9999px'
+
+
+  textarea.style.top =
+    '0'
+
+
+  textarea.style.opacity =
+    '0'
+
+
   document.body.appendChild(
     textarea
   )
 
+
   textarea.focus()
+
+
   textarea.select()
 
-  let copied = false
+
+  let copied =
+    false
+
 
   try {
+
     copied =
       document.execCommand(
         'copy'
       )
+
   } catch (error) {
+
     console.warn(
       'Fallback copy failed:',
       error
     )
   }
 
+
   textarea.remove()
+
+
   return copied
 }
 
-async function copyExampleText (
+
+async function copyExampleText(
   exampleBox
 ) {
+
   const state =
     exampleBox?._translationState
+
 
   if (!state) {
     return
   }
 
+
   const text =
     state.translated &&
     state.translation
+
       ? state.translation
+
       : state.originalText
+
 
   if (!text) {
     return
   }
 
+
   const success =
-    await copyText(text)
+    await copyText(
+      text
+    )
+
 
   if (success) {
+
     showCopyFeedback(
       exampleBox,
+
       state.translated
+
         ? getLanguageText(
             'copiedTranslation'
           )
+
         : getLanguageText(
             'copiedOriginal'
           )
@@ -2349,24 +3984,30 @@ async function copyExampleText (
   }
 }
 
-function showCopyFeedback (
+
+function showCopyFeedback(
   exampleBox,
   message
 ) {
+
   if (
     !document.body.contains(
       exampleBox
     )
   ) {
+
     return
   }
+
 
   const previousHTML =
     exampleBox.innerHTML
 
+
   exampleBox.classList.add(
     'copied'
   )
+
 
   exampleBox.innerHTML = `
     <i class="bi bi-check-circle-fill"></i>
@@ -2375,36 +4016,52 @@ function showCopyFeedback (
     </span>
   `
 
-  setTimeout(() => {
-    if (
-      !document.body.contains(
+
+  setTimeout(
+    () => {
+
+      if (
+        !document.body.contains(
+          exampleBox
+        )
+      ) {
+
+        return
+      }
+
+
+      const state =
         exampleBox
+          ?._translationState
+
+
+      if (
+        state?.translated
+      ) {
+
+        exampleBox.innerHTML = `
+          <i class="bi bi-translate"></i>
+          <span>
+            ${escapeHTML(
+              state.translation
+            )}
+          </span>
+        `
+
+      } else {
+
+        exampleBox.innerHTML =
+          previousHTML
+      }
+
+
+      exampleBox.classList.remove(
+        'copied'
       )
-    ) {
-      return
-    }
 
-    const state =
-      exampleBox._translationState
-
-    if (state?.translated) {
-      exampleBox.innerHTML = `
-        <i class="bi bi-translate"></i>
-        <span>
-          ${escapeHTML(
-            state.translation
-          )}
-        </span>
-      `
-    } else {
-      exampleBox.innerHTML =
-        previousHTML
-    }
-
-    exampleBox.classList.remove(
-      'copied'
-    )
-  }, 900)
+    },
+    900
+  )
 }
 
 
@@ -2412,62 +4069,91 @@ function showCopyFeedback (
    EXAMPLE INTERACTION
 ========================================================= */
 
-let exampleClickTimer = null
+let exampleClickTimer =
+  null
+
 
 document.addEventListener(
   'click',
   event => {
+
     const exampleBox =
       event.target.closest(
         '.example-box'
       )
 
+
     if (
       !exampleBox?._translationState
     ) {
+
       return
     }
 
-    if (exampleClickTimer) {
+
+    if (
+      exampleClickTimer
+    ) {
+
       clearTimeout(
         exampleClickTimer
       )
     }
 
+
     exampleClickTimer =
-      setTimeout(() => {
-        exampleClickTimer =
-          null
-        copyExampleText(
-          exampleBox
-        )
-      }, 220)
+      setTimeout(
+        () => {
+
+          exampleClickTimer =
+            null
+
+
+          copyExampleText(
+            exampleBox
+          )
+
+        },
+        220
+      )
   }
 )
+
 
 document.addEventListener(
   'dblclick',
   event => {
+
     const exampleBox =
       event.target.closest(
         '.example-box'
       )
 
+
     if (
       !exampleBox?._translationState
     ) {
+
       return
     }
 
+
     event.preventDefault()
 
-    if (exampleClickTimer) {
+
+    if (
+      exampleClickTimer
+    ) {
+
       clearTimeout(
         exampleClickTimer
       )
+
+
       exampleClickTimer =
         null
     }
+
 
     showExampleTranslation(
       exampleBox
@@ -2475,26 +4161,36 @@ document.addEventListener(
   }
 )
 
+
 document.addEventListener(
   'keydown',
   event => {
+
     const target =
       event.target?.closest?.(
         '.example-box'
       )
 
+
     if (
       !target?._translationState
     ) {
+
       return
     }
+
 
     if (
       event.key === 'Enter' ||
       event.key === ' '
     ) {
+
       event.preventDefault()
-      copyExampleText(target)
+
+
+      copyExampleText(
+        target
+      )
     }
   }
 )
@@ -2504,12 +4200,16 @@ document.addEventListener(
    CARD HTML
 ========================================================= */
 
-function createCardHTML (
+function createCardHTML(
   item,
   index
 ) {
+
   const savedStatus =
-    getStatus(item)
+    getStatus(
+      item
+    )
+
 
   const examples =
     Array.isArray(
@@ -2518,24 +4218,35 @@ function createCardHTML (
       ? item.examples
       : []
 
+
   const lang =
     normalizeLanguage(
       currentLanguage
     )
+
 
   const reading =
     item?.reading ||
     item?.yomi ||
     ''
 
+
   const moduleText =
     item?.module ||
     item?.lesson ||
+
     `M${String(
       item?._week || ''
-    ).replace('week', '')} - H${String(
+    ).replace(
+      'week',
+      ''
+    )} - H${String(
       item?._day || ''
-    ).replace('day', '')}`
+    ).replace(
+      'day',
+      ''
+    )}`
+
 
   const examplesHTML =
     examples
@@ -2544,12 +4255,14 @@ function createCardHTML (
           example,
           exampleIndex
         ) => {
+
           const state =
             createExampleState(
               item,
               example,
               exampleIndex
             )
+
 
           return `
             <div
@@ -2575,26 +4288,41 @@ function createCardHTML (
       )
       .join('')
 
+
   const meaning =
     lang === 'en'
-      ? item?.meaning?.en || '-'
+
+      ? item?.meaning?.en ||
+        '-'
+
       : lang === 'cn'
+
       ? item?.meaning?.cn ||
         item?.meaning?.zh ||
         '-'
-      : item?.meaning?.id || '-'
+
+      : item?.meaning?.id ||
+        '-'
+
 
   const explanation =
     stripHTML(
       item?.explanation || ''
-    ) || '—'
+    ) ||
+    '—'
+
 
   const exampleLabel =
     lang === 'id'
+
       ? 'Contoh Kalimat'
+
       : lang === 'en'
+
       ? 'Example Sentences'
+
       : '例句'
+
 
   return `
     <article
@@ -2606,12 +4334,15 @@ function createCardHTML (
     >
 
       <div class="card-top">
+
         <span class="day-badge">
           <i class="bi bi-bookmark-star-fill"></i>
+
           ${escapeHTML(
             moduleText
           )}
         </span>
+
 
         <span class="module-badge">
           <i class="bi ${
@@ -2619,24 +4350,30 @@ function createCardHTML (
               ? 'bi-building'
               : 'bi-stars'
           }"></i>
+
           ${
             item?.formal
               ? 'Formal'
               : 'N1'
           }
         </span>
+
       </div>
 
+
       <div class="rule-area">
+
         <div class="rule-reading">
           ${escapeHTML(
             reading
           )}
         </div>
 
+
         <div class="grammar-rule">
           ${item?.rule || '-'}
         </div>
+
 
         <button
           class="speaker-main-btn"
@@ -2649,34 +4386,51 @@ function createCardHTML (
         >
           <i class="bi bi-volume-up-fill"></i>
         </button>
+
       </div>
 
+
       <div class="card-body">
+
         <div class="info-block">
+
           <div class="info-label">
+
             <i class="bi bi-info-circle-fill"></i>
+
             ${escapeHTML(
               getLanguageText(
                 'meaning'
               )
             )}
+
           </div>
+
+
           <div class="info-text">
+
             <span>
               ${meaning}
             </span>
+
           </div>
+
         </div>
 
+
         <div class="info-block">
+
           <div
             class="translation-box"
             data-explanation-id="${escapeHTML(
               item?.id
             )}"
           >
+
             <div class="translation-label">
+
               <i class="bi bi-globe2"></i>
+
               <span>
                 ${escapeHTML(
                   getLanguageText(
@@ -2684,35 +4438,54 @@ function createCardHTML (
                   )
                 )}
               </span>
+
             </div>
+
+
             <span class="id-explanation">
+
               ${
                 lang === 'id'
+
                   ? escapeHTML(
                       explanation
                     )
+
                   : escapeHTML(
                       getLanguageText(
                         'translating'
                       )
                     )
               }
+
             </span>
+
           </div>
+
         </div>
 
+
         <div class="info-block examples">
+
           <div class="info-label">
+
             <i class="bi bi-chat-square-text-fill"></i>
+
             <span class="example-label">
               ${exampleLabel}
             </span>
+
           </div>
+
+
           ${
             examplesHTML ||
+
             `
               <div class="example-box">
+
                 <i class="bi bi-dash-circle"></i>
+
                 <span>
                   ${escapeHTML(
                     getLanguageText(
@@ -2720,16 +4493,23 @@ function createCardHTML (
                     )
                   )}
                 </span>
+
               </div>
             `
           }
+
         </div>
+
       </div>
 
+
       <div class="tts-toolbar">
+
         <div class="tts-status">
           読み上げ機能
         </div>
+
+
         <button
           class="tts-btn tts-play"
           type="button"
@@ -2741,6 +4521,7 @@ function createCardHTML (
           <i class="bi bi-play-fill"></i>
         </button>
 
+
         <button
           class="tts-btn tts-pause"
           type="button"
@@ -2749,6 +4530,7 @@ function createCardHTML (
         >
           <i class="bi bi-pause-fill"></i>
         </button>
+
 
         <button
           class="tts-btn tts-replay"
@@ -2759,6 +4541,7 @@ function createCardHTML (
           <i class="bi bi-arrow-repeat"></i>
         </button>
 
+
         <button
           class="tts-btn stop tts-stop"
           type="button"
@@ -2767,9 +4550,12 @@ function createCardHTML (
         >
           <i class="bi bi-stop-fill"></i>
         </button>
+
       </div>
 
+
       <div class="card-footer">
+
         <button
           class="status-btn btn-0 ${
             savedStatus === '0'
@@ -2785,9 +4571,15 @@ function createCardHTML (
             this
           )"
         >
+
           <i class="bi bi-x-circle"></i>
-          <span>Belum</span>
+
+          <span>
+            Belum
+          </span>
+
         </button>
+
 
         <button
           class="status-btn btn-1 ${
@@ -2804,9 +4596,15 @@ function createCardHTML (
             this
           )"
         >
+
           <i class="bi bi-dash-circle"></i>
-          <span>Agak</span>
+
+          <span>
+            Agak
+          </span>
+
         </button>
+
 
         <button
           class="status-btn btn-2 ${
@@ -2823,9 +4621,15 @@ function createCardHTML (
             this
           )"
         >
+
           <i class="bi bi-check-circle"></i>
-          <span>Hafal</span>
+
+          <span>
+            Hafal
+          </span>
+
         </button>
+
       </div>
 
     </article>
@@ -2837,67 +4641,91 @@ function createCardHTML (
    INITIALIZE EXAMPLE STATES
 ========================================================= */
 
-function initializeExampleStates (
+function initializeExampleStates(
   items
 ) {
+
   if (!grammarCards) {
     return
   }
 
-  const cards = new Map()
+
+  const cards =
+    new Map()
+
 
   grammarCards
     .querySelectorAll(
       '.grammar-card[data-id]'
     )
-    .forEach(card => {
-      cards.set(
-        String(card.dataset.id),
-        card
-      )
-    })
+    .forEach(
+      card => {
 
-  items.forEach(item => {
-    const card =
-      cards.get(
-        String(item.id)
-      )
-
-    if (!card) {
-      return
-    }
-
-    const examples =
-      Array.isArray(
-        item.examples
-      )
-        ? item.examples
-        : []
-
-    const boxes =
-      card.querySelectorAll(
-        '.example-box[data-example-id]'
-      )
-
-    boxes.forEach(
-      (
-        box,
-        index
-      ) => {
-        if (
-          examples[index] !==
-          undefined
-        ) {
-          box._translationState =
-            createExampleState(
-              item,
-              examples[index],
-              index
-            )
-        }
+        cards.set(
+          String(
+            card.dataset.id
+          ),
+          card
+        )
       }
     )
-  })
+
+
+  items.forEach(
+    item => {
+
+      const card =
+        cards.get(
+          String(
+            item.id
+          )
+        )
+
+
+      if (!card) {
+        return
+      }
+
+
+      const examples =
+        Array.isArray(
+          item.examples
+        )
+          ? item.examples
+          : []
+
+
+      const boxes =
+        card.querySelectorAll(
+          '.example-box[data-example-id]'
+        )
+
+
+      boxes.forEach(
+        (
+          box,
+          index
+        ) => {
+
+          if (
+            examples[index] !==
+            undefined
+          ) {
+
+            box._translationState =
+              createExampleState(
+                item,
+                examples[
+                  index
+                ],
+                index
+              )
+          }
+        }
+      )
+    }
+  )
+
 
   updateSpeechButtons()
 }
@@ -2907,96 +4735,130 @@ function initializeExampleStates (
    CARD EXPLANATION LOAD
 ========================================================= */
 
-async function loadCardTranslations (
+async function loadCardTranslations(
   items,
   version
 ) {
+
   const selectedLanguage =
     normalizeLanguage(
       currentLanguage
     )
 
+
   if (
-    selectedLanguage === 'id'
+    selectedLanguage ===
+    'id'
   ) {
-    items.forEach(item => {
-      const selector =
-        `.translation-box[data-explanation-id="${CSS.escape(
-          String(item.id)
-        )}"]`
 
-      const box =
-        document.querySelector(
-          selector
-        )
-
-      const target =
-        box?.querySelector(
-          '.id-explanation'
-        )
-
-      if (target) {
-        target.textContent =
-          stripHTML(
-            item?.explanation ||
-              ''
-          ) || '—'
-      }
-    })
-
-    return
-  }
-
-  let cursor = 0
-
-  const worker =
-    async () => {
-      while (
-        cursor <
-        items.length
-      ) {
-        if (
-          version !==
-          explanationLoadVersion
-        ) {
-          return
-        }
-
-        const index =
-          cursor++
-
-        const item =
-          items[index]
+    items.forEach(
+      item => {
 
         const selector =
           `.translation-box[data-explanation-id="${CSS.escape(
-            String(item.id)
+            String(
+              item.id
+            )
           )}"]`
+
 
         const box =
           document.querySelector(
             selector
           )
 
+
         const target =
           box?.querySelector(
             '.id-explanation'
           )
 
+
+        if (target) {
+
+          target.textContent =
+            stripHTML(
+              item?.explanation ||
+                ''
+            ) ||
+            '—'
+        }
+      }
+    )
+
+
+    return
+  }
+
+
+  let cursor = 0
+
+
+  const worker =
+    async () => {
+
+      while (
+        cursor <
+        items.length
+      ) {
+
+        if (
+          version !==
+          explanationLoadVersion
+        ) {
+
+          return
+        }
+
+
+        const index =
+          cursor++
+
+
+        const item =
+          items[
+            index
+          ]
+
+
+        const selector =
+          `.translation-box[data-explanation-id="${CSS.escape(
+            String(
+              item.id
+            )
+          )}"]`
+
+
+        const box =
+          document.querySelector(
+            selector
+          )
+
+
+        const target =
+          box?.querySelector(
+            '.id-explanation'
+          )
+
+
         if (!target) {
           continue
         }
+
 
         target.textContent =
           getLanguageText(
             'translating'
           )
 
+
         try {
+
           const translated =
             await getExplanationForLanguage(
               item
             )
+
 
           if (
             version !==
@@ -3005,16 +4867,22 @@ async function loadCardTranslations (
               target
             )
           ) {
+
             return
           }
 
+
           target.textContent =
-            translated || '—'
+            translated ||
+            '—'
+
         } catch (error) {
+
           console.warn(
             'Explanation translation failed:',
             error
           )
+
 
           if (
             version ===
@@ -3023,27 +4891,33 @@ async function loadCardTranslations (
               target
             )
           ) {
+
             target.textContent =
               stripHTML(
                 item?.explanation ||
                   ''
-              ) || '—'
+              ) ||
+              '—'
           }
         }
       }
     }
 
+
   const workers =
     Array.from(
       {
-        length: Math.min(
-          TRANSLATION_CONFIG
-            .explanationConcurrency,
-          items.length
-        )
+        length:
+          Math.min(
+            TRANSLATION_CONFIG
+              .explanationConcurrency,
+            items.length
+          )
       },
-      () => worker()
+      () =>
+        worker()
     )
+
 
   await Promise.allSettled(
     workers
@@ -3055,21 +4929,28 @@ async function loadCardTranslations (
    PROGRESS LABEL
 ========================================================= */
 
-function isExamDay () {
+function isExamDay() {
+
   return (
-    activeDay === 'day7' &&
+    activeDay ===
+      'day7' &&
     !currentSearch
   )
 }
 
-function updateProgressLabel () {
+
+function updateProgressLabel() {
+
   if (!progressLabel) {
     return
   }
 
+
   progressLabel.textContent =
     isExamDay()
+
       ? 'Progress ujian'
+
       : 'Progress hafalan'
 }
 
@@ -3078,64 +4959,97 @@ function updateProgressLabel () {
    EXAM STATE
 ========================================================= */
 
-let examAnswers = {}
+let examAnswers =
+  {}
 
-window.currentObjectExam = null
+
+let examSubmitted =
+  false
+
+
+window.currentObjectExam =
+  null
 
 
 /* =========================================================
    EXAM PROGRESS → MAIN PROGRESS
 ========================================================= */
 
-function syncExamToMainProgress () {
+function syncExamToMainProgress() {
+
   updateProgressLabel()
+
 
   if (!isExamDay()) {
     return
   }
+
 
   const questionBlocks =
     examContent?.querySelectorAll(
       '.exam-q'
     ) || []
 
+
   const total =
     questionBlocks.length
+
 
   if (
     window.currentObjectExam &&
     total > 0
   ) {
+
     const answered =
       Object.keys(
         examAnswers
       ).length
 
+
     const percentage =
       Math.round(
-        (answered / total) *
-          100
+        (
+          answered /
+          total
+        ) * 100
       )
 
-    if (progressPercent) {
+
+    if (
+      progressPercent
+    ) {
+
       progressPercent.textContent =
         `${percentage}%`
     }
 
-    if (progressBarFill) {
+
+    if (
+      progressBarFill
+    ) {
+
       progressBarFill.style.width =
         `${percentage}%`
     }
 
+
     return
   }
 
-  if (progressPercent) {
+
+  if (
+    progressPercent
+  ) {
+
     progressPercent.textContent =
       '0%'
   }
 
-  if (progressBarFill) {
+
+  if (
+    progressBarFill
+  ) {
+
     progressBarFill.style.width =
       '0%'
   }
@@ -3146,49 +5060,82 @@ function syncExamToMainProgress () {
    RENDER CARDS
 ========================================================= */
 
-function renderCards () {
+function renderCards() {
+
   const version =
     ++renderVersion
 
+
   explanationLoadVersion++
+
 
   stopSpeech()
 
+
   updateProgressLabel()
 
+
   if (
-    activeDay === 'day7' &&
+    activeDay ===
+      'day7' &&
     !currentSearch
   ) {
+
     if (grammarCards) {
+
       grammarCards.replaceChildren()
-      grammarCards.classList.add('hidden')
+
+      grammarCards.classList.add(
+        'hidden'
+      )
     }
+
 
     if (emptyState) {
-      emptyState.classList.add('hidden')
+
+      emptyState.classList.add(
+        'hidden'
+      )
     }
 
-    if (resultCounter) {
-      resultCounter.textContent = 'Full Exam'
+
+    if (
+      resultCounter
+    ) {
+
+      resultCounter.textContent =
+        'Full Exam'
     }
+
 
     updateProgress([])
+
+
     return
   }
 
+
   if (grammarCards) {
-    grammarCards.classList.remove('hidden')
+
+    grammarCards.classList.remove(
+      'hidden'
+    )
   }
+
 
   const items =
     getFilteredItems()
 
+
   if (grammarCards) {
+
     const html =
       items
         .map(
-          (item, index) =>
+          (
+            item,
+            index
+          ) =>
             createCardHTML(
               item,
               index
@@ -3196,49 +5143,73 @@ function renderCards () {
         )
         .join('')
 
-    grammarCards.innerHTML = html
+
+    grammarCards.innerHTML =
+      html
   }
 
+
   if (emptyState) {
+
     emptyState.classList.toggle(
       'hidden',
       items.length !== 0
     )
   }
 
-  if (resultCounter) {
+
+  if (
+    resultCounter
+  ) {
+
     resultCounter.textContent =
       `${items.length} materi`
   }
+
 
   initializeExampleStates(
     items
   )
 
-  updateProgress(items)
+
+  updateProgress(
+    items
+  )
+
 
   if (!items.length) {
     return
   }
 
-  setTimeout(() => {
-    if (
-      version !==
-      renderVersion
-    ) {
-      return
-    }
 
-    loadCardTranslations(
-      items,
-      explanationLoadVersion
-    ).catch(error => {
-      console.warn(
-        'Card translation load failed:',
-        error
+  setTimeout(
+    () => {
+
+      if (
+        version !==
+        renderVersion
+      ) {
+
+        return
+      }
+
+
+      loadCardTranslations(
+        items,
+        explanationLoadVersion
+      ).catch(
+        error => {
+
+          console.warn(
+            'Card translation load failed:',
+            error
+          )
+        }
       )
-    })
-  }, 0)
+
+    },
+    0
+  )
 }
 
 
@@ -3246,50 +5217,74 @@ function renderCards () {
    PROGRESS
 ========================================================= */
 
-function updateProgress (
+function updateProgress(
   items
 ) {
+
   updateProgressLabel()
 
-  if (isExamDay()) {
+
+  if (
+    isExamDay()
+  ) {
+
     syncExamToMainProgress()
+
     return
   }
+
 
   if (!progressPercent) {
     return
   }
 
+
   if (!items.length) {
+
     progressPercent.textContent =
       '0%'
 
-    if (progressBarFill) {
+
+    if (
+      progressBarFill
+    ) {
+
       progressBarFill.style.width =
         '0%'
     }
 
+
     return
   }
+
 
   const mastered =
     items.filter(
       item =>
-        getStatus(item) ===
+        getStatus(
+          item
+        ) ===
         '2'
     ).length
 
+
   const percentage =
     Math.round(
-      (mastered /
-        items.length) *
-        100
+      (
+        mastered /
+        items.length
+      ) * 100
     )
+
 
   progressPercent.textContent =
     `${percentage}%`
 
-  if (progressBarFill) {
+
+  if (
+    progressBarFill
+  ) {
+
     progressBarFill.style.width =
       `${percentage}%`
   }
@@ -3300,32 +5295,54 @@ function updateProgress (
    HEADER
 ========================================================= */
 
-function updateContentHeader () {
-  if (!weekTitle || !dayTitle) {
+function updateContentHeader() {
+
+  if (
+    !weekTitle ||
+    !dayTitle
+  ) {
+
     return
   }
 
-  if (currentSearch) {
+
+  if (
+    currentSearch
+  ) {
+
     weekTitle.textContent =
       'Hasil Pencarian'
+
 
     dayTitle.textContent =
       `Menemukan materi untuk "${currentSearch}"`
 
+
     return
   }
 
+
   const week =
-    courseData[activeWeek]
+    courseData[
+      activeWeek
+    ]
+
 
   const day =
-    week?.days?.[activeDay]
+    week?.days?.[
+      activeDay
+    ]
+
 
   weekTitle.textContent =
-    activeDay === 'day7'
+    activeDay ===
+      'day7'
+
       ? week?.title || ''
+
       : week?.title ||
         'Materi JLPT N1'
+
 
   dayTitle.textContent =
     day?.title || ''
@@ -3336,17 +5353,27 @@ function updateContentHeader () {
    FILTER LABEL
 ========================================================= */
 
-function updateFilterLabel () {
-  if (!activeFilterLabel) {
+function updateFilterLabel() {
+
+  if (
+    !activeFilterLabel
+  ) {
+
     return
   }
 
-  if (currentSearch) {
+
+  if (
+    currentSearch
+  ) {
+
     activeFilterLabel.textContent =
       `Pencarian: "${currentSearch}"`
 
+
     return
   }
+
 
   const weekNumber =
     activeWeek.replace(
@@ -3354,16 +5381,386 @@ function updateFilterLabel () {
       ''
     )
 
+
   const dayNumber =
     activeDay.replace(
       'day',
       ''
     )
 
+
   activeFilterLabel.textContent =
-    activeDay === 'day7'
+    activeDay ===
+      'day7'
+
       ? `Minggu ${weekNumber} • Hari 7 • Full Exam`
+
       : `Minggu ${weekNumber} • Hari ${dayNumber}`
+}
+
+
+/* =========================================================
+   EXAM HELPERS
+========================================================= */
+
+/*
+  Ambil teks pembahasan berdasarkan struktur:
+  question.explanation.options[optionIndex]
+*/
+
+function getExamOptionExplanation(
+  question,
+  optionIndex
+) {
+
+  return (
+    question
+      ?.explanation
+      ?.options?.[
+        optionIndex
+      ] || ''
+  )
+}
+
+
+/*
+  Ambil pembahasan jawaban benar.
+*/
+
+function getExamCorrectExplanation(
+  question
+) {
+
+  return (
+    question
+      ?.explanation
+      ?.correct || ''
+  )
+}
+
+
+/*
+  Ambil penjelasan penggunaan grammar.
+*/
+
+function getExamUsageExplanation(
+  question
+) {
+
+  return (
+    question
+      ?.explanation
+      ?.usage || ''
+  )
+}
+
+
+/*
+  Escape teks option tetapi tetap biarkan
+  HTML pembahasan.
+*/
+
+function safeExamOptionHTML(
+  option
+) {
+
+  return escapeHTML(
+    option
+  )
+}
+
+
+/* =========================================================
+   EXAM EXPLANATION UI
+========================================================= */
+
+function buildExamExplanationHTML(
+  question,
+  selectedIndex,
+  isCorrect
+) {
+
+  const correctIndex =
+    question.correct
+
+
+  const selectedOption =
+    question.options?.[
+      selectedIndex
+    ] || ''
+
+
+  const correctOption =
+    question.options?.[
+      correctIndex
+    ] || ''
+
+
+  const selectedExplanation =
+    getExamOptionExplanation(
+      question,
+      selectedIndex
+    )
+
+
+  const correctExplanation =
+    getExamCorrectExplanation(
+      question
+    )
+
+
+  const usageExplanation =
+    getExamUsageExplanation(
+      question
+    )
+
+
+  const title =
+    question
+      ?.explanation
+      ?.title ||
+    'Pembahasan'
+
+
+  if (isCorrect) {
+
+    return `
+      <div class="exam-explanation correct">
+
+        <div class="exam-explanation-header">
+
+          <div class="exam-explanation-icon">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+
+          <div>
+            <div class="exam-explanation-status">
+              BENAR
+            </div>
+
+            <div class="exam-explanation-title">
+              ${escapeHTML(title)}
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="exam-explanation-answer">
+
+          <strong>Jawabanmu:</strong>
+
+          <span>
+            ${safeExamOptionHTML(
+              selectedOption
+            )}
+          </span>
+
+        </div>
+
+
+        <div class="exam-explanation-section">
+
+          <div class="exam-explanation-section-title">
+            <i class="bi bi-lightbulb-fill"></i>
+            Kenapa benar?
+          </div>
+
+          <div class="exam-explanation-text">
+            ${
+              correctExplanation ||
+              `
+                Jawaban ini merupakan pilihan
+                yang tepat berdasarkan struktur
+                tata bahasa dan konteks kalimat.
+              `
+            }
+          </div>
+
+        </div>
+
+
+        ${
+          usageExplanation
+            ? `
+              <div class="exam-explanation-section">
+
+                <div class="exam-explanation-section-title">
+                  <i class="bi bi-book-half"></i>
+                  Dipakai untuk apa?
+                </div>
+
+                <div class="exam-explanation-text">
+                  ${usageExplanation}
+                </div>
+
+              </div>
+            `
+            : ''
+        }
+
+
+        <div class="exam-explanation-section">
+
+          <div class="exam-explanation-section-title">
+            <i class="bi bi-list-check"></i>
+            Ringkasan
+          </div>
+
+          <div class="exam-explanation-text">
+
+            <strong>
+              ${escapeHTML(title)}
+            </strong>
+
+            adalah pola yang sesuai dengan
+            hubungan makna dan struktur kalimat
+            pada soal ini.
+
+          </div>
+
+        </div>
+
+      </div>
+    `
+  }
+
+
+  return `
+    <div class="exam-explanation incorrect">
+
+      <div class="exam-explanation-header">
+
+        <div class="exam-explanation-icon">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+
+        <div>
+          <div class="exam-explanation-status">
+            KURANG TEPAT
+          </div>
+
+          <div class="exam-explanation-title">
+            ${escapeHTML(title)}
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="exam-explanation-answer wrong">
+
+        <strong>Jawabanmu:</strong>
+
+        <span>
+          ${safeExamOptionHTML(
+            selectedOption
+          )}
+        </span>
+
+      </div>
+
+
+      <div class="exam-explanation-answer right">
+
+        <strong>Jawaban benar:</strong>
+
+        <span>
+          ${safeExamOptionHTML(
+            correctOption
+          )}
+        </span>
+
+      </div>
+
+
+      <div class="exam-explanation-section">
+
+        <div class="exam-explanation-section-title">
+          <i class="bi bi-question-circle-fill"></i>
+          Kenapa jawabanmu salah?
+        </div>
+
+        <div class="exam-explanation-text">
+
+          ${
+            selectedExplanation ||
+
+            `
+              Pilihan tersebut tidak sesuai
+              dengan fungsi tata bahasa atau
+              struktur kalimat pada soal.
+            `
+          }
+
+        </div>
+
+      </div>
+
+
+      <div class="exam-explanation-section">
+
+        <div class="exam-explanation-section-title">
+          <i class="bi bi-lightbulb-fill"></i>
+          Kenapa jawaban yang benar?
+        </div>
+
+        <div class="exam-explanation-text">
+
+          ${
+            correctExplanation ||
+
+            `
+              Jawaban tersebut paling sesuai
+              dengan makna dan struktur kalimat.
+            `
+          }
+
+        </div>
+
+      </div>
+
+
+      ${
+        usageExplanation
+          ? `
+            <div class="exam-explanation-section">
+
+              <div class="exam-explanation-section-title">
+                <i class="bi bi-book-half"></i>
+                Dipakai untuk apa?
+              </div>
+
+              <div class="exam-explanation-text">
+                ${usageExplanation}
+              </div>
+
+            </div>
+          `
+          : ''
+      }
+
+
+      <div class="exam-explanation-section">
+
+        <div class="exam-explanation-section-title">
+          <i class="bi bi-arrow-repeat"></i>
+          Yang perlu diingat
+        </div>
+
+        <div class="exam-explanation-text">
+
+          Ingat bahwa pada JLPT N1 bukan hanya
+          arti kata yang diperiksa, tetapi juga
+          <strong>fungsi pola, pasangan struktur,
+          nuansa, dan kecocokan dengan konteks</strong>.
+
+        </div>
+
+      </div>
+
+    </div>
+  `
 }
 
 
@@ -3371,93 +5768,135 @@ function updateFilterLabel () {
    RENDER EXAM
 ========================================================= */
 
-function renderExam (
+function renderExam(
   examData
 ) {
+
   if (!miniExam) {
     return
   }
+
 
   if (
     currentSearch ||
     !examData
   ) {
+
     miniExam.classList.add(
       'hidden'
     )
 
+
     if (examContent) {
+
       examContent.innerHTML =
         ''
     }
 
+
     window.currentObjectExam =
       null
 
-    examAnswers = {}
+
+    examAnswers =
+      {}
+
+
+    examSubmitted =
+      false
+
 
     updateExamProgress()
+
     syncExamToMainProgress()
 
     return
   }
 
+
   miniExam.classList.remove(
     'hidden'
   )
+
 
   if (!examContent) {
     return
   }
 
+
   if (
     typeof examData ===
     'string'
   ) {
+
     examContent.innerHTML =
       examData
 
+
     initializeHTMLExam()
+
 
     return
   }
+
 
   if (
-    examData.type === 'html'
+    examData.type ===
+    'html'
   ) {
+
     examContent.innerHTML =
-      examData.content || ''
+      examData.content ||
+      ''
+
 
     initializeHTMLExam()
 
+
     return
   }
+
 
   if (
     Array.isArray(
       examData.questions
     )
   ) {
+
     renderObjectExam(
       examData
     )
 
+
     return
   }
 
+
   examContent.innerHTML = `
     <div class="exam-empty">
+
       <i class="bi bi-info-circle"></i>
+
       Exam belum tersedia.
+
     </div>
   `
+
 
   window.currentObjectExam =
     null
 
-  examAnswers = {}
+
+  examAnswers =
+    {}
+
+
+  examSubmitted =
+    false
+
 
   updateExamProgress()
+
   syncExamToMainProgress()
 }
 
@@ -3466,10 +5905,12 @@ function renderExam (
    HTML EXAM
 ========================================================= */
 
-function initializeHTMLExam () {
+function initializeHTMLExam() {
+
   if (!examContent) {
     return
   }
+
 
   examContent
     .querySelectorAll(
@@ -3480,13 +5921,18 @@ function initializeHTMLExam () {
         button,
         index
       ) => {
+
         button.dataset.examOption =
-          String(index + 1)
+          String(
+            index + 1
+          )
+
 
         button.style.animationDelay =
           `${index * 0.015}s`
       }
     )
+
 
   examContent
     .querySelectorAll(
@@ -3497,17 +5943,27 @@ function initializeHTMLExam () {
         question,
         index
       ) => {
+
         question.style.animationDelay =
           `${index * 0.035}s`
       }
     )
 
+
   window.currentObjectExam =
     null
 
-  examAnswers = {}
+
+  examAnswers =
+    {}
+
+
+  examSubmitted =
+    false
+
 
   updateExamProgress()
+
   syncExamToMainProgress()
 }
 
@@ -3516,13 +5972,21 @@ function initializeHTMLExam () {
    OBJECT EXAM
 ========================================================= */
 
-function renderObjectExam (
+function renderObjectExam(
   examData
 ) {
-  examAnswers = {}
+
+  examAnswers =
+    {}
+
+
+  examSubmitted =
+    false
+
 
   window.currentObjectExam =
     examData
+
 
   const questions =
     Array.isArray(
@@ -3531,6 +5995,7 @@ function renderObjectExam (
       ? examData.questions
       : []
 
+
   const questionsHTML =
     questions
       .map(
@@ -3538,12 +6003,14 @@ function renderObjectExam (
           question,
           index
         ) => {
+
           const options =
             Array.isArray(
               question?.options
             )
               ? question.options
               : []
+
 
           const optionsHTML =
             options
@@ -3562,11 +6029,12 @@ function renderObjectExam (
                     )"
                   >
                     ${optionIndex + 1}.
-                    ${option}
+                    ${safeExamOptionHTML(option)}
                   </button>
                 `
               )
               .join('')
+
 
           return `
             <div
@@ -3578,17 +6046,26 @@ function renderObjectExam (
                 問題 ${index + 1}
               </h3>
 
+
               <p>
                 ${question?.question || ''}
               </p>
 
-              <div>
+
+              <div class="exam-options">
                 ${optionsHTML}
               </div>
+
 
               <div
                 class="exam-feedback"
                 id="exam-feedback-${index}"
+              ></div>
+
+
+              <div
+                class="exam-detailed-explanation"
+                id="exam-explanation-${index}"
               ></div>
 
             </div>
@@ -3597,49 +6074,27 @@ function renderObjectExam (
       )
       .join('')
 
+
   examContent.innerHTML = `
     <div class="exam-container">
 
       ${questionsHTML}
 
+
       <button
         type="button"
         onclick="finishObjectExam()"
-        style="
-          display:inline-flex;
-          align-items:center;
-          justify-content:center;
-          gap:9px;
-          padding:11px 20px;
-          border:none;
-          border-radius:10px;
-          background:#BC002D;
-          color:#fff;
-          font-size:14px;
-          font-weight:600;
-          letter-spacing:.2px;
-          cursor:pointer;
-          box-shadow:0 4px 12px rgba(188,0,45,.25);
-          transition:all .2s ease;
-        "
-        onmouseover="
-          this.style.background='#A80028';
-          this.style.transform='translateY(-1px)';
-          this.style.boxShadow='0 6px 16px rgba(188,0,45,.32)'
-        "
-        onmouseout="
-          this.style.background='#BC002D';
-          this.style.transform='translateY(0)';
-          this.style.boxShadow='0 4px 12px rgba(188,0,45,.25)'
-        "
+        class="exam-finish-btn"
       >
+
         <i
           class="bi bi-send-check"
-          style="font-size:17px;"
         ></i>
 
         Selesai & Lihat Skor
+
       </button>
+
 
       <div
         id="objectExamResult"
@@ -3649,7 +6104,9 @@ function renderObjectExam (
     </div>
   `
 
+
   updateExamProgress()
+
   syncExamToMainProgress()
 }
 
@@ -3664,68 +6121,96 @@ window.chooseExamAnswer =
     optionIndex,
     button
   ) {
+
     if (
       examAnswers[
         questionIndex
       ] !== undefined
     ) {
+
       return
     }
 
+
     const exam =
       window.currentObjectExam
+
 
     const question =
       exam?.questions?.[
         questionIndex
       ]
 
-    if (!question || !button) {
+
+    if (
+      !question ||
+      !button
+    ) {
+
       return
     }
 
+
     examAnswers[
       questionIndex
-    ] = optionIndex
+    ] =
+      optionIndex
+
 
     const parent =
       button.parentElement
+
 
     const buttons =
       parent?.querySelectorAll(
         'button'
       ) || []
 
-    buttons.forEach(btn => {
-      btn.disabled = true
-    })
+
+    buttons.forEach(
+      btn => {
+
+        btn.disabled =
+          true
+      }
+    )
+
 
     const isCorrect =
       optionIndex ===
       question.correct
 
+
     if (isCorrect) {
+
       button.style.background =
         'var(--success)'
 
-      button.style.color =
-        'white'
-    } else {
-      button.style.background =
-        'var(--danger)'
 
       button.style.color =
         'white'
+
+    } else {
+
+      button.style.background =
+        'var(--danger)'
+
+
+      button.style.color =
+        'white'
+
 
       if (
         buttons[
           question.correct
         ]
       ) {
+
         buttons[
           question.correct
         ].style.background =
           'var(--success)'
+
 
         buttons[
           question.correct
@@ -3734,33 +6219,93 @@ window.chooseExamAnswer =
       }
     }
 
+
     const feedback =
       document.getElementById(
         `exam-feedback-${questionIndex}`
       )
 
+
     if (feedback) {
+
       feedback.innerHTML =
         isCorrect
+
           ? `
             <span
               style="color:var(--success)"
             >
+
               <i class="bi bi-check-circle-fill"></i>
+
               Benar!
+
             </span>
           `
+
           : `
             <span
               style="color:var(--danger)"
             >
+
               <i class="bi bi-x-circle-fill"></i>
+
               Kurang tepat.
+
             </span>
           `
     }
 
+
+    /* =====================================================
+       DETAIL EXPLANATION
+    ===================================================== */
+
+    const explanationBox =
+      document.getElementById(
+        `exam-explanation-${questionIndex}`
+      )
+
+
+    if (explanationBox) {
+
+      explanationBox.innerHTML =
+        buildExamExplanationHTML(
+          question,
+          optionIndex,
+          isCorrect
+        )
+
+
+      explanationBox.classList.remove(
+        'hidden'
+      )
+
+
+      /*
+        Scroll sedikit ke pembahasan
+        agar user langsung melihat alasan.
+      */
+
+      setTimeout(
+        () => {
+
+          explanationBox.scrollIntoView({
+            behavior:
+              'smooth',
+
+            block:
+              'nearest'
+          })
+
+        },
+        50
+      )
+    }
+
+
     updateExamProgress()
+
     syncExamToMainProgress()
   }
 
@@ -3771,12 +6316,15 @@ window.chooseExamAnswer =
 
 window.finishObjectExam =
   function () {
+
     const exam =
       window.currentObjectExam
+
 
     if (!exam) {
       return
     }
+
 
     const questions =
       Array.isArray(
@@ -3785,75 +6333,131 @@ window.finishObjectExam =
         ? exam.questions
         : []
 
+
     if (
       Object.keys(
         examAnswers
       ).length <
       questions.length
     ) {
+
       alert(
         'Jawab semua pertanyaan terlebih dahulu.'
       )
 
+
       return
     }
 
-    let score = 0
+
+    let score =
+      0
+
 
     questions.forEach(
       (
         question,
         index
       ) => {
+
         if (
-          examAnswers[index] ===
+          examAnswers[
+            index
+          ] ===
           question.correct
         ) {
+
           score++
         }
       }
     )
 
+
     const total =
       questions.length
 
+
     const percentage =
       total > 0
+
         ? Math.round(
-            (score / total) *
-              100
+            (
+              score /
+              total
+            ) *
+            100
           )
+
         : 0
+
 
     const result =
       document.getElementById(
         'objectExamResult'
       )
 
+
     if (!result) {
       return
     }
+
 
     result.classList.remove(
       'hidden'
     )
 
+
     result.innerHTML = `
       <i class="bi bi-trophy-fill"></i>
 
-      Skor:
-      ${score}/${total}
+      <div class="exam-result-score">
 
-      (${percentage}%)
+        Skor:
+        ${score}/${total}
 
-      <br>
+        (${percentage}%)
 
-      ${
-        percentage >= 70
-          ? 'よくできました！'
-          : 'もう一度復習しましょう。'
-      }
+      </div>
+
+
+      <div class="exam-result-message">
+
+        ${
+          percentage >= 70
+
+            ? 'よくできました！'
+
+            : 'もう一度復習しましょう。'
+        }
+
+      </div>
+
+
+      <div class="exam-result-detail">
+
+        ${
+          percentage >= 90
+
+            ? 'Sangat bagus. Pemahaman pola N1 kamu sudah kuat.'
+
+            : percentage >= 70
+
+            ? 'Hasil sudah cukup baik. Review soal yang salah agar pola semakin stabil.'
+
+            : percentage >= 50
+
+            ? 'Beberapa pola masih perlu diperkuat. Fokus pada pembahasan soal yang salah.'
+
+            : 'Sebaiknya ulangi materi Hari 1–6 untuk pola yang muncul di ujian.'
+        }
+
+      </div>
     `
+
+
+    examSubmitted =
+      true
+
 
     syncExamToMainProgress()
   }
@@ -3863,60 +6467,89 @@ window.finishObjectExam =
    EXAM PROGRESS
 ========================================================= */
 
-function updateExamProgress () {
+function updateExamProgress() {
+
   if (!examContent) {
     return
   }
+
 
   const questionBlocks =
     examContent.querySelectorAll(
       '.exam-q'
     )
 
+
   if (
     window.currentObjectExam &&
     questionBlocks.length
   ) {
+
     const total =
       questionBlocks.length
+
 
     const answered =
       Object.keys(
         examAnswers
       ).length
 
+
     const percentage =
       total > 0
+
         ? Math.round(
-            (answered / total) *
-              100
+            (
+              answered /
+              total
+            ) * 100
           )
+
         : 0
 
-    if (examAnswered) {
+
+    if (
+      examAnswered
+    ) {
+
       examAnswered.textContent =
-        `${percentage}%`
+        `${answered}/${total} soal`
     }
 
-    if (examProgressFill) {
+
+    if (
+      examProgressFill
+    ) {
+
       examProgressFill.style.width =
         `${percentage}%`
     }
 
+
     syncExamToMainProgress()
+
 
     return
   }
 
-  if (examAnswered) {
+
+  if (
+    examAnswered
+  ) {
+
     examAnswered.textContent =
-      '25 Soal'
+      '0 Soal'
   }
 
-  if (examProgressFill) {
+
+  if (
+    examProgressFill
+  ) {
+
     examProgressFill.style.width =
       '0%'
   }
+
 
   syncExamToMainProgress()
 }
@@ -3932,26 +6565,39 @@ window.updateStatus =
     status,
     button
   ) {
+
     storageSet(
       `status_${id}`,
-      String(status)
+      String(
+        status
+      )
     )
 
-    if (button?.parentElement) {
-      button.parentElement
+
+    if (
+      button?.parentElement
+    ) {
+
+      button
+        .parentElement
         .querySelectorAll(
           '.status-btn'
         )
-        .forEach(btn => {
-          btn.classList.remove(
-            'active'
-          )
-        })
+        .forEach(
+          btn => {
+
+            btn.classList.remove(
+              'active'
+            )
+          }
+        )
+
 
       button.classList.add(
         'active'
       )
     }
+
 
     updateProgress(
       getFilteredItems()
@@ -3964,37 +6610,51 @@ window.updateStatus =
 ========================================================= */
 
 if (searchInput) {
+
   searchInput.addEventListener(
     'input',
     event => {
+
       const value =
         event.target.value
           .trim()
           .toLowerCase()
 
+
       clearTimeout(
         searchDebounceTimer
       )
 
+
       searchDebounceTimer =
-        setTimeout(() => {
-          currentSearch =
-            value
+        setTimeout(
+          () => {
 
-          updateContentHeader()
-          updateFilterLabel()
-          renderCards()
+            currentSearch =
+              value
 
-          renderExam(
-            courseData[
-              activeWeek
-            ]?.days?.[
-              activeDay
-            ]?.exam
-          )
 
-          updateProgressLabel()
-        }, 220)
+            updateContentHeader()
+
+            updateFilterLabel()
+
+            renderCards()
+
+
+            renderExam(
+              courseData[
+                activeWeek
+              ]?.days?.[
+                activeDay
+              ]?.exam
+            )
+
+
+            updateProgressLabel()
+
+          },
+          220
+        )
     }
   )
 }
@@ -4005,39 +6665,54 @@ if (searchInput) {
 ========================================================= */
 
 if (weekSelect) {
+
   weekSelect.addEventListener(
     'change',
     event => {
+
       activeWeek =
         event.target.value
+
 
       activeDay =
         'day1'
 
+
       currentSearch =
         ''
+
 
       clearTimeout(
         searchDebounceTimer
       )
 
+
       stopSpeech()
+
 
       savePageState()
 
+
       if (searchInput) {
+
         searchInput.value =
           ''
       }
 
+
       if (daySelect) {
+
         daySelect.value =
           activeDay
       }
 
+
       updateContentHeader()
+
       updateFilterLabel()
+
       renderCards()
+
 
       renderExam(
         courseData[
@@ -4046,6 +6721,7 @@ if (weekSelect) {
           activeDay
         ]?.exam
       )
+
 
       updateProgressLabel()
     }
@@ -4058,31 +6734,43 @@ if (weekSelect) {
 ========================================================= */
 
 if (daySelect) {
+
   daySelect.addEventListener(
     'change',
     event => {
+
       activeDay =
         event.target.value
 
+
       currentSearch =
         ''
+
 
       clearTimeout(
         searchDebounceTimer
       )
 
+
       stopSpeech()
+
 
       savePageState()
 
+
       if (searchInput) {
+
         searchInput.value =
           ''
       }
 
+
       updateContentHeader()
+
       updateFilterLabel()
+
       renderCards()
+
 
       renderExam(
         courseData[
@@ -4091,6 +6779,7 @@ if (daySelect) {
           activeDay
         ]?.exam
       )
+
 
       updateProgressLabel()
     }
@@ -4103,18 +6792,24 @@ if (daySelect) {
 ========================================================= */
 
 if (statusSelect) {
+
   statusSelect.addEventListener(
     'change',
     event => {
+
       currentStatus =
         event.target.value
 
+
       if (
-        activeDay === 'day7' &&
+        activeDay ===
+          'day7' &&
         !currentSearch
       ) {
+
         return
       }
+
 
       renderCards()
     }
@@ -4126,59 +6821,98 @@ if (statusSelect) {
    RESET FILTER
 ========================================================= */
 
-function resetFilters () {
+function resetFilters() {
+
   clearTimeout(
     searchDebounceTimer
   )
 
+
   stopSpeech()
 
-  currentSearch = ''
-  currentStatus = 'all'
 
-  activeWeek = 'week1'
-  activeDay = 'day1'
+  currentSearch =
+    ''
+
+
+  currentStatus =
+    'all'
+
+
+  activeWeek =
+    'week1'
+
+
+  activeDay =
+    'day1'
+
 
   savePageState()
 
+
   if (searchInput) {
-    searchInput.value = ''
+
+    searchInput.value =
+      ''
   }
+
 
   if (statusSelect) {
-    statusSelect.value = 'all'
+
+    statusSelect.value =
+      'all'
   }
 
+
   if (weekSelect) {
+
     weekSelect.value =
       'week1'
   }
 
+
   if (daySelect) {
+
     daySelect.value =
       'day1'
   }
 
+
   updateContentHeader()
+
   updateFilterLabel()
+
   renderCards()
 
+
   renderExam(
-    courseData.week1
-      ?.days?.day1?.exam
+    courseData
+      .week1
+      ?.days
+      ?.day1
+      ?.exam
   )
+
 
   updateProgressLabel()
 }
 
-if (resetFiltersBtn) {
+
+if (
+  resetFiltersBtn
+) {
+
   resetFiltersBtn.addEventListener(
     'click',
     resetFilters
   )
 }
 
-if (emptyResetBtn) {
+
+if (
+  emptyResetBtn
+) {
+
   emptyResetBtn.addEventListener(
     'click',
     resetFilters
@@ -4193,15 +6927,21 @@ if (emptyResetBtn) {
 document.addEventListener(
   'keydown',
   event => {
+
     if (
-      (event.ctrlKey ||
-        event.metaKey) &&
+      (
+        event.ctrlKey ||
+        event.metaKey
+      ) &&
       event.key.toLowerCase() ===
         'k'
     ) {
+
       event.preventDefault()
 
+
       if (searchInput) {
+
         searchInput.focus()
       }
     }
@@ -4216,14 +6956,19 @@ document.addEventListener(
 document.addEventListener(
   'keydown',
   event => {
+
     if (
-      event.code !== 'Space'
+      event.code !==
+      'Space'
     ) {
+
       return
     }
 
+
     const target =
       event.target
+
 
     if (
       target?.tagName ===
@@ -4234,13 +6979,18 @@ document.addEventListener(
         'SELECT' ||
       target?.isContentEditable
     ) {
+
       return
     }
 
+
     if (
-      speakingCardId !== null
+      speakingCardId !==
+      null
     ) {
+
       event.preventDefault()
+
 
       window.togglePauseSpeech()
     }
@@ -4252,26 +7002,35 @@ document.addEventListener(
    MEMO MODE
 ========================================================= */
 
-if (memoToggle) {
+if (
+  memoToggle
+) {
+
   memoToggle.addEventListener(
     'click',
     () => {
+
       memoMode =
         !memoMode
+
 
       document.body.classList.toggle(
         'memo-mode',
         memoMode
       )
 
+
       memoToggle.classList.toggle(
         'active',
         memoMode
       )
 
+
       memoToggle.innerHTML =
         memoMode
+
           ? '<i class="bi bi-eye-slash-fill"></i>'
+
           : '<i class="bi bi-eye"></i>'
     }
   )
@@ -4282,50 +7041,65 @@ if (memoToggle) {
    DARK MODE
 ========================================================= */
 
-function applyDarkModeButton (
+function applyDarkModeButton(
   dark
 ) {
+
   if (!themeToggle) {
     return
   }
 
+
   themeToggle.innerHTML =
     dark
+
       ? '<i class="bi bi-sun-fill"></i>'
+
       : '<i class="bi bi-moon-stars-fill"></i>'
 }
+
 
 const savedDarkMode =
   localStorage.getItem(
     'n1_dark_mode'
   ) === '1'
 
+
 if (savedDarkMode) {
+
   document.body.classList.add(
     'dark-mode'
   )
 }
 
+
 applyDarkModeButton(
   savedDarkMode
 )
 
+
 if (themeToggle) {
+
   themeToggle.addEventListener(
     'click',
     () => {
+
       const dark =
         document.body.classList.toggle(
           'dark-mode'
         )
 
+
       applyDarkModeButton(
         dark
       )
 
+
       localStorage.setItem(
         'n1_dark_mode',
-        dark ? '1' : '0'
+        dark
+          ? '1'
+          : '0'
       )
     }
   )
@@ -4336,16 +7110,21 @@ if (themeToggle) {
    LANGUAGE APPLY
 ========================================================= */
 
-function applyLanguage (
+function applyLanguage(
   lang
 ) {
+
   currentLanguage =
-    normalizeLanguage(lang)
+    normalizeLanguage(
+      lang
+    )
+
 
   storageSet(
     'n1_language',
     currentLanguage
   )
+
 
   document.body.classList.remove(
     'lang-show-id',
@@ -4353,9 +7132,11 @@ function applyLanguage (
     'lang-show-cn'
   )
 
+
   document.body.classList.add(
     `lang-show-${currentLanguage}`
   )
+
 
   renderCards()
 }
@@ -4365,11 +7146,13 @@ function applyLanguage (
    LANGUAGE UI
 ========================================================= */
 
-function initializeLanguageUI () {
+function initializeLanguageUI() {
+
   currentLanguage =
     normalizeLanguage(
       currentLanguage
     )
+
 
   document.body.classList.remove(
     'lang-show-id',
@@ -4377,30 +7160,40 @@ function initializeLanguageUI () {
     'lang-show-cn'
   )
 
+
   document.body.classList.add(
     `lang-show-${currentLanguage}`
   )
+
 
   document
     .querySelectorAll(
       '#languageMenu button'
     )
-    .forEach(button => {
-      button.classList.toggle(
-        'active',
-        normalizeLanguage(
-          button.dataset.lang
-        ) ===
+    .forEach(
+      button => {
+
+        button.classList.toggle(
+          'active',
+
+          normalizeLanguage(
+            button.dataset.lang
+          ) ===
           currentLanguage
-      )
-    })
+        )
+      }
+    )
 }
 
+
 if (langToggleBtn) {
+
   langToggleBtn.addEventListener(
     'click',
     event => {
+
       event.stopPropagation()
+
 
       languageMenu?.classList.toggle(
         'hidden'
@@ -4409,47 +7202,61 @@ if (langToggleBtn) {
   )
 }
 
+
 document
   .querySelectorAll(
     '#languageMenu button'
   )
-  .forEach(button => {
-    button.addEventListener(
-      'click',
-      event => {
-        event.stopPropagation()
+  .forEach(
+    button => {
 
-        applyLanguage(
-          button.dataset.lang
-        )
+      button.addEventListener(
+        'click',
+        event => {
 
-        document
-          .querySelectorAll(
-            '#languageMenu button'
+          event.stopPropagation()
+
+
+          applyLanguage(
+            button.dataset.lang
           )
-          .forEach(btn =>
-            btn.classList.remove(
-              'active'
+
+
+          document
+            .querySelectorAll(
+              '#languageMenu button'
             )
+            .forEach(
+              btn =>
+                btn.classList.remove(
+                  'active'
+                )
+            )
+
+
+          button.classList.add(
+            'active'
           )
 
-        button.classList.add(
-          'active'
-        )
 
-        languageMenu?.classList.add(
-          'hidden'
-        )
+          languageMenu?.classList.add(
+            'hidden'
+          )
 
-        updateContentHeader()
-        updateFilterLabel()
-      }
-    )
-  })
+
+          updateContentHeader()
+
+          updateFilterLabel()
+        }
+      )
+    }
+  )
+
 
 document.addEventListener(
   'click',
   event => {
+
     if (
       languageMenu &&
       !languageMenu.contains(
@@ -4458,6 +7265,7 @@ document.addEventListener(
       event.target !==
         langToggleBtn
     ) {
+
       languageMenu.classList.add(
         'hidden'
       )
@@ -4470,50 +7278,63 @@ document.addEventListener(
    TIME
 ========================================================= */
 
-function getTimePeriod (
+function getTimePeriod(
   hour
 ) {
+
   if (
     hour >= 0 &&
     hour < 3
   ) {
+
     return 'larut-malam'
   }
+
 
   if (
     hour >= 3 &&
     hour < 5
   ) {
+
     return 'subuh'
   }
+
 
   if (
     hour >= 5 &&
     hour < 10
   ) {
+
     return 'pagi'
   }
+
 
   if (
     hour >= 10 &&
     hour < 15
   ) {
+
     return 'siang'
   }
+
 
   if (
     hour >= 15 &&
     hour < 18
   ) {
+
     return 'sore'
   }
+
 
   if (
     hour >= 18 &&
     hour < 23
   ) {
+
     return 'malam'
   }
+
 
   return 'tengah-malam'
 }
@@ -4524,67 +7345,137 @@ function getTimePeriod (
 ========================================================= */
 
 const greetingData = {
+
   'larut-malam': {
-    label: 'LARUT MALAM',
-    japanese: 'こんばんは',
+
+    label:
+      'LARUT MALAM',
+
+    japanese:
+      'こんばんは',
+
     message:
       'Kalau masih belajar, cukup lakukan review ringan. Besok masih ada waktu untuk melanjutkannya.',
-    icon: 'bi-stars',
-    period: 'Larut malam'
+
+    icon:
+      'bi-stars',
+
+    period:
+      'Larut malam'
   },
+
 
   subuh: {
-    label: 'SELAMAT SUBUH',
-    japanese: 'おはようございます',
+
+    label:
+      'SELAMAT SUBUH',
+
+    japanese:
+      'おはようございます',
+
     message:
       'Waktu yang tenang untuk mengulang bunpou sebelum aktivitas dimulai.',
-    icon: 'bi-cloud-sun-fill',
-    period: 'Subuh'
+
+    icon:
+      'bi-cloud-sun-fill',
+
+    period:
+      'Subuh'
   },
+
 
   pagi: {
-    label: 'SELAMAT PAGI',
-    japanese: 'おはようございます',
+
+    label:
+      'SELAMAT PAGI',
+
+    japanese:
+      'おはようございます',
+
     message:
       'Mulai hari dengan sedikit latihan. Satu bunpou yang benar-benar dipahami lebih berharga daripada banyak yang hanya dibaca.',
-    icon: 'bi-sun-fill',
-    period: 'Pagi'
+
+    icon:
+      'bi-sun-fill',
+
+    period:
+      'Pagi'
   },
+
 
   siang: {
-    label: 'SELAMAT SIANG',
-    japanese: 'こんにちは',
+
+    label:
+      'SELAMAT SIANG',
+
+    japanese:
+      'こんにちは',
+
     message:
       'Tetap konsisten. Sedikit demi sedikit pola tata bahasa N1 akan menjadi semakin familiar.',
-    icon: 'bi-brightness-high-fill',
-    period: 'Siang'
+
+    icon:
+      'bi-brightness-high-fill',
+
+    period:
+      'Siang'
   },
+
 
   sore: {
-    label: 'SELAMAT SORE',
-    japanese: 'こんにちは',
+
+    label:
+      'SELAMAT SORE',
+
+    japanese:
+      'こんにちは',
+
     message:
       'Matahari mulai turun. Waktunya review beberapa bunpou sebelum target harian terlewat.',
-    icon: 'bi-sun',
-    period: 'Sore'
+
+    icon:
+      'bi-sun',
+
+    period:
+      'Sore'
   },
+
 
   malam: {
-    label: 'SELAMAT MALAM',
-    japanese: 'こんばんは',
+
+    label:
+      'SELAMAT MALAM',
+
+    japanese:
+      'こんばんは',
+
     message:
       'Hari hampir selesai. Perkuat pola yang masih terasa samar sebelum menutup hari.',
-    icon: 'bi-moon-stars-fill',
-    period: 'Malam'
+
+    icon:
+      'bi-moon-stars-fill',
+
+    period:
+      'Malam'
   },
 
+
   'tengah-malam': {
-    label: 'TENGAH MALAM',
-    japanese: 'こんばんは',
+
+    label:
+      'TENGAH MALAM',
+
+    japanese:
+      'こんばんは',
+
     message:
       'Sudah cukup malam. Review singkat tetap berarti, tetapi jangan memaksakan diri terlalu lama.',
-    icon: 'bi-moon-fill',
-    period: 'Tengah malam'
+
+    icon:
+      'bi-moon-fill',
+
+    period:
+      'Tengah malam'
   }
 }
 
@@ -4593,42 +7484,66 @@ const greetingData = {
    TIME + GREETING UPDATE
 ========================================================= */
 
-function updateTimeAndGreeting () {
+function updateTimeAndGreeting() {
+
   const now =
     new Date()
+
 
   const hour =
     now.getHours()
 
+
   const minute =
     now.getMinutes()
+
 
   const second =
     now.getSeconds()
 
+
   const period =
-    getTimePeriod(hour)
+    getTimePeriod(
+      hour
+    )
+
 
   document.body.classList.remove(
+
     'theme-subuh',
+
     'theme-pagi',
+
     'theme-siang',
+
     'theme-sore',
+
     'theme-malam',
+
     'theme-tengah-malam',
+
     'theme-larut-malam'
   )
+
 
   document.body.classList.add(
     `theme-${period}`
   )
 
+
   if (liveClock) {
+
     liveClock.textContent =
-      [hour, minute, second]
-        .map(value =>
-          String(value)
-            .padStart(
+      [
+        hour,
+        minute,
+        second
+      ]
+        .map(
+          value =>
+            String(
+              value
+            ).padStart(
               2,
               '0'
             )
@@ -4636,37 +7551,62 @@ function updateTimeAndGreeting () {
         .join(':')
   }
 
+
   const greeting =
-    greetingData[period]
+    greetingData[
+      period
+    ]
+
 
   if (!greeting) {
     return
   }
 
-  if (greetingLabel) {
+
+  if (
+    greetingLabel
+  ) {
+
     greetingLabel.textContent =
       greeting.label
   }
 
-  if (greetingJapanese) {
+
+  if (
+    greetingJapanese
+  ) {
+
     greetingJapanese.textContent =
       greeting.japanese
   }
 
-  if (greetingMessage) {
+
+  if (
+    greetingMessage
+  ) {
+
     greetingMessage.textContent =
       greeting.message
   }
 
-  if (greetingIcon) {
+
+  if (
+    greetingIcon
+  ) {
+
     greetingIcon.className =
       `bi ${greeting.icon}`
   }
 
-  if (timePeriodText) {
+
+  if (
+    timePeriodText
+  ) {
+
     timePeriodText.textContent =
       greeting.period
   }
+
 
   const primary =
     getComputedStyle(
@@ -4676,6 +7616,7 @@ function updateTimeAndGreeting () {
         '--primary'
       )
       .trim()
+
 
   document
     .querySelector(
@@ -4687,31 +7628,99 @@ function updateTimeAndGreeting () {
     )
 }
 
+
 /* =========================================================
-   ACCOUNT MODAL EVENT LISTENERS
+   ACCOUNT MODAL EVENTS
 ========================================================= */
 
-if (accountToggleBtn) {
-  accountToggleBtn.addEventListener('click', () => {
-    if (accountModal) accountModal.classList.remove('hidden');
-    if (usernameInput) {
-      usernameInput.value = currentUser === 'default' ? '' : currentUser;
-      usernameInput.focus();
+if (
+  accountToggleBtn
+) {
+
+  accountToggleBtn.addEventListener(
+    'click',
+    () => {
+
+      if (
+        accountModal
+      ) {
+
+        accountModal.classList.remove(
+          'hidden'
+        )
+      }
+
+
+      if (
+        usernameInput
+      ) {
+
+        usernameInput.value =
+          currentUser ===
+          'default'
+
+            ? ''
+
+            : currentUser
+
+
+        usernameInput.focus()
+      }
     }
-  });
+  )
 }
 
-if (closeAccountBtn) {
-  closeAccountBtn.addEventListener('click', () => {
-    if (accountModal) accountModal.classList.add('hidden');
-  });
+
+if (
+  closeAccountBtn
+) {
+
+  closeAccountBtn.addEventListener(
+    'click',
+    () => {
+
+      if (
+        accountModal
+      ) {
+
+        accountModal.classList.add(
+          'hidden'
+        )
+      }
+    }
+  )
 }
 
-if (loginBtn && usernameInput) {
-  loginBtn.addEventListener('click', () => switchUser(usernameInput.value));
-  usernameInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') switchUser(usernameInput.value);
-  });
+
+if (
+  loginBtn &&
+  usernameInput
+) {
+
+  loginBtn.addEventListener(
+    'click',
+    () =>
+      switchUser(
+        usernameInput.value
+      )
+  )
+
+
+  usernameInput.addEventListener(
+    'keydown',
+    e => {
+
+      if (
+        e.key ===
+        'Enter'
+      ) {
+
+        switchUser(
+          usernameInput.value
+        )
+      }
+    }
+  )
 }
 
 
@@ -4724,15 +7733,19 @@ window.addEventListener(
   stopSpeech
 )
 
+
 document.addEventListener(
   'visibilitychange',
   () => {
+
     if (
       document.visibilityState !==
       'visible'
     ) {
+
       return
     }
+
 
     loadVoices()
   }
@@ -4743,30 +7756,48 @@ document.addEventListener(
    INIT
 ========================================================= */
 
-function init () {
+function init() {
+
   invalidateGrammarCache()
 
+
   populateWeekSelect()
+
   populateDaySelect()
 
+
   initializeLanguageUI()
+
   updateUserUI()
 
-  if (weekSelect) {
+
+  if (
+    weekSelect
+  ) {
+
     weekSelect.value =
       activeWeek
   }
 
-  if (daySelect) {
+
+  if (
+    daySelect
+  ) {
+
     daySelect.value =
       activeDay
   }
 
+
   updateContentHeader()
+
   updateFilterLabel()
+
   updateProgressLabel()
 
+
   renderCards()
+
 
   renderExam(
     courseData[
@@ -4776,10 +7807,14 @@ function init () {
     ]?.exam
   )
 
+
   updateProgressLabel()
 
+
   updateTimeAndGreeting()
+
   updateSpeechButtons()
+
 
   setInterval(
     updateTimeAndGreeting,
